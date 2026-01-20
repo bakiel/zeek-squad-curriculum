@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zeek Squad - Coding Curriculum</title>
+    <title>Zeek Squad - Coding for Kids</title>
     <style>
         * {
             margin: 0;
@@ -12,254 +12,537 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
-            padding: 40px 20px;
         }
 
-        .container {
-            max-width: 900px;
+        /* Navigation */
+        nav {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav .nav-container {
+            max-width: 1200px;
             margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .card h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-
-        .card p {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .card a {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.2s ease;
-        }
-
-        .card a:hover {
-            transform: scale(1.05);
-        }
-
-        .games-section {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-
-        .games-section h2 {
-            color: #667eea;
-            margin-bottom: 25px;
-            font-size: 2rem;
-            text-align: center;
-        }
-
-        .game-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .game-item {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .game-item:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .game-item:hover h3,
-        .game-item:hover p {
-            color: white;
-        }
-
-        .game-item h3 {
-            color: #333;
-            margin-bottom: 10px;
-            transition: color 0.3s ease;
-        }
-
-        .game-item p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            transition: color 0.3s ease;
-        }
-
-        .game-item a {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .game-item:hover a {
-            background: white;
-            color: #667eea;
-        }
-
-        .characters {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        nav .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        nav .nav-links a:hover,
+        nav .nav-links a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Section Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
 
-        .character {
-            text-align: center;
+        .tab-btn {
+            padding: 15px 30px;
+            border: none;
+            background: white;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .character-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Content Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .game-card .game-image {
+            height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 4rem;
+        }
+
+        .game-card .game-info {
+            padding: 25px;
+        }
+
+        .game-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .game-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .game-card .play-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: opacity 0.3s;
+        }
+
+        .game-card .play-btn:hover {
+            opacity: 0.9;
+        }
+
+        .game-card .coming-soon {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Week Cards */
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .week-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .week-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .week-card .week-num {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .week-card h3 {
+            color: #333;
             margin-bottom: 10px;
         }
 
-        .character p {
-            color: white;
-            font-weight: bold;
+        .week-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
-        .zeek { background: #FF6B6B; }
-        .byte { background: #4ECDC4; }
-        .loop { background: #45B7D1; }
-        .pixel { background: #96CEB4; }
+        /* Resources */
+        .resource-list {
+            display: grid;
+            gap: 15px;
+        }
 
-        footer {
-            text-align: center;
+        .resource-item {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .resource-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        .resource-item .icon {
+            font-size: 2.5rem;
+        }
+
+        .resource-item .info h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .resource-item .info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Colors for game cards */
+        .bg-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-teal { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .bg-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .bg-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+        /* Hero Banner */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            margin-top: 40px;
-            opacity: 0.8;
+            padding: 50px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Mobile menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            nav .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            nav .nav-links.show {
+                display: flex;
+            }
+
+            .tabs {
+                justify-content: center;
+            }
+
+            .tab-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Zeek Squad</h1>
-            <p>After-school coding and digital literacy curriculum for young learners</p>
-
-            <div class="characters">
-                <div class="character">
-                    <div class="character-icon zeek">🤖</div>
-                    <p>Zeek</p>
-                </div>
-                <div class="character">
-                    <div class="character-icon byte">🐛</div>
-                    <p>Byte</p>
-                </div>
-                <div class="character">
-                    <div class="character-icon loop">🐱</div>
-                    <p>Loop</p>
-                </div>
-                <div class="character">
-                    <div class="character-icon pixel">🎨</div>
-                    <p>Pixel</p>
-                </div>
-            </div>
-        </header>
-
-        <div class="card-grid">
-            <div class="card">
-                <h2>📚 Curriculum</h2>
-                <p>12 weeks of structured lessons covering computational thinking, coding basics, and digital citizenship.</p>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum">View Curriculum</a>
-            </div>
-            <div class="card">
-                <h2>👨‍👩‍👧‍👦 For Parents</h2>
-                <p>Information for parents about the programme, how to support learning at home, and weekly updates.</p>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/resources/parent-guides">Parent Resources</a>
-            </div>
-            <div class="card">
-                <h2>👩‍🏫 For Educators</h2>
-                <p>Lesson plans, activity sheets, assessment tools, and teaching guides for facilitators.</p>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/docs">Educator Resources</a>
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">🤖 Zeek Squad</a>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <div class="nav-links" id="navLinks">
+                <a href="#" class="active" onclick="showSection('games')">Games</a>
+                <a href="#" onclick="showSection('curriculum')">Curriculum</a>
+                <a href="#" onclick="showSection('resources')">Resources</a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum" target="_blank">GitHub</a>
             </div>
         </div>
+    </nav>
 
-        <section class="games-section">
-            <h2>🎮 Interactive Games</h2>
-            <div class="game-list">
-                <div class="game-item">
-                    <h3>Sequence Challenge</h3>
-                    <p>Find the missing item in the pattern! 10 levels of fun.</p>
-                    <a href="games/interactive/sequence-game.html">Play Now</a>
+    <main>
+        <div class="hero">
+            <h1>Welcome to Zeek Squad!</h1>
+            <p>Learn coding through fun games and activities. Click on any game below to start playing!</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showSection('games')">🎮 Games</button>
+            <button class="tab-btn" onclick="showSection('curriculum')">📚 Curriculum</button>
+            <button class="tab-btn" onclick="showSection('resources')">📁 Resources</button>
+        </div>
+
+        <!-- GAMES SECTION -->
+        <section id="games" class="section active">
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-image bg-purple">🧩</div>
+                    <div class="game-info">
+                        <h3>Sequence Challenge</h3>
+                        <p>Find the missing item in the pattern! Test your pattern recognition skills across 10 fun levels.</p>
+                        <a href="games/interactive/sequence-game.html" class="play-btn">▶ Play Now</a>
+                    </div>
                 </div>
-                <div class="game-item">
-                    <h3>More Games Coming!</h3>
-                    <p>Loop games, debugging challenges, and more are on the way.</p>
-                    <a href="#">Coming Soon</a>
+
+                <div class="game-card">
+                    <div class="game-image bg-teal">🔁</div>
+                    <div class="game-info">
+                        <h3>Loop Master</h3>
+                        <p>Learn about loops by helping Zeek complete repetitive tasks efficiently.</p>
+                        <span class="play-btn coming-soon">Coming Soon</span>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image bg-orange">🐛</div>
+                    <div class="game-info">
+                        <h3>Bug Hunter</h3>
+                        <p>Find and fix the bugs in the code! Become a debugging expert with Byte.</p>
+                        <span class="play-btn coming-soon">Coming Soon</span>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-image bg-blue">🎨</div>
+                    <div class="game-info">
+                        <h3>Pixel Art Coder</h3>
+                        <p>Create beautiful pixel art by writing simple commands with Pixel.</p>
+                        <span class="play-btn coming-soon">Coming Soon</span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <footer>
-            <p>Building tomorrow's tech leaders, one code block at a time.</p>
-            <p style="margin-top: 10px;">
-                <a href="https://github.com/bakiel/zeek-squad-curriculum" style="color: white;">View on GitHub</a>
-            </p>
-        </footer>
-    </div>
+        <!-- CURRICULUM SECTION -->
+        <section id="curriculum" class="section">
+            <div class="week-grid">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-01" class="week-card" target="_blank">
+                    <span class="week-num">Week 1</span>
+                    <h3>Welcome to Zeek Squad</h3>
+                    <p>Introduction, meet the characters, classroom routines</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-02" class="week-card" target="_blank">
+                    <span class="week-num">Week 2</span>
+                    <h3>Computer Basics</h3>
+                    <p>Parts of a computer, mouse and keyboard skills</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-03" class="week-card" target="_blank">
+                    <span class="week-num">Week 3</span>
+                    <h3>What is Coding?</h3>
+                    <p>Algorithms, following instructions, sequences</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-04" class="week-card" target="_blank">
+                    <span class="week-num">Week 4</span>
+                    <h3>Patterns Everywhere</h3>
+                    <p>Recognising and creating patterns</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-05" class="week-card" target="_blank">
+                    <span class="week-num">Week 5</span>
+                    <h3>Loops - Do It Again!</h3>
+                    <p>Understanding repetition and efficiency</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-06" class="week-card" target="_blank">
+                    <span class="week-num">Week 6</span>
+                    <h3>Making Decisions</h3>
+                    <p>If-then statements and conditions</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-07" class="week-card" target="_blank">
+                    <span class="week-num">Week 7</span>
+                    <h3>Variables</h3>
+                    <p>Storing and changing information</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-08" class="week-card" target="_blank">
+                    <span class="week-num">Week 8</span>
+                    <h3>Functions</h3>
+                    <p>Reusable code blocks and shortcuts</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-09" class="week-card" target="_blank">
+                    <span class="week-num">Week 9</span>
+                    <h3>Bug Hunters</h3>
+                    <p>Debugging strategies and testing</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-10" class="week-card" target="_blank">
+                    <span class="week-num">Week 10</span>
+                    <h3>Digital Citizens</h3>
+                    <p>Online safety and responsibility</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-11" class="week-card" target="_blank">
+                    <span class="week-num">Week 11</span>
+                    <h3>Create and Share</h3>
+                    <p>Project planning and collaboration</p>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-12" class="week-card" target="_blank">
+                    <span class="week-num">Week 12</span>
+                    <h3>Showcase</h3>
+                    <p>Presentations and celebration</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- RESOURCES SECTION -->
+        <section id="resources" class="section">
+            <div class="resource-list">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/resources/parent-guides/welcome-letter.md" class="resource-item" target="_blank">
+                    <span class="icon">👨‍👩‍👧</span>
+                    <div class="info">
+                        <h3>Parent Welcome Letter</h3>
+                        <p>Introduction to the programme for parents and guardians</p>
+                    </div>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/docs/curriculum-overview.md" class="resource-item" target="_blank">
+                    <span class="icon">📋</span>
+                    <div class="info">
+                        <h3>Curriculum Overview</h3>
+                        <p>Complete 12-week learning objectives and lesson breakdown</p>
+                    </div>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/resources/educator-resources" class="resource-item" target="_blank">
+                    <span class="icon">👩‍🏫</span>
+                    <div class="info">
+                        <h3>Educator Resources</h3>
+                        <p>Teaching guides, activity sheets, and assessment tools</p>
+                    </div>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/assets" class="resource-item" target="_blank">
+                    <span class="icon">🖼️</span>
+                    <div class="info">
+                        <h3>Assets & Images</h3>
+                        <p>Logos, flyers, QR codes, and visual materials</p>
+                    </div>
+                </a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum" class="resource-item" target="_blank">
+                    <span class="icon">💻</span>
+                    <div class="info">
+                        <h3>GitHub Repository</h3>
+                        <p>Full source code and all curriculum files</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(function(s) {
+                s.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+
+            // Find and activate the correct tab
+            var tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(function(tab) {
+                if (tab.textContent.toLowerCase().includes(sectionId)) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Update nav links
+            document.querySelectorAll('.nav-links a').forEach(function(link) {
+                link.classList.remove('active');
+                if (link.textContent.toLowerCase() === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Close mobile menu
+            document.getElementById('navLinks').classList.remove('show');
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('show');
+        }
+    </script>
 </body>
 </html>
