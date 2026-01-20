@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeek Squad - Sequence Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .game-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .level-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .level-indicator span {
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .sequence-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .sequence-item {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .color-0 { background: #FF6B6B; }
+        .color-1 { background: #4ECDC4; }
+        .color-2 { background: #45B7D1; }
+        .color-3 { background: #96CEB4; }
+        .color-4 { background: #FFEAA7; color: #333; }
+
+        .question-mark {
+            background: #ddd;
+            color: #666;
+            font-size: 2rem;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .option-btn.correct {
+            background: #4ECDC4;
+            border-color: #4ECDC4;
+            color: white;
+        }
+
+        .option-btn.incorrect {
+            background: #FF6B6B;
+            border-color: #FF6B6B;
+            color: white;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 30px;
+        }
+
+        .feedback.success { color: #4ECDC4; }
+        .feedback.error { color: #FF6B6B; }
+
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-item label {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .score-item span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: none;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .next-btn.show {
+            display: block;
+        }
+
+        .game-over {
+            text-align: center;
+            display: none;
+        }
+
+        .game-over.show {
+            display: block;
+        }
+
+        .game-over h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            font-size: 3rem;
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .star.earned { color: #FFD700; }
+        .star.empty { color: #ddd; }
+
+        .restart-btn {
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: #4ECDC4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>Zeek Squad Sequence Challenge</h1>
+            <p>Find the missing item in the pattern!</p>
+        </div>
+
+        <div id="gameArea">
+            <div class="level-indicator">
+                <span id="levelDisplay">Level 1</span>
+            </div>
+
+            <div class="sequence-display" id="sequenceDisplay">
+                <!-- Sequence items will be inserted here -->
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="options-container" id="optionsContainer">
+                <!-- Options will be inserted here -->
+            </div>
+
+            <div class="score-container">
+                <div class="score-item">
+                    <label>Score</label>
+                    <span id="score">0</span>
+                </div>
+                <div class="score-item">
+                    <label>Streak</label>
+                    <span id="streak">0</span>
+                </div>
+                <div class="score-item">
+                    <label>Best</label>
+                    <span id="bestStreak">0</span>
+                </div>
+            </div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextLevel()">Next Level</button>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2>Amazing Job!</h2>
+            <p>You completed all levels!</p>
+            <div id="stars"></div>
+            <p id="finalScore"></p>
+            <button class="restart-btn" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let currentLevel = 1;
+        let score = 0;
+        let streak = 0;
+        let bestStreak = 0;
+        const maxLevels = 10;
+
+        // Sequence Patterns - all data is hardcoded and trusted
+        const patterns = [
+            { sequence: ['A', 'B', 'A', 'B', '?'], answer: 'A', options: ['A', 'B', 'C', 'D'] },
+            { sequence: ['1', '2', '3', '4', '?'], answer: '5', options: ['5', '6', '4', '3'] },
+            { sequence: ['Red', 'Blue', 'Red', 'Blue', '?'], answer: 'Red', options: ['Red', 'Blue', 'Green', 'Yellow'] },
+            { sequence: ['2', '4', '6', '8', '?'], answer: '10', options: ['10', '9', '11', '12'] },
+            { sequence: ['Cat', 'Dog', 'Cat', 'Dog', '?'], answer: 'Cat', options: ['Cat', 'Dog', 'Bird', 'Fish'] },
+            { sequence: ['1', '3', '5', '7', '?'], answer: '9', options: ['8', '9', '10', '11'] },
+            { sequence: ['A', 'B', 'C', 'D', '?'], answer: 'E', options: ['E', 'F', 'A', 'Z'] },
+            { sequence: ['10', '20', '30', '40', '?'], answer: '50', options: ['45', '50', '55', '60'] },
+            { sequence: ['Mon', 'Tue', 'Wed', 'Thu', '?'], answer: 'Fri', options: ['Sat', 'Fri', 'Sun', 'Mon'] },
+            { sequence: ['1', '1', '2', '3', '?'], answer: '5', options: ['4', '5', '6', '8'] },
+        ];
+
+        // Shuffle array
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Display sequence using safe DOM methods
+        function displaySequence() {
+            const pattern = patterns[currentLevel - 1];
+            const container = document.getElementById('sequenceDisplay');
+
+            // Clear container safely
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            pattern.sequence.forEach((item, index) => {
+                const div = document.createElement('div');
+                if (item === '?') {
+                    div.className = 'sequence-item question-mark';
+                } else {
+                    div.className = 'sequence-item color-' + (index % 5);
+                }
+                div.textContent = item;
+                container.appendChild(div);
+            });
+        }
+
+        // Display options using safe DOM methods
+        function displayOptions() {
+            const pattern = patterns[currentLevel - 1];
+            const container = document.getElementById('optionsContainer');
+
+            // Clear container safely
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            const shuffledOptions = shuffle([...pattern.options]);
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = function() { checkAnswer(option, btn); };
+                container.appendChild(btn);
+            });
+        }
+
+        // Check answer
+        function checkAnswer(selected, button) {
+            const pattern = patterns[currentLevel - 1];
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.onclick = null);
+
+            const feedbackEl = document.getElementById('feedback');
+
+            if (selected === pattern.answer) {
+                button.classList.add('correct');
+                score += 10 + (streak * 5);
+                streak++;
+                if (streak > bestStreak) bestStreak = streak;
+                feedbackEl.textContent = 'Correct! Well done!';
+                feedbackEl.className = 'feedback success';
+            } else {
+                button.classList.add('incorrect');
+                buttons.forEach(btn => {
+                    if (btn.textContent === pattern.answer) {
+                        btn.classList.add('correct');
+                    }
+                });
+                streak = 0;
+                feedbackEl.textContent = 'Not quite. The answer was ' + pattern.answer;
+                feedbackEl.className = 'feedback error';
+            }
+
+            updateScore();
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        // Update score display
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('bestStreak').textContent = bestStreak;
+        }
+
+        // Next level
+        function nextLevel() {
+            currentLevel++;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('nextBtn').classList.remove('show');
+
+            if (currentLevel > maxLevels) {
+                endGame();
+            } else {
+                document.getElementById('levelDisplay').textContent = 'Level ' + currentLevel;
+                displaySequence();
+                displayOptions();
+            }
+        }
+
+        // End game using safe DOM methods
+        function endGame() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('gameOver').classList.add('show');
+
+            const stars = Math.min(3, Math.floor(score / 50));
+            const starsContainer = document.getElementById('stars');
+
+            // Clear container safely
+            while (starsContainer.firstChild) {
+                starsContainer.removeChild(starsContainer.firstChild);
+            }
+
+            for (let i = 0; i < 3; i++) {
+                const starSpan = document.createElement('span');
+                starSpan.className = 'star ' + (i < stars ? 'earned' : 'empty');
+                starSpan.textContent = '\u2605'; // Unicode star character
+                starsContainer.appendChild(starSpan);
+            }
+
+            document.getElementById('finalScore').textContent = 'Final Score: ' + score + ' points';
+        }
+
+        // Restart game
+        function restartGame() {
+            currentLevel = 1;
+            score = 0;
+            streak = 0;
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('gameOver').classList.remove('show');
+            document.getElementById('levelDisplay').textContent = 'Level 1';
+            updateScore();
+            displaySequence();
+            displayOptions();
+        }
+
+        // Initialize
+        displaySequence();
+        displayOptions();
+    </script>
+</body>
+</html>
