@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Needs vs Wants - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        .story-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .story-character {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        .story-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+        }
+        .highlight { color: #f5576c; font-weight: bold; }
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: inherit;
+        }
+        .sorting-area {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .drop-zone {
+            flex: 1;
+            min-height: 200px;
+            border: 4px dashed #ddd;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .drop-zone h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .needs-zone { border-color: #28a745; }
+        .needs-zone h3 { background: #d4edda; color: #155724; }
+        .wants-zone { border-color: #dc3545; }
+        .wants-zone h3 { background: #f8d7da; color: #721c24; }
+        .item-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .item-card {
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .item-card:hover { transform: scale(1.05); }
+        .item-card.selected { border-color: #667eea; background: #e8e4f8; }
+        .item-card.sorted { opacity: 0.5; pointer-events: none; }
+        .item-card .emoji { font-size: 2.5rem; display: block; }
+        .item-card .label { font-size: 1rem; font-weight: bold; margin-top: 5px; }
+        .sorted-item {
+            display: inline-block;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 10px;
+            margin: 5px;
+            font-size: 1.5rem;
+        }
+        .jars {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .jar {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .jar:hover { transform: scale(1.1); }
+        .jar .emoji { font-size: 4rem; display: block; }
+        .jar .label {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 5px;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        .jar-spend .label { background: #ff6b6b; color: white; }
+        .jar-save .label { background: #4ECDC4; color: white; }
+        .jar-share .label { background: #f39c12; color: white; }
+        .jar.selected { transform: scale(1.15); }
+        .jar.selected .emoji { animation: bounce 0.5s; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .score {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .stars { font-size: 2.5rem; }
+        .star { color: #ddd; transition: color 0.3s; }
+        .star.earned { color: #FFD700; }
+        .feedback {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.info { background: #d1ecf1; color: #0c5460; }
+        .coin {
+            display: inline-block;
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        .definition-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #4caf50;
+        }
+        .definition-box h4 { color: #2e7d32; margin-bottom: 10px; }
+        .definition-box.want-box { background: #fce4ec; border-color: #e91e63; }
+        .definition-box.want-box h4 { color: #c2185b; }
+        .back-btn {
+            display: block;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Needs vs Wants</h1>
+            <p>Learn about money with Benny Bunny!</p>
+        </div>
+
+        <div class="score">
+            <div class="stars">
+                <span class="star" id="star1">★</span>
+                <span class="star" id="star2">★</span>
+                <span class="star" id="star3">★</span>
+            </div>
+        </div>
+
+        <!-- Story Section -->
+        <div class="game-card" id="storyCard">
+            <h2>📖 Benny Bunny's Story</h2>
+            <div class="story-box">
+                <div class="story-character">🐰</div>
+                <div class="story-text" id="storyText">Hi! I'm Benny Bunny! 🐰 Today I'm going to the store with my mom!</div>
+            </div>
+            <button class="next-btn" id="storyBtn" onclick="nextStory()">Next →</button>
+        </div>
+
+        <!-- Sorting Game -->
+        <div class="game-card" id="sortCard" style="display: none;">
+            <h2>🎯 Sort: Need or Want?</h2>
+            <div class="definition-box">
+                <h4>🏠 NEED = Must have to live</h4>
+                <p>Food, water, clothes, home</p>
+            </div>
+            <div class="definition-box want-box">
+                <h4>🎁 WANT = Nice to have</h4>
+                <p>Toys, candy, games</p>
+            </div>
+            <p style="text-align: center; margin: 15px 0; font-weight: bold;">Tap an item, then tap NEEDS or WANTS!</p>
+            <div class="item-cards" id="itemCards"></div>
+            <div class="sorting-area">
+                <div class="drop-zone needs-zone" id="needsZone" onclick="sortItem('need')">
+                    <h3>✓ NEEDS</h3>
+                    <div id="needsItems"></div>
+                </div>
+                <div class="drop-zone wants-zone" id="wantsZone" onclick="sortItem('want')">
+                    <h3>♥ WANTS</h3>
+                    <div id="wantsItems"></div>
+                </div>
+            </div>
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Three Jars -->
+        <div class="game-card" id="jarsCard" style="display: none;">
+            <h2>🏺 Three Jars Activity</h2>
+            <p style="text-align: center; margin-bottom: 20px;">When you get money, you can put it in THREE jars!</p>
+            <div class="jars">
+                <div class="jar jar-spend" onclick="selectJar('spend')">
+                    <span class="emoji">🛒</span>
+                    <span class="label">SPEND</span>
+                </div>
+                <div class="jar jar-save" onclick="selectJar('save')">
+                    <span class="emoji">🐷</span>
+                    <span class="label">SAVE</span>
+                </div>
+                <div class="jar jar-share" onclick="selectJar('share')">
+                    <span class="emoji">🎁</span>
+                    <span class="label">SHARE</span>
+                </div>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <span class="coin">🪙</span>
+                <p style="margin-top: 10px;" id="jarQuestion">Tap each jar to learn about it!</p>
+            </div>
+            <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to All Games</a>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let storyIndex = 0;
+        let selectedItem = null;
+        let sortedCount = 0;
+        let jarsLearned = 0;
+        let learnedJars = {};
+
+        // Story - using textContent for safe updates
+        const storyPages = [
+            "Hi! I'm Benny Bunny! 🐰 Today I'm going to the store with my mom!",
+            "My mom says: Benny, we NEED to buy food for dinner. 🥕🥬",
+            "I see a shiny toy car! 🚗 I say: Mom, I WANT that!",
+            "Mom explains: A NEED is something we must have to live - like food, water, and clothes.",
+            "A WANT is something nice to have but we can live without - like toys and candy!",
+            "Now I understand! Let's practice sorting NEEDS and WANTS! 🎯"
+        ];
+
+        function nextStory() {
+            storyIndex++;
+            if (storyIndex < storyPages.length) {
+                document.getElementById('storyText').textContent = storyPages[storyIndex];
+                if (storyIndex === storyPages.length - 1) {
+                    document.getElementById('storyBtn').textContent = "Let's Play! →";
+                }
+            } else {
+                earnStar(1);
+                document.getElementById('storyCard').style.display = 'none';
+                document.getElementById('sortCard').style.display = 'block';
+                loadSortingGame();
+            }
+        }
+
+        // Sorting Game
+        const items = [
+            { emoji: '🍎', label: 'Food', type: 'need' },
+            { emoji: '💧', label: 'Water', type: 'need' },
+            { emoji: '👕', label: 'Clothes', type: 'need' },
+            { emoji: '🏠', label: 'Home', type: 'need' },
+            { emoji: '🧸', label: 'Toy', type: 'want' },
+            { emoji: '🍬', label: 'Candy', type: 'want' },
+            { emoji: '🎮', label: 'Video Game', type: 'want' },
+            { emoji: '🎈', label: 'Balloon', type: 'want' }
+        ];
+
+        function loadSortingGame() {
+            const container = document.getElementById('itemCards');
+
+            // Clear container safely
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            // Shuffle items
+            const shuffled = items.slice().sort(function() { return Math.random() - 0.5; });
+
+            shuffled.forEach(function(item, index) {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.dataset.type = item.type;
+                card.dataset.emoji = item.emoji;
+
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'emoji';
+                emojiSpan.textContent = item.emoji;
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'label';
+                labelSpan.textContent = item.label;
+
+                card.appendChild(emojiSpan);
+                card.appendChild(labelSpan);
+                card.onclick = function() { selectItem(card); };
+                container.appendChild(card);
+            });
+        }
+
+        function selectItem(card) {
+            if (card.classList.contains('sorted')) return;
+
+            document.querySelectorAll('.item-card').forEach(function(c) {
+                c.classList.remove('selected');
+            });
+            card.classList.add('selected');
+            selectedItem = card;
+        }
+
+        function sortItem(zone) {
+            if (!selectedItem) return;
+
+            const itemType = selectedItem.dataset.type;
+            const emoji = selectedItem.dataset.emoji;
+
+            if (itemType === zone) {
+                const sorted = document.createElement('span');
+                sorted.className = 'sorted-item';
+                sorted.textContent = emoji;
+
+                if (zone === 'need') {
+                    document.getElementById('needsItems').appendChild(sorted);
+                } else {
+                    document.getElementById('wantsItems').appendChild(sorted);
+                }
+
+                selectedItem.classList.add('sorted');
+                selectedItem.classList.remove('selected');
+                selectedItem = null;
+                sortedCount++;
+
+                if (sortedCount >= 8) {
+                    earnStar(2);
+                    showFeedback('feedback1', '🎉 Amazing! You sorted all the items!', true);
+                    setTimeout(function() {
+                        document.getElementById('sortCard').style.display = 'none';
+                        document.getElementById('jarsCard').style.display = 'block';
+                    }, 2000);
+                }
+            } else {
+                showFeedback('feedback1', 'Hmm, try the other box!', false);
+                setTimeout(function() {
+                    document.getElementById('feedback1').classList.remove('show');
+                }, 1500);
+            }
+        }
+
+        // Three Jars
+        const jarInfo = {
+            spend: "SPEND jar is for buying small things NOW! 🛒",
+            save: "SAVE jar is for buying something BIG later! 🐷",
+            share: "SHARE jar is for helping others! 🎁"
+        };
+
+        function selectJar(jar) {
+            document.querySelectorAll('.jar').forEach(function(j) {
+                j.classList.remove('selected');
+            });
+            document.querySelector('.jar-' + jar).classList.add('selected');
+            document.getElementById('jarQuestion').textContent = jarInfo[jar];
+
+            if (!learnedJars[jar]) {
+                learnedJars[jar] = true;
+                jarsLearned++;
+                if (jarsLearned >= 3) {
+                    earnStar(3);
+                    showFeedback('feedback2', '🏆 You learned about all three jars! Great job!', true);
+                }
+            }
+        }
+
+        function earnStar(num) {
+            if (document.getElementById('star' + num).classList.contains('earned')) return;
+            document.getElementById('star' + num).classList.add('earned');
+            starsEarned++;
+        }
+
+        function showFeedback(id, message, success) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'feedback show ' + (success ? 'success' : 'info');
+        }
+    </script>
+</body>
+</html>

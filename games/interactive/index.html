@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeek Squad - Tuesday Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .characters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .character {
+            font-size: 2.5rem;
+            animation: bounce 1s infinite;
+        }
+        .character:nth-child(2) { animation-delay: 0.2s; }
+        .character:nth-child(3) { animation-delay: 0.4s; }
+        .character:nth-child(4) { animation-delay: 0.6s; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        .game-header {
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        .game-header.reading { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); }
+        .game-header.math { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .game-header.science { background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%); }
+        .game-header.financial { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .game-header .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+        .game-header h2 { font-size: 1.5rem; margin-bottom: 5px; }
+        .game-header .subject {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+        .game-body {
+            padding: 20px;
+        }
+        .game-body p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .game-body ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .game-body li { margin-bottom: 8px; }
+        .play-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-family: inherit;
+        }
+        .play-btn.reading { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); }
+        .play-btn.math { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .play-btn.science { background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%); }
+        .play-btn.financial { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .play-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        .instructions {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .instructions h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .tip {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .tip strong { color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="characters">
+                <span class="character">🤖</span>
+                <span class="character">🐛</span>
+                <span class="character">🐱</span>
+                <span class="character">🎨</span>
+            </div>
+            <h1>🎮 Zeek Squad Games</h1>
+            <p>Tuesday Learning Activities</p>
+        </div>
+
+        <!-- Letter N Game -->
+        <div class="game-card">
+            <div class="game-header reading">
+                <span class="emoji">📖</span>
+                <h2>Letter N</h2>
+                <span class="subject">Reading / Phonics</span>
+            </div>
+            <div class="game-body">
+                <p>Find the letter N and identify words that start with the /n/ sound!</p>
+                <ul>
+                    <li>🔍 Find all the letter N's</li>
+                    <li>👃 Learn N words: Nose, Nut, Nest, Nine</li>
+                    <li>🔊 Hear the /n/ sound</li>
+                </ul>
+                <a href="letter-n.html" class="play-btn reading">▶ Play Letter N</a>
+            </div>
+        </div>
+
+        <!-- Counting Game -->
+        <div class="game-card">
+            <div class="game-header math">
+                <span class="emoji">🔢</span>
+                <h2>Counting Forward</h2>
+                <span class="subject">Math</span>
+            </div>
+            <div class="game-body">
+                <p>Jump and count to 10! Practice counting forward and fill in missing numbers.</p>
+                <ul>
+                    <li>🐸 Jump and count to 10</li>
+                    <li>❓ What comes next?</li>
+                    <li>🧩 Fill the gap in sequences</li>
+                </ul>
+                <a href="counting-forward.html" class="play-btn math">▶ Play Counting</a>
+            </div>
+        </div>
+
+        <!-- Light & Shadows Game -->
+        <div class="game-card">
+            <div class="game-header science">
+                <span class="emoji">🔦</span>
+                <h2>Light & Shadows</h2>
+                <span class="subject">Science</span>
+            </div>
+            <div class="game-body">
+                <p>Discover what makes light and how shadows change!</p>
+                <ul>
+                    <li>☀️ Identify light sources</li>
+                    <li>🖐️ Shadow experiment with slider</li>
+                    <li>🎯 Light source quiz</li>
+                </ul>
+                <a href="light-shadows.html" class="play-btn science">▶ Play Light & Shadows</a>
+            </div>
+        </div>
+
+        <!-- Needs vs Wants Game -->
+        <div class="game-card">
+            <div class="game-header financial">
+                <span class="emoji">💰</span>
+                <h2>Needs vs Wants</h2>
+                <span class="subject">Financial Literacy</span>
+            </div>
+            <div class="game-body">
+                <p>Learn the difference between needs and wants with Benny Bunny!</p>
+                <ul>
+                    <li>📖 Benny Bunny's story</li>
+                    <li>🎯 Sort needs vs wants</li>
+                    <li>🏺 Three jars: Spend, Save, Share</li>
+                </ul>
+                <a href="needs-wants.html" class="play-btn financial">▶ Play Needs vs Wants</a>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>👨‍👩‍👧 Instructions for Parents</h3>
+            <ol>
+                <li>📱 Works on any phone, tablet, or computer</li>
+                <li>🚫 No app download needed!</li>
+                <li>👆 Let your child tap the big colorful buttons</li>
+                <li>⏱️ Each game takes 5-10 minutes</li>
+                <li>⭐ Celebrate their stars!</li>
+            </ol>
+            <div class="tip">
+                <strong>💡 TIP:</strong> Sit with your child and cheer them on!
+            </div>
+        </div>
+    </div>
+</body>
+</html>

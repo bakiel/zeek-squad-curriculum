@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter N - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.1rem; margin-top: 5px; }
+        .big-letter {
+            font-size: 8rem;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            animation: bounce 1s infinite;
+            margin: 20px 0;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .letter-btn {
+            padding: 20px;
+            font-size: 2rem;
+            border: 4px solid #ddd;
+            border-radius: 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .letter-btn:hover { transform: scale(1.05); }
+        .letter-btn.correct {
+            background: #4ECDC4;
+            border-color: #4ECDC4;
+            color: white;
+            animation: celebrate 0.5s;
+        }
+        .letter-btn.wrong {
+            background: #ffcccc;
+            border-color: #ff6b6b;
+        }
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+        .word-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .word-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-family: inherit;
+        }
+        .word-card:hover { transform: translateY(-5px); }
+        .word-card .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+        .word-card .word { font-size: 1.3rem; font-weight: bold; }
+        .word-card.selected {
+            background: #4ECDC4;
+            transform: scale(1.05);
+        }
+        .word-card.wrong-selection {
+            background: #ff6b6b;
+        }
+        .score {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .stars {
+            font-size: 2.5rem;
+        }
+        .star { color: #ddd; transition: color 0.3s; }
+        .star.earned { color: #FFD700; }
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: inherit;
+        }
+        .sound-btn:hover { opacity: 0.9; }
+        .instruction {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .back-btn {
+            display: block;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .feedback {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.try-again { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 Letter N</h1>
+            <p>Find the letter N and N words!</p>
+        </div>
+
+        <div class="big-letter">Nn</div>
+
+        <div class="score">
+            <div class="stars">
+                <span class="star" id="star1">★</span>
+                <span class="star" id="star2">★</span>
+                <span class="star" id="star3">★</span>
+            </div>
+        </div>
+
+        <!-- Game 1: Find the N -->
+        <div class="game-card">
+            <h2>🔍 Find All the N's!</h2>
+            <div class="instruction">Tap every letter N you see!</div>
+            <div class="letter-grid" id="letterGrid"></div>
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Game 2: N Sound Words -->
+        <div class="game-card">
+            <h2>🗣️ Words that start with N</h2>
+            <div class="instruction">Tap the pictures that start with /n/ sound!</div>
+            <div class="word-cards" id="wordCards"></div>
+            <div class="feedback" id="feedback2"></div>
+            <button class="sound-btn" onclick="playNSound()">🔊 Hear the /n/ sound</button>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to All Games</a>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let nFound = 0;
+        let nWordsFound = 0;
+
+        // Game 1: Find the N
+        const letters = ['N', 'M', 'N', 'W', 'H', 'N', 'V', 'M', 'N', 'Z', 'K', 'N'];
+        const grid = document.getElementById('letterGrid');
+
+        letters.forEach(function(letter, index) {
+            const btn = document.createElement('button');
+            btn.className = 'letter-btn';
+            btn.textContent = letter;
+            btn.onclick = function() { checkLetter(btn, letter); };
+            grid.appendChild(btn);
+        });
+
+        function checkLetter(btn, letter) {
+            if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+
+            if (letter === 'N') {
+                btn.classList.add('correct');
+                nFound++;
+                if (nFound >= 5) {
+                    earnStar(1);
+                    showFeedback('feedback1', 'Great job! You found all the N\'s!', true);
+                }
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(function() { btn.classList.remove('wrong'); }, 500);
+            }
+        }
+
+        // Game 2: N Words
+        const words = [
+            { emoji: '👃', word: 'Nose', startsN: true },
+            { emoji: '🥜', word: 'Nut', startsN: true },
+            { emoji: '🪺', word: 'Nest', startsN: true },
+            { emoji: '9️⃣', word: 'Nine', startsN: true },
+            { emoji: '🍎', word: 'Apple', startsN: false },
+            { emoji: '🐱', word: 'Cat', startsN: false },
+            { emoji: '☀️', word: 'Sun', startsN: false },
+            { emoji: '🏀', word: 'Ball', startsN: false }
+        ];
+
+        // Shuffle words
+        for (let i = words.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = words[i];
+            words[i] = words[j];
+            words[j] = temp;
+        }
+
+        const wordContainer = document.getElementById('wordCards');
+        words.forEach(function(item) {
+            const card = document.createElement('button');
+            card.className = 'word-card';
+
+            const emojiSpan = document.createElement('span');
+            emojiSpan.className = 'emoji';
+            emojiSpan.textContent = item.emoji;
+
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'word';
+            wordSpan.textContent = item.word;
+
+            card.appendChild(emojiSpan);
+            card.appendChild(wordSpan);
+            card.onclick = function() { checkWord(card, item.startsN); };
+            wordContainer.appendChild(card);
+        });
+
+        function checkWord(card, startsN) {
+            if (card.classList.contains('selected') || card.classList.contains('wrong-selection')) return;
+
+            if (startsN) {
+                card.classList.add('selected');
+                nWordsFound++;
+                if (nWordsFound >= 4) {
+                    earnStar(2);
+                    earnStar(3);
+                    showFeedback('feedback2', 'Amazing! You know your N words!', true);
+                }
+            } else {
+                card.classList.add('wrong-selection');
+                setTimeout(function() { card.classList.remove('wrong-selection'); }, 500);
+                showFeedback('feedback2', 'That doesn\'t start with N. Try again!', false);
+                setTimeout(function() {
+                    document.getElementById('feedback2').classList.remove('show');
+                }, 1500);
+            }
+        }
+
+        function earnStar(num) {
+            document.getElementById('star' + num).classList.add('earned');
+            starsEarned++;
+        }
+
+        function showFeedback(id, message, success) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'feedback show ' + (success ? 'success' : 'try-again');
+        }
+
+        function playNSound() {
+            // Create simple audio feedback
+            const utterance = new SpeechSynthesisUtterance('nnnn, nose, nut, nest, nine');
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
