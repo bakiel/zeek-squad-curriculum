@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zeek Squad - Coding for Kids</title>
     <style>
         * {
@@ -11,16 +11,21 @@
             box-sizing: border-box;
         }
 
+        html {
+            font-size: 16px;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Navigation */
         nav {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
+            padding: 12px 15px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -37,23 +42,26 @@
 
         nav .logo {
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         nav .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         nav .nav-links a {
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 25px;
             font-weight: 500;
+            font-size: 0.9rem;
             transition: background 0.3s;
+            white-space: nowrap;
         }
 
         nav .nav-links a:hover,
@@ -65,19 +73,20 @@
         main {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 20px 15px;
         }
 
         /* Section Tabs */
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 8px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .tab-btn {
-            padding: 15px 30px;
+            padding: 12px 24px;
             border: none;
             background: white;
             border-radius: 10px;
@@ -86,11 +95,16 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
 
         .tab-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .tab-btn:active {
+            transform: translateY(0);
         }
 
         .tab-btn.active {
@@ -101,17 +115,23 @@
         /* Content Sections */
         .section {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .section.active {
             display: block;
         }
 
-        /* Games Grid */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Games Grid - Responsive */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .game-card {
@@ -127,46 +147,55 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
+        .game-card:active {
+            transform: translateY(-2px);
+        }
+
         .game-card .game-image {
-            height: 180px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: 3.5rem;
         }
 
         .game-card .game-info {
-            padding: 25px;
+            padding: 20px;
         }
 
         .game-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
+            font-size: 1.25rem;
+            margin-bottom: 8px;
             color: #333;
         }
 
         .game-card p {
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             line-height: 1.5;
+            font-size: 0.95rem;
         }
 
         .game-card .play-btn {
             display: block;
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             text-decoration: none;
             text-align: center;
             border-radius: 10px;
             font-weight: bold;
-            font-size: 1.1rem;
-            transition: opacity 0.3s;
+            font-size: 1.05rem;
+            transition: opacity 0.3s, transform 0.2s;
         }
 
         .game-card .play-btn:hover {
             opacity: 0.9;
+        }
+
+        .game-card .play-btn:active {
+            transform: scale(0.98);
         }
 
         .game-card .coming-soon {
@@ -174,17 +203,17 @@
             cursor: not-allowed;
         }
 
-        /* Week Cards */
+        /* Week Cards - Responsive */
         .week-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
         }
 
         .week-card {
             background: white;
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.1);
             transition: all 0.3s;
             text-decoration: none;
@@ -197,41 +226,46 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
+        .week-card:active {
+            transform: translateY(-1px);
+        }
+
         .week-card .week-num {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 20px;
             font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
         }
 
         .week-card h3 {
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
         }
 
         .week-card p {
             color: #666;
             font-size: 0.9rem;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        /* Resources */
+        /* Resources - Responsive */
         .resource-list {
             display: grid;
-            gap: 15px;
+            gap: 12px;
         }
 
         .resource-item {
             background: white;
-            padding: 20px 25px;
+            padding: 18px 20px;
             border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             text-decoration: none;
             color: inherit;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -243,18 +277,29 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.12);
         }
 
+        .resource-item:active {
+            transform: translateX(2px);
+        }
+
         .resource-item .icon {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+        }
+
+        .resource-item .info {
+            min-width: 0;
         }
 
         .resource-item .info h3 {
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            font-size: 1rem;
         }
 
         .resource-item .info p {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
 
         /* Colors for game cards */
@@ -263,26 +308,28 @@
         .bg-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .bg-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 
-        /* Hero Banner */
+        /* Hero Banner - Responsive */
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 50px 30px;
+            padding: 35px 25px;
             border-radius: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
         .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            line-height: 1.2;
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             opacity: 0.9;
             max-width: 600px;
             margin: 0 auto;
+            line-height: 1.5;
         }
 
         /* Mobile menu */
@@ -293,11 +340,32 @@
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
+            padding: 5px;
         }
 
+        /* ========== TABLET STYLES ========== */
+        @media (max-width: 992px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .week-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* ========== MOBILE LANDSCAPE & SMALL TABLETS ========== */
         @media (max-width: 768px) {
             .menu-toggle {
                 display: block;
+            }
+
+            nav {
+                padding: 10px 15px;
             }
 
             nav .nav-links {
@@ -308,24 +376,339 @@
                 right: 0;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 flex-direction: column;
-                padding: 20px;
+                padding: 15px;
+                gap: 5px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             }
 
             nav .nav-links.show {
                 display: flex;
             }
 
+            nav .nav-links a {
+                padding: 12px 20px;
+                text-align: center;
+                border-radius: 10px;
+            }
+
+            main {
+                padding: 15px 12px;
+            }
+
             .tabs {
-                justify-content: center;
+                gap: 6px;
+                margin-bottom: 20px;
             }
 
             .tab-btn {
-                padding: 12px 20px;
+                padding: 10px 16px;
                 font-size: 0.9rem;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .hero {
+                padding: 30px 20px;
+                border-radius: 15px;
+                margin-bottom: 20px;
             }
 
             .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .game-card .game-image {
+                height: 120px;
+                font-size: 3rem;
+            }
+
+            .game-card .game-info {
+                padding: 15px;
+            }
+
+            .game-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .game-card p {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+
+            .game-card .play-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            .week-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .week-card {
+                padding: 15px;
+            }
+
+            .week-card h3 {
+                font-size: 1rem;
+            }
+
+            .resource-item {
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .resource-item .icon {
+                font-size: 2rem;
+            }
+        }
+
+        /* ========== MOBILE PORTRAIT ========== */
+        @media (max-width: 480px) {
+            html {
+                font-size: 15px;
+            }
+
+            nav .logo {
+                font-size: 1.2rem;
+            }
+
+            main {
+                padding: 12px 10px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+
+            .hero {
+                padding: 25px 15px;
+                border-radius: 12px;
+            }
+
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .game-card {
+                border-radius: 15px;
+            }
+
+            .game-card .game-image {
+                height: 130px;
+                font-size: 3.5rem;
+            }
+
+            .game-card .game-info {
+                padding: 18px;
+            }
+
+            .game-card h3 {
+                font-size: 1.15rem;
+            }
+
+            .game-card p {
+                font-size: 0.95rem;
+            }
+
+            .game-card .play-btn {
+                padding: 14px;
+                font-size: 1.05rem;
+                border-radius: 12px;
+            }
+
+            .week-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .week-card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .week-card .week-num {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+                margin-bottom: 8px;
+            }
+
+            .week-card h3 {
+                font-size: 0.95rem;
+                margin-bottom: 5px;
+            }
+
+            .week-card p {
+                font-size: 0.8rem;
+            }
+
+            .resource-list {
+                gap: 10px;
+            }
+
+            .resource-item {
+                padding: 14px 12px;
+                border-radius: 10px;
+            }
+
+            .resource-item .icon {
                 font-size: 1.8rem;
+            }
+
+            .resource-item .info h3 {
+                font-size: 0.95rem;
+            }
+
+            .resource-item .info p {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ========== EXTRA SMALL DEVICES ========== */
+        @media (max-width: 360px) {
+            html {
+                font-size: 14px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .week-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* ========== TOUCH DEVICE OPTIMIZATIONS ========== */
+        @media (hover: none) and (pointer: coarse) {
+            .game-card:hover {
+                transform: none;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+
+            .game-card:active {
+                transform: scale(0.98);
+            }
+
+            .week-card:hover {
+                transform: none;
+            }
+
+            .week-card:active {
+                transform: scale(0.98);
+            }
+
+            .resource-item:hover {
+                transform: none;
+            }
+
+            .resource-item:active {
+                transform: scale(0.98);
+            }
+
+            .tab-btn:hover {
+                transform: none;
+            }
+
+            .tab-btn:active {
+                transform: scale(0.95);
+            }
+
+            .play-btn:active {
+                transform: scale(0.95) !important;
+            }
+        }
+
+        /* ========== LANDSCAPE PHONE ========== */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .hero {
+                padding: 20px 25px;
+                margin-bottom: 15px;
+            }
+
+            .hero h1 {
+                font-size: 1.4rem;
+                margin-bottom: 8px;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .tabs {
+                margin-bottom: 15px;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .game-card .game-image {
+                height: 80px;
+                font-size: 2.5rem;
+            }
+
+            .game-card .game-info {
+                padding: 12px;
+            }
+
+            .game-card p {
+                display: none;
+            }
+        }
+
+        /* ========== PRINT STYLES ========== */
+        @media print {
+            nav, .tabs, .play-btn {
+                display: none;
+            }
+
+            .hero {
+                background: #667eea;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .section {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+
+            .game-card, .week-card, .resource-item {
+                box-shadow: none;
+                border: 1px solid #ddd;
             }
         }
     </style>
@@ -334,12 +717,12 @@
     <nav>
         <div class="nav-container">
             <a href="#" class="logo">🤖 Zeek Squad</a>
-            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
             <div class="nav-links" id="navLinks">
-                <a href="#" class="active" onclick="showSection('games')">Games</a>
-                <a href="#" onclick="showSection('curriculum')">Curriculum</a>
-                <a href="#" onclick="showSection('resources')">Resources</a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum" target="_blank">GitHub</a>
+                <a href="#" class="active" onclick="showSection('games'); return false;">Games</a>
+                <a href="#" onclick="showSection('curriculum'); return false;">Curriculum</a>
+                <a href="#" onclick="showSection('resources'); return false;">Resources</a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum" target="_blank" rel="noopener">GitHub</a>
             </div>
         </div>
     </nav>
@@ -400,62 +783,62 @@
         <!-- CURRICULUM SECTION -->
         <section id="curriculum" class="section">
             <div class="week-grid">
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-01" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-01" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 1</span>
                     <h3>Welcome to Zeek Squad</h3>
                     <p>Introduction, meet the characters, classroom routines</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-02" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-02" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 2</span>
                     <h3>Computer Basics</h3>
                     <p>Parts of a computer, mouse and keyboard skills</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-03" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-03" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 3</span>
                     <h3>What is Coding?</h3>
                     <p>Algorithms, following instructions, sequences</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-04" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-04" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 4</span>
                     <h3>Patterns Everywhere</h3>
                     <p>Recognising and creating patterns</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-05" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-05" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 5</span>
                     <h3>Loops - Do It Again!</h3>
                     <p>Understanding repetition and efficiency</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-06" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-06" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 6</span>
                     <h3>Making Decisions</h3>
                     <p>If-then statements and conditions</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-07" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-07" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 7</span>
                     <h3>Variables</h3>
                     <p>Storing and changing information</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-08" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-08" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 8</span>
                     <h3>Functions</h3>
                     <p>Reusable code blocks and shortcuts</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-09" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-09" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 9</span>
                     <h3>Bug Hunters</h3>
                     <p>Debugging strategies and testing</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-10" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-10" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 10</span>
                     <h3>Digital Citizens</h3>
                     <p>Online safety and responsibility</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-11" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-11" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 11</span>
                     <h3>Create and Share</h3>
                     <p>Project planning and collaboration</p>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-12" class="week-card" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-12" class="week-card" target="_blank" rel="noopener">
                     <span class="week-num">Week 12</span>
                     <h3>Showcase</h3>
                     <p>Presentations and celebration</p>
@@ -466,35 +849,35 @@
         <!-- RESOURCES SECTION -->
         <section id="resources" class="section">
             <div class="resource-list">
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/resources/parent-guides/welcome-letter.md" class="resource-item" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/resources/parent-guides/welcome-letter.md" class="resource-item" target="_blank" rel="noopener">
                     <span class="icon">👨‍👩‍👧</span>
                     <div class="info">
                         <h3>Parent Welcome Letter</h3>
                         <p>Introduction to the programme for parents and guardians</p>
                     </div>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/docs/curriculum-overview.md" class="resource-item" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/docs/curriculum-overview.md" class="resource-item" target="_blank" rel="noopener">
                     <span class="icon">📋</span>
                     <div class="info">
                         <h3>Curriculum Overview</h3>
                         <p>Complete 12-week learning objectives and lesson breakdown</p>
                     </div>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/resources/educator-resources" class="resource-item" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/resources/educator-resources" class="resource-item" target="_blank" rel="noopener">
                     <span class="icon">👩‍🏫</span>
                     <div class="info">
                         <h3>Educator Resources</h3>
                         <p>Teaching guides, activity sheets, and assessment tools</p>
                     </div>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/assets" class="resource-item" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/assets" class="resource-item" target="_blank" rel="noopener">
                     <span class="icon">🖼️</span>
                     <div class="info">
                         <h3>Assets & Images</h3>
                         <p>Logos, flyers, QR codes, and visual materials</p>
                     </div>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum" class="resource-item" target="_blank">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum" class="resource-item" target="_blank" rel="noopener">
                     <span class="icon">💻</span>
                     <div class="info">
                         <h3>GitHub Repository</h3>
@@ -538,11 +921,32 @@
 
             // Close mobile menu
             document.getElementById('navLinks').classList.remove('show');
+
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function toggleMenu() {
             document.getElementById('navLinks').classList.toggle('show');
         }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            var nav = document.querySelector('nav');
+            var navLinks = document.getElementById('navLinks');
+            var menuToggle = document.querySelector('.menu-toggle');
+
+            if (!nav.contains(e.target) && navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+            }
+        });
+
+        // Handle escape key to close menu
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('navLinks').classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>
