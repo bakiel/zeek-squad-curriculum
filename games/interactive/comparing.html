@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparing Numbers - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 15px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; filter: drop-shadow(0 0 10px #FFD700); animation: starEarn 0.6s ease; }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 50% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0); } }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: scaleBounce 1.5s ease-in-out infinite; }
+        @keyframes scaleBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            flex: 1;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 { color: #27ae60; margin-bottom: 15px; font-size: 1.3rem; text-align: center; }
+
+        .compare-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .group-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 4px solid #dee2e6;
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .group-box:hover { transform: scale(1.05); border-color: #27ae60; }
+        .group-box.selected { border-color: #FFD700; background: #fff9e6; transform: scale(1.1); }
+        .group-box.correct { border-color: #27ae60; background: #d4edda; animation: correctPulse 0.5s ease; }
+        .group-box.wrong { border-color: #e74c3c; animation: shake 0.5s ease; }
+        @keyframes correctPulse { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.2); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+        .items { font-size: 2rem; margin-bottom: 10px; line-height: 1.2; }
+        .count { font-size: 2.5rem; font-weight: bold; color: #27ae60; }
+
+        .vs-text { font-size: 2rem; font-weight: bold; color: #27ae60; }
+
+        .choice-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .choice-btn.more { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; }
+        .choice-btn.fewer { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+        .choice-btn.equal { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; }
+        .choice-btn:hover { transform: scale(1.1); }
+        .choice-btn:active { transform: scale(0.95); }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: feedbackPop 0.4s ease;
+        }
+        @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.wrong { background: #f8d7da; color: #721c24; }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .next-btn.show { display: block; }
+        .next-btn:hover { transform: scale(1.02); }
+
+        .hidden { display: none !important; }
+
+        .celebration {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { color: #27ae60; font-size: 2rem; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; margin-bottom: 15px; }
+        .celebration .stars-final { font-size: 3rem; color: #FFD700; margin-bottom: 20px; }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1001;
+        }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover { transform: scale(1.05); }
+
+        .question-counter {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>🔢 More or Fewer?</h1>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">★</span>
+            <span class="star" id="star2">★</span>
+            <span class="star" id="star3">★</span>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">⚖️</div>
+            <div class="speech-bubble" id="speechBubble">
+                Hi! I'm Balanced Bear! Let's compare groups - which has MORE? Which has FEWER?
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <span class="question-counter" id="questionCounter">Question 1 of 6</span>
+        </div>
+
+        <div class="game-card" id="gameCard">
+            <h2 id="questionText">Which group has MORE?</h2>
+
+            <div class="compare-area">
+                <div class="group-box" id="groupA" onclick="selectGroup('A')">
+                    <div class="items" id="itemsA">🍎🍎🍎</div>
+                    <div class="count" id="countA">3</div>
+                </div>
+                <div class="vs-text">VS</div>
+                <div class="group-box" id="groupB" onclick="selectGroup('B')">
+                    <div class="items" id="itemsB">🍎🍎🍎🍎🍎</div>
+                    <div class="count" id="countB">5</div>
+                </div>
+            </div>
+
+            <div class="choice-btns" id="choiceBtns">
+                <button class="choice-btn more" onclick="checkAnswer('more')">👆 MORE</button>
+                <button class="choice-btn fewer" onclick="checkAnswer('fewer')">👇 FEWER</button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🏆</div>
+            <h2>COMPARING CHAMPION!</h2>
+            <div class="stars-final" id="starsFinal">★★★</div>
+            <p>You know MORE and FEWER!</p>
+            <a href="index.html" class="submit-btn">Play More Games!</a>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'star') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'select') {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            }
+        }
+
+        const emojis = ['🍎', '🍊', '🍋', '🍇', '🍓', '⭐', '🌟', '💎', '🎈', '🐶'];
+
+        const questions = [
+            { type: 'more', a: 3, b: 5 },
+            { type: 'fewer', a: 6, b: 2 },
+            { type: 'more', a: 4, b: 7 },
+            { type: 'fewer', a: 8, b: 3 },
+            { type: 'more', a: 2, b: 9 },
+            { type: 'fewer', a: 7, b: 4 }
+        ];
+
+        let currentQuestion = 0;
+        let starsEarned = 0;
+        let correctAnswers = 0;
+        let selectedGroup = null;
+
+        function updateSpeech(text) {
+            document.getElementById('speechBubble').textContent = text;
+        }
+
+        function updateProgress() {
+            const percent = (currentQuestion / questions.length) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function earnStar(num) {
+            const star = document.getElementById('star' + num);
+            star.classList.add('earned');
+            starsEarned++;
+            playSound('star');
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+            document.getElementById('questionCounter').textContent = 'Question ' + (currentQuestion + 1) + ' of ' + questions.length;
+            document.getElementById('questionText').textContent = q.type === 'more' ? 'Which group has MORE?' : 'Which group has FEWER?';
+
+            document.getElementById('itemsA').textContent = emoji.repeat(q.a);
+            document.getElementById('countA').textContent = q.a;
+            document.getElementById('itemsB').textContent = emoji.repeat(q.b);
+            document.getElementById('countB').textContent = q.b;
+
+            // Reset UI
+            document.getElementById('groupA').className = 'group-box';
+            document.getElementById('groupB').className = 'group-box';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('nextBtn').className = 'next-btn';
+            document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = false);
+            selectedGroup = null;
+
+            const hints = [
+                "Count the items! Which has MORE?",
+                "Fewer means LESS. Which has fewer?",
+                "5 is MORE than 3! Which is bigger?",
+                "Count carefully!",
+                "You're doing great! Keep comparing!",
+                "Last one! You got this!"
+            ];
+            updateSpeech(hints[currentQuestion]);
+        }
+
+        function selectGroup(group) {
+            playSound('select');
+            document.getElementById('groupA').className = 'group-box';
+            document.getElementById('groupB').className = 'group-box';
+            document.getElementById('group' + group).className = 'group-box selected';
+            selectedGroup = group;
+        }
+
+        function checkAnswer(answer) {
+            if (!selectedGroup) {
+                updateSpeech("Tap a group first!");
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            let correct = false;
+
+            if (answer === 'more') {
+                if (q.type === 'more') {
+                    // Check if selected group has more
+                    correct = (selectedGroup === 'A' && q.a > q.b) || (selectedGroup === 'B' && q.b > q.a);
+                } else {
+                    // Looking for fewer but clicked more
+                    correct = false;
+                }
+            } else {
+                if (q.type === 'fewer') {
+                    correct = (selectedGroup === 'A' && q.a < q.b) || (selectedGroup === 'B' && q.b < q.a);
+                } else {
+                    correct = false;
+                }
+            }
+
+            document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = true);
+
+            if (correct) {
+                playSound('correct');
+                document.getElementById('group' + selectedGroup).className = 'group-box correct';
+                document.getElementById('feedback').textContent = '🎉 Correct! ' + (q.type === 'more' ? 'That group has MORE!' : 'That group has FEWER!');
+                document.getElementById('feedback').className = 'feedback show success';
+                correctAnswers++;
+                updateSpeech("Amazing! You got it right!");
+
+                if (correctAnswers === 2) earnStar(1);
+                if (correctAnswers === 4) earnStar(2);
+                if (correctAnswers === 6) earnStar(3);
+            } else {
+                playSound('wrong');
+                document.getElementById('group' + selectedGroup).className = 'group-box wrong';
+                document.getElementById('feedback').textContent = '❌ Not quite! Try to count again next time!';
+                document.getElementById('feedback').className = 'feedback show wrong';
+                updateSpeech("Oops! Remember to count each group!");
+            }
+
+            document.getElementById('nextBtn').className = 'next-btn show';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            updateProgress();
+
+            if (currentQuestion >= questions.length) {
+                showCelebration();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            document.getElementById('starsFinal').textContent = '★'.repeat(starsEarned) + '☆'.repeat(3 - starsEarned);
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const colors = ['#27ae60', '#FFD700', '#3498db', '#e74c3c', '#9b59b6'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        // Start game
+        loadQuestion();
+    </script>
+</body>
+</html>

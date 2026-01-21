@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter O - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .mascot { text-align: center; margin-bottom: 15px; }
+        .mascot-emoji { font-size: 4rem; display: inline-block; animation: octoWave 1s ease-in-out infinite; }
+        @keyframes octoWave {
+            0%, 100% { transform: rotate(-10deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            position: relative;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-bottom-color: white;
+        }
+
+        .big-letter {
+            font-size: 10rem;
+            text-align: center;
+            color: white;
+            text-shadow: 6px 6px 12px rgba(0,0,0,0.3);
+            margin: 20px 0;
+        }
+        .big-letter span { display: inline-block; animation: letterPop 0.5s ease forwards; }
+        .big-letter span:nth-child(2) { animation-delay: 0.2s; font-size: 7rem; vertical-align: bottom; }
+        @keyframes letterPop {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .score { text-align: center; margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 20px; }
+        .stars { font-size: 3rem; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .score-text { color: white; font-size: 1.2rem; margin-top: 10px; }
+
+        .trace-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .trace-area h2 { color: #e74c3c; margin-bottom: 15px; }
+        .trace-canvas-container { position: relative; display: inline-block; }
+        #traceCanvas {
+            border: 4px dashed #e74c3c;
+            border-radius: 50%;
+            background: #fff5f5;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        .trace-letter-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10rem;
+            color: rgba(231, 76, 60, 0.15);
+            pointer-events: none;
+            font-weight: bold;
+        }
+        .trace-btns { margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+        .trace-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+        .trace-btn.clear { background: #f8d7da; color: #721c24; }
+        .trace-btn.done { background: #d4edda; color: #155724; }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 { color: #e74c3c; margin-bottom: 15px; font-size: 1.4rem; text-align: center; }
+
+        .letter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .letter-btn {
+            padding: 18px;
+            font-size: 2.2rem;
+            border: 4px solid #ffd5d5;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #fff5f5);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .letter-btn:hover { transform: scale(1.08); border-color: #e74c3c; }
+        .letter-btn:active { transform: scale(0.95); }
+        .letter-btn.correct {
+            background: linear-gradient(145deg, #4ECDC4, #44a08d);
+            border-color: #4ECDC4;
+            color: white;
+            animation: correctPop 0.5s ease;
+        }
+        .letter-btn.wrong { background: #ffcccc; border-color: #ff6b6b; animation: shake 0.4s ease; }
+        @keyframes correctPop { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        .word-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .word-card {
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 20px 15px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-family: inherit;
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+        }
+        .word-card:hover { transform: translateY(-5px) scale(1.02); }
+        .word-card:active { transform: scale(0.95); }
+        .word-card .emoji { font-size: 3.5rem; display: block; margin-bottom: 10px; }
+        .word-card .word { font-size: 1.2rem; font-weight: bold; }
+        .word-card.selected { background: linear-gradient(145deg, #4ECDC4, #44a08d); transform: scale(1.05); animation: pulse 0.5s ease; }
+        .word-card.wrong-selection { background: linear-gradient(145deg, #ff6b6b, #ee5a5a); animation: shake 0.4s ease; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.7); } 50% { box-shadow: 0 0 0 15px rgba(78, 205, 196, 0); } }
+
+        .sound-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            background: linear-gradient(145deg, #4ECDC4, #44a08d);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .sound-btn:hover { transform: translateY(-3px); }
+        .sound-btn .icon { font-size: 1.5rem; animation: soundPulse 1s infinite; }
+        @keyframes soundPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        .instruction {
+            background: linear-gradient(145deg, #fff3cd, #ffeeba);
+            padding: 15px 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 18px;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+        .feedback.show { display: block; animation: feedbackPop 0.4s ease; }
+        @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.try-again { background: #f8d7da; color: #721c24; }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            padding: 18px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1000;
+        }
+        @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 Letter O Adventure!</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🐙</div>
+            <div class="speech-bubble" id="speechBubble">Hi! I'm Ollie Octopus! Let's learn the round letter O!</div>
+        </div>
+
+        <div class="big-letter"><span>O</span><span>o</span></div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="score">
+            <div class="stars">
+                <span class="star" id="star1">★</span>
+                <span class="star" id="star2">★</span>
+                <span class="star" id="star3">★</span>
+            </div>
+            <div class="score-text" id="scoreText">Find all the O's to earn stars!</div>
+        </div>
+
+        <!-- Tracing Game -->
+        <div class="trace-area">
+            <h2>✏️ Trace the Letter O!</h2>
+            <p style="color: #666; margin-bottom: 15px;">O is a perfect CIRCLE! Go round and round!</p>
+            <div class="trace-canvas-container">
+                <div class="trace-letter-bg">O</div>
+                <canvas id="traceCanvas" width="200" height="200"></canvas>
+            </div>
+            <div class="trace-btns">
+                <button class="trace-btn clear" onclick="clearCanvas()">🗑️ Clear</button>
+                <button class="trace-btn done" onclick="finishTrace()">✓ Done!</button>
+            </div>
+        </div>
+
+        <!-- Game 1: Find the O -->
+        <div class="game-card">
+            <h2>🔍 Find All the O's!</h2>
+            <div class="instruction">Tap every letter O you see! O is round like a circle!</div>
+            <div class="letter-grid" id="letterGrid"></div>
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Game 2: O Sound Words -->
+        <div class="game-card">
+            <h2>🗣️ O Sound Words</h2>
+            <div class="instruction">Tap pictures that start with the /o/ sound!</div>
+            <div class="word-cards" id="wordCards"></div>
+            <div class="feedback" id="feedback2"></div>
+            <button class="sound-btn" onclick="playOSound()">
+                <span class="icon">🔊</span>
+                <span>Hear the /o/ sound!</span>
+            </button>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to All Games</a>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let oFound = 0;
+        let oWordsFound = 0;
+        let totalProgress = 0;
+        let hasTraced = false;
+
+        function updateSpeech(text) {
+            document.getElementById('speechBubble').textContent = text;
+        }
+
+        function updateProgress() {
+            const maxProgress = 10;
+            const percent = (totalProgress / maxProgress) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        // Tracing canvas
+        const canvas = document.getElementById('traceCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        canvas.addEventListener('mousedown', function(e) { isDrawing = true; const pos = getPos(e); lastX = pos.x; lastY = pos.y; });
+        canvas.addEventListener('mousemove', function(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(pos.x, pos.y); ctx.stroke();
+            lastX = pos.x; lastY = pos.y;
+        });
+        canvas.addEventListener('mouseup', function() { isDrawing = false; });
+        canvas.addEventListener('mouseout', function() { isDrawing = false; });
+
+        canvas.addEventListener('touchstart', function(e) { e.preventDefault(); isDrawing = true; const pos = getPos(e); lastX = pos.x; lastY = pos.y; });
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const pos = getPos(e);
+            ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(pos.x, pos.y); ctx.stroke();
+            lastX = pos.x; lastY = pos.y;
+        });
+        canvas.addEventListener('touchend', function() { isDrawing = false; });
+
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        function finishTrace() {
+            if (!hasTraced) {
+                hasTraced = true;
+                totalProgress++;
+                updateProgress();
+                updateSpeech("Beautiful circle! You wrote the letter O!");
+                playSound('success');
+            }
+        }
+
+        // Game 1: Find the O
+        const letters = ['O', 'C', 'O', 'Q', 'D', 'O', '0', 'G', 'O', 'C', 'O', 'Q'];
+        const grid = document.getElementById('letterGrid');
+
+        letters.forEach(function(letter, index) {
+            const btn = document.createElement('button');
+            btn.className = 'letter-btn';
+            btn.textContent = letter;
+            btn.onclick = function() { checkLetter(btn, letter); };
+            grid.appendChild(btn);
+        });
+
+        function checkLetter(btn, letter) {
+            if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+
+            if (letter === 'O') {
+                btn.classList.add('correct');
+                oFound++;
+                totalProgress++;
+                updateProgress();
+                playSound('pop');
+
+                if (oFound === 1) updateSpeech("You found an O! It's round like me!");
+                if (oFound === 3) updateSpeech("Great job! Keep finding O's!");
+
+                if (oFound >= 5) {
+                    earnStar(1);
+                    showFeedback('feedback1', '🎉 Amazing! You found ALL the O\'s!', true);
+                    updateSpeech("WOW! You're an O expert!");
+                    launchConfetti();
+                }
+            } else {
+                btn.classList.add('wrong');
+                playSound('wrong');
+                updateSpeech("Oops! That's not O. O is a perfect circle!");
+                setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+            }
+        }
+
+        // Game 2: O Words
+        const words = [
+            { emoji: '🐙', word: 'Octopus', startsO: true },
+            { emoji: '🍊', word: 'Orange', startsO: true },
+            { emoji: '🦉', word: 'Owl', startsO: true },
+            { emoji: '🫒', word: 'Olive', startsO: true },
+            { emoji: '🍎', word: 'Apple', startsO: false },
+            { emoji: '🐱', word: 'Cat', startsO: false },
+            { emoji: '🐕', word: 'Dog', startsO: false },
+            { emoji: '🌙', word: 'Moon', startsO: false }
+        ];
+
+        for (let i = words.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [words[i], words[j]] = [words[j], words[i]];
+        }
+
+        const wordContainer = document.getElementById('wordCards');
+        words.forEach(function(item) {
+            const card = document.createElement('button');
+            card.className = 'word-card';
+
+            const emojiSpan = document.createElement('span');
+            emojiSpan.className = 'emoji';
+            emojiSpan.textContent = item.emoji;
+
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'word';
+            wordSpan.textContent = item.word;
+
+            card.appendChild(emojiSpan);
+            card.appendChild(wordSpan);
+            card.onclick = function() { checkWord(card, item.startsO, item.word); };
+            wordContainer.appendChild(card);
+        });
+
+        function checkWord(card, startsO, word) {
+            if (card.classList.contains('selected') || card.classList.contains('wrong-selection')) return;
+
+            if (startsO) {
+                card.classList.add('selected');
+                oWordsFound++;
+                totalProgress++;
+                updateProgress();
+                playSound('success');
+                updateSpeech(word + " starts with O! /o/ /o/ " + word + "!");
+
+                if (oWordsFound >= 4) {
+                    earnStar(2);
+                    earnStar(3);
+                    showFeedback('feedback2', '🌟 Perfect! You know all your O words!', true);
+                    updateSpeech("You're an O SUPERSTAR!");
+                    launchConfetti();
+                }
+            } else {
+                card.classList.add('wrong-selection');
+                playSound('wrong');
+                updateSpeech(word + " doesn't start with O. Try again!");
+                setTimeout(function() { card.classList.remove('wrong-selection'); }, 600);
+            }
+        }
+
+        function earnStar(num) {
+            const star = document.getElementById('star' + num);
+            if (star.classList.contains('earned')) return;
+            star.classList.add('earned');
+            starsEarned++;
+            document.getElementById('scoreText').textContent = starsEarned + ' of 3 stars earned!';
+            playSound('star');
+        }
+
+        function showFeedback(id, message, success) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'feedback show ' + (success ? 'success' : 'try-again');
+        }
+
+        function playOSound() {
+            updateSpeech("/o/ /o/ /o/... Octopus! Orange! Owl! Olive!");
+            const utterance = new SpeechSynthesisUtterance('oooo. Octopus. Orange. Owl. Olive.');
+            utterance.rate = 0.7;
+            utterance.pitch = 1.2;
+            speechSynthesis.speak(utterance);
+        }
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'pop') {
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'success') {
+                oscillator.frequency.setValueAtTime(523, audioCtx.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'star') {
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        function launchConfetti() {
+            const colors = ['#e74c3c', '#4ECDC4', '#FFD700', '#9b59b6', '#3498db'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(function() {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    document.body.appendChild(confetti);
+                    setTimeout(function() { confetti.remove(); }, 3000);
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>

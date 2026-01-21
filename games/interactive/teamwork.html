@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teamwork - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 15px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; filter: drop-shadow(0 0 10px #FFD700); animation: starEarn 0.6s ease; }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: teamBounce 1s ease-in-out infinite; }
+        @keyframes teamBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            flex: 1;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 { color: #3498db; margin-bottom: 15px; font-size: 1.3rem; text-align: center; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .team-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 4px solid #dee2e6;
+            border-radius: 20px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .team-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .team-card:active { transform: scale(0.95); }
+        .team-card.selected {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            transform: scale(1.05);
+        }
+        .team-card.correct {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            animation: correctPulse 0.5s ease;
+        }
+        .team-card.wrong { animation: shake 0.5s ease; border-color: #e74c3c; }
+        @keyframes correctPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .team-card .emoji { font-size: 3rem; display: block; margin-bottom: 8px; }
+        .team-card .label { font-size: 1rem; color: #333; font-weight: bold; }
+
+        .puzzle-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            min-height: 150px;
+        }
+        .puzzle-piece {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: grab;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .puzzle-piece:hover { transform: scale(1.1); }
+        .puzzle-piece.placed {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            animation: piecePlace 0.5s ease;
+        }
+        @keyframes piecePlace { 0% { transform: scale(0.5); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        .drop-zone {
+            width: 80px;
+            height: 80px;
+            border: 4px dashed #3498db;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: rgba(52, 152, 219, 0.1);
+        }
+        .drop-zone.filled { border-style: solid; background: #d4edda; }
+
+        .cheer-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .cheer-btn:hover { transform: scale(1.02); }
+        .cheer-btn:active { transform: scale(0.98); }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+            animation: feedbackPop 0.4s ease;
+        }
+        @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+
+        .hidden { display: none !important; }
+
+        .celebration {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { color: #3498db; font-size: 2rem; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; margin-bottom: 15px; }
+        .celebration p { color: #666; margin-bottom: 20px; font-size: 1.1rem; }
+        .celebration .stars-final { font-size: 3rem; color: #FFD700; margin-bottom: 20px; }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1001;
+        }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>🤝 Teamwork Time!</h1>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">★</span>
+            <span class="star" id="star2">★</span>
+            <span class="star" id="star3">★</span>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🐝</div>
+            <div class="speech-bubble" id="speechBubble">
+                Hi! I'm Buzzy Bee! Bees work as a TEAM to make honey! Let's learn about teamwork!
+            </div>
+        </div>
+
+        <!-- Game 1: Teamwork Rules -->
+        <div class="game-card" id="game1">
+            <h2>📋 Teamwork Rules!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap the GOOD teamwork rules!</p>
+
+            <div class="team-grid" id="rulesGrid">
+                <div class="team-card" onclick="selectRule(this, true)">
+                    <span class="emoji">👂</span>
+                    <span class="label">Listen</span>
+                </div>
+                <div class="team-card" onclick="selectRule(this, false)">
+                    <span class="emoji">😤</span>
+                    <span class="label">Be Bossy</span>
+                </div>
+                <div class="team-card" onclick="selectRule(this, true)">
+                    <span class="emoji">🤝</span>
+                    <span class="label">Share</span>
+                </div>
+                <div class="team-card" onclick="selectRule(this, false)">
+                    <span class="emoji">🙅</span>
+                    <span class="label">Don't Help</span>
+                </div>
+                <div class="team-card" onclick="selectRule(this, true)">
+                    <span class="emoji">⏰</span>
+                    <span class="label">Take Turns</span>
+                </div>
+                <div class="team-card" onclick="selectRule(this, true)">
+                    <span class="emoji">😊</span>
+                    <span class="label">Be Kind</span>
+                </div>
+            </div>
+
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Game 2: Build Together -->
+        <div class="game-card hidden" id="game2">
+            <h2>🏗️ Build Together!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap pieces in order to build a house!</p>
+
+            <div class="puzzle-area" id="puzzleArea">
+                <div class="puzzle-piece" onclick="placePiece(this, 0)" data-order="0">🏠</div>
+                <div class="puzzle-piece" onclick="placePiece(this, 1)" data-order="1">🚪</div>
+                <div class="puzzle-piece" onclick="placePiece(this, 2)" data-order="2">🪟</div>
+                <div class="puzzle-piece" onclick="placePiece(this, 3)" data-order="3">🌳</div>
+            </div>
+
+            <p style="text-align: center; color: #888; margin-top: 15px; font-size: 0.9rem;">
+                Order: House → Door → Window → Tree
+            </p>
+
+            <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <!-- Game 3: Team Cheer -->
+        <div class="game-card hidden" id="game3">
+            <h2>📣 Team Cheer!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">Let's do the Zeek Squad cheer!</p>
+
+            <div style="text-align: center; font-size: 1.5rem; line-height: 2; background: #f8f9fa; padding: 20px; border-radius: 15px;">
+                <div id="cheerLine1" style="opacity: 0.3;">🎵 Z-E-E-K!</div>
+                <div id="cheerLine2" style="opacity: 0.3;">🎵 S-Q-U-A-D!</div>
+                <div id="cheerLine3" style="opacity: 0.3;">🎵 GO TEAM!</div>
+            </div>
+
+            <button class="cheer-btn" id="cheerBtn" onclick="doCheer()">
+                📣 SAY THE CHEER!
+            </button>
+
+            <div class="feedback" id="feedback3"></div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🏆</div>
+            <h2>TEAM CHAMPION!</h2>
+            <div class="stars-final" id="starsFinal">★★★</div>
+            <p>You know how to be a great teammate!</p>
+            <p>Remember: Listen, Share, Take Turns, Be Kind!</p>
+            <a href="index.html" class="submit-btn">Play More Games!</a>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'star') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'cheer') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(554, audioCtx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.4);
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.6);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.8);
+            }
+        }
+
+        let starsEarned = 0;
+        let progress = 0;
+        let goodRulesFound = 0;
+        let currentPiece = 0;
+
+        function updateSpeech(text) {
+            document.getElementById('speechBubble').textContent = text;
+        }
+
+        function updateProgress(amount) {
+            progress += amount;
+            document.getElementById('progressBar').style.width = Math.min(progress, 100) + '%';
+        }
+
+        function earnStar(num) {
+            const star = document.getElementById('star' + num);
+            star.classList.add('earned');
+            starsEarned++;
+            playSound('star');
+        }
+
+        // Game 1: Rules
+        function selectRule(element, isGood) {
+            if (element.classList.contains('correct') || element.classList.contains('wrong')) return;
+
+            if (isGood) {
+                element.classList.add('correct');
+                playSound('correct');
+                goodRulesFound++;
+                updateProgress(8);
+                updateSpeech("Yes! " + element.querySelector('.label').textContent + " is great teamwork!");
+
+                if (goodRulesFound >= 4) {
+                    earnStar(1);
+                    showFeedback('feedback1', '🌟 You know the teamwork rules!', true);
+                    setTimeout(() => {
+                        document.getElementById('game1').classList.add('hidden');
+                        document.getElementById('game2').classList.remove('hidden');
+                        updateSpeech("Now let's BUILD something together!");
+                    }, 1500);
+                }
+            } else {
+                element.classList.add('wrong');
+                playSound('wrong');
+                updateSpeech("Hmm, that's not good teamwork. Try another!");
+                setTimeout(() => element.classList.remove('wrong'), 600);
+            }
+        }
+
+        // Game 2: Build
+        function placePiece(element, order) {
+            if (element.classList.contains('placed')) return;
+
+            if (order === currentPiece) {
+                element.classList.add('placed');
+                playSound('correct');
+                currentPiece++;
+                updateProgress(8);
+
+                const messages = [
+                    "Great! We have a house!",
+                    "Add the door! Teamwork!",
+                    "Window in! Almost done!",
+                    "Tree planted! We did it TOGETHER!"
+                ];
+                updateSpeech(messages[order]);
+
+                if (currentPiece >= 4) {
+                    earnStar(2);
+                    showFeedback('feedback2', '🏠 You built it together!', true);
+                    setTimeout(() => {
+                        document.getElementById('game2').classList.add('hidden');
+                        document.getElementById('game3').classList.remove('hidden');
+                        updateSpeech("Time for our team cheer!");
+                    }, 1500);
+                }
+            } else {
+                playSound('wrong');
+                updateSpeech("Oops! Follow the order. What comes first?");
+            }
+        }
+
+        // Game 3: Cheer
+        let cheerStep = 0;
+        function doCheer() {
+            if (cheerStep >= 3) return;
+
+            playSound('cheer');
+            cheerStep++;
+
+            document.getElementById('cheerLine' + cheerStep).style.opacity = '1';
+            document.getElementById('cheerLine' + cheerStep).style.transform = 'scale(1.2)';
+
+            const messages = [
+                "Z-E-E-K! Say it loud!",
+                "S-Q-U-A-D! We're a team!",
+                "GO TEAM! You're amazing!"
+            ];
+            updateSpeech(messages[cheerStep - 1]);
+            updateProgress(12);
+
+            if (cheerStep >= 3) {
+                earnStar(3);
+                showFeedback('feedback3', '📣 AMAZING TEAM SPIRIT!', true);
+                setTimeout(showCelebration, 1500);
+            }
+        }
+
+        function showFeedback(id, message, success) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'feedback show ' + (success ? 'success' : '');
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            document.getElementById('starsFinal').textContent = '★'.repeat(starsEarned) + '☆'.repeat(3 - starsEarned);
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const colors = ['#3498db', '#FFD700', '#e74c3c', '#27ae60', '#9b59b6'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>

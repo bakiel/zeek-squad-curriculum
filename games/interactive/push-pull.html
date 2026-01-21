@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push & Pull - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 15px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; filter: drop-shadow(0 0 10px #FFD700); animation: starEarn 0.6s ease; }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 50% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0); } }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: push-pull 2s ease-in-out infinite; }
+        @keyframes push-pull {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(15px); }
+            75% { transform: translateX(-15px); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            flex: 1;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 { color: #8e44ad; margin-bottom: 15px; font-size: 1.3rem; text-align: center; }
+
+        .item-display {
+            text-align: center;
+            font-size: 6rem;
+            margin: 20px 0;
+            animation: itemBounce 1s ease-in-out infinite;
+        }
+        @keyframes itemBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        .item-name {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .choice-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .choice-btn {
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .choice-btn.push {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        .choice-btn.pull {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        .choice-btn:hover { transform: scale(1.1); }
+        .choice-btn:active { transform: scale(0.95); }
+        .choice-btn .arrow { font-size: 2rem; }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: feedbackPop 0.4s ease;
+        }
+        @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.wrong { background: #f8d7da; color: #721c24; }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .next-btn.show { display: block; }
+        .next-btn:hover { transform: scale(1.02); }
+
+        .question-counter {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .experiment-area {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+        .car-track {
+            background: linear-gradient(to bottom, #555 0%, #333 100%);
+            height: 80px;
+            border-radius: 10px;
+            position: relative;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .car-track:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #FFD700, #FFD700 20px, transparent 20px, transparent 40px);
+            transform: translateY(-50%);
+        }
+        .car {
+            position: absolute;
+            font-size: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
+            transition: left 1s ease-out;
+        }
+
+        .force-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .force-btn {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .force-btn.soft { background: #74b9ff; color: white; }
+        .force-btn.hard { background: #0984e3; color: white; }
+        .force-btn:hover { transform: scale(1.05); }
+
+        .hidden { display: none !important; }
+
+        .celebration {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { color: #8e44ad; font-size: 2rem; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; margin-bottom: 15px; }
+        .celebration .stars-final { font-size: 3rem; color: #FFD700; margin-bottom: 20px; }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1001;
+        }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>🔬 Push & Pull Forces!</h1>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">★</span>
+            <span class="star" id="star2">★</span>
+            <span class="star" id="star3">★</span>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🤖</div>
+            <div class="speech-bubble" id="speechBubble">
+                Hi! I'm Robo! Let's learn about PUSH and PULL forces! They make things MOVE!
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <span class="question-counter" id="questionCounter">Question 1 of 6</span>
+        </div>
+
+        <!-- Game 1: Push or Pull -->
+        <div class="game-card" id="game1">
+            <h2>🤔 Is it PUSH or PULL?</h2>
+            <div class="item-display" id="itemDisplay">🚪</div>
+            <div class="item-name" id="itemName">Opening a door</div>
+
+            <div class="choice-btns">
+                <button class="choice-btn push" onclick="checkAnswer('push')">
+                    <span class="arrow">👉</span>
+                    <span>PUSH</span>
+                </button>
+                <button class="choice-btn pull" onclick="checkAnswer('pull')">
+                    <span class="arrow">👈</span>
+                    <span>PULL</span>
+                </button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+        </div>
+
+        <!-- Game 2: Car Experiment -->
+        <div class="game-card hidden" id="game2">
+            <h2>🚗 Push the Car!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Push SOFT or HARD - see what happens!</p>
+
+            <div class="experiment-area">
+                <div class="car-track">
+                    <div class="car" id="car">🚗</div>
+                </div>
+
+                <div class="force-btns">
+                    <button class="force-btn soft" onclick="pushCar('soft')">🤏 Soft Push</button>
+                    <button class="force-btn hard" onclick="pushCar('hard')">💪 Hard Push</button>
+                </div>
+
+                <button class="force-btn" onclick="resetCar()" style="margin-top: 10px; background: #636e72; color: white;">🔄 Reset</button>
+            </div>
+
+            <div class="feedback" id="feedback2"></div>
+            <button class="next-btn" id="finishBtn" onclick="finishGame()">I'm a Force Scientist! →</button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🏆</div>
+            <h2>FORCE SCIENTIST!</h2>
+            <div class="stars-final" id="starsFinal">★★★</div>
+            <p>You understand PUSH and PULL!</p>
+            <p>Remember: Forces make things MOVE!</p>
+            <a href="index.html" class="submit-btn">Play More Games!</a>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'star') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'push') {
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            }
+        }
+
+        const questions = [
+            { emoji: '🚪', name: 'Opening a door', answer: 'pull' },
+            { emoji: '📦', name: 'Sliding a box', answer: 'push' },
+            { emoji: '🛒', name: 'Shopping cart', answer: 'push' },
+            { emoji: '🧲', name: 'Magnet attracting', answer: 'pull' },
+            { emoji: '⚽', name: 'Kicking a ball', answer: 'push' },
+            { emoji: '🎣', name: 'Fishing with a rod', answer: 'pull' }
+        ];
+
+        let currentQuestion = 0;
+        let starsEarned = 0;
+        let correctAnswers = 0;
+        let pushCount = 0;
+
+        function updateSpeech(text) {
+            document.getElementById('speechBubble').textContent = text;
+        }
+
+        function updateProgress() {
+            const percent = ((currentQuestion + pushCount / 2) / (questions.length + 1)) * 100;
+            document.getElementById('progressBar').style.width = Math.min(percent, 100) + '%';
+        }
+
+        function earnStar(num) {
+            const star = document.getElementById('star' + num);
+            star.classList.add('earned');
+            starsEarned++;
+            playSound('star');
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionCounter').textContent = 'Question ' + (currentQuestion + 1) + ' of ' + questions.length;
+            document.getElementById('itemDisplay').textContent = q.emoji;
+            document.getElementById('itemName').textContent = q.name;
+
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('nextBtn').className = 'next-btn';
+            document.querySelectorAll('.choice-btn').forEach(function(btn) { btn.disabled = false; });
+
+            const hints = [
+                "Think: Do you move TOWARD it or AWAY from it?",
+                "Push means moving something AWAY from you!",
+                "Pull means bringing something TOWARD you!",
+                "Magnets can PULL things!",
+                "When you kick, your foot PUSHES the ball!",
+                "Fishing rods PULL the fish toward you!"
+            ];
+            updateSpeech(hints[currentQuestion]);
+        }
+
+        function checkAnswer(answer) {
+            const q = questions[currentQuestion];
+            document.querySelectorAll('.choice-btn').forEach(function(btn) { btn.disabled = true; });
+
+            if (answer === q.answer) {
+                playSound('correct');
+                document.getElementById('feedback').textContent = '🎉 Correct! ' + q.name + ' is a ' + q.answer.toUpperCase() + '!';
+                document.getElementById('feedback').className = 'feedback show success';
+                correctAnswers++;
+                updateSpeech("Great job! You got it right!");
+
+                if (correctAnswers === 2) earnStar(1);
+                if (correctAnswers === 4) earnStar(2);
+            } else {
+                playSound('wrong');
+                document.getElementById('feedback').textContent = '❌ Not quite! ' + q.name + ' is actually a ' + q.answer.toUpperCase() + '.';
+                document.getElementById('feedback').className = 'feedback show wrong';
+                updateSpeech("Remember: Push moves away, Pull brings toward you!");
+            }
+
+            document.getElementById('nextBtn').className = 'next-btn show';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            updateProgress();
+
+            if (currentQuestion >= questions.length) {
+                document.getElementById('game1').classList.add('hidden');
+                document.getElementById('game2').classList.remove('hidden');
+                updateSpeech("Now let's do an experiment! Push the car!");
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function pushCar(force) {
+            playSound('push');
+            const car = document.getElementById('car');
+            pushCount++;
+
+            if (force === 'soft') {
+                car.style.left = '120px';
+                updateSpeech("Soft push = car moves a LITTLE!");
+                showFeedback2("🤏 Soft push makes it go a little!");
+            } else {
+                car.style.left = '350px';
+                updateSpeech("Hard push = car moves a LOT! More force = more movement!");
+                showFeedback2("💪 Hard push makes it go FAR!");
+            }
+
+            updateProgress();
+
+            if (pushCount >= 2) {
+                document.getElementById('finishBtn').classList.add('show');
+            }
+        }
+
+        function resetCar() {
+            document.getElementById('car').style.left = '20px';
+        }
+
+        function showFeedback2(message) {
+            const el = document.getElementById('feedback2');
+            el.textContent = message;
+            el.className = 'feedback show success';
+        }
+
+        function finishGame() {
+            earnStar(3);
+            showCelebration();
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            document.getElementById('starsFinal').textContent = '★'.repeat(starsEarned) + '☆'.repeat(3 - starsEarned);
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const colors = ['#8e44ad', '#FFD700', '#3498db', '#e74c3c', '#27ae60'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(function() {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(function() { confetti.remove(); }, 3000);
+                }, i * 50);
+            }
+        }
+
+        // Start game
+        loadQuestion();
+    </script>
+</body>
+</html>
