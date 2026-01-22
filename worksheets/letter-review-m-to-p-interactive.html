@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter Review: M-N-O-P Interactive - Zeek Squad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: #2e7d32;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .mascot-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mascot {
+            font-size: 80px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 300px;
+            position: relative;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent white transparent transparent;
+        }
+
+        .progress-container {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .star {
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .star.earned {
+            opacity: 1;
+            animation: starPop 0.5s ease;
+        }
+
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 1.5em;
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Tab navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border: 3px solid #4caf50;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2e7d32;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+        }
+
+        .tab-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Letter cards */
+        .letter-showcase {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .letter-card {
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .letter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .letter-card.m { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%); }
+        .letter-card.n { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
+        .letter-card.o { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
+        .letter-card.p { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); }
+
+        .letter-card .big-letter {
+            font-size: 4em;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .letter-card.m .big-letter { color: #c2185b; }
+        .letter-card.n .big-letter { color: #1565c0; }
+        .letter-card.o .big-letter { color: #e65100; }
+        .letter-card.p .big-letter { color: #7b1fa2; }
+
+        .letter-card .picture {
+            font-size: 3em;
+            margin: 10px 0;
+        }
+
+        .letter-card .word {
+            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* Quiz section */
+        .quiz-question {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .quiz-question .prompt {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .quiz-question .item {
+            font-size: 5em;
+            margin: 15px 0;
+        }
+
+        .quiz-question .item-word {
+            font-size: 1.5em;
+            color: #666;
+        }
+
+        .answer-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .answer-btn {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            border: 4px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .answer-btn.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            animation: correctPop 0.5s ease;
+        }
+
+        .answer-btn.wrong {
+            background: #ffcdd2;
+            border-color: #f44336;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Matching game */
+        .match-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .match-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .match-item {
+            padding: 15px 25px;
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .match-item:hover {
+            transform: scale(1.05);
+        }
+
+        .match-item.selected {
+            border-color: #4caf50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+            background: #e8f5e9;
+        }
+
+        .match-item.matched {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        /* Letter hunt */
+        .letter-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .hunt-letter {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .hunt-letter:hover {
+            transform: scale(1.1);
+        }
+
+        .hunt-letter.found {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .hunt-letter.wrong-click {
+            animation: shake 0.3s ease;
+            background: #ffcdd2;
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .feedback.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .feedback.error {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto 0;
+            padding: 15px 30px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .celebration.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .celebration.show .celebration-content {
+            transform: scale(1);
+        }
+
+        .celebration h2 {
+            font-size: 2em;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .celebration .trophy {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.6em; }
+            .mascot { font-size: 60px; }
+            .letter-showcase { grid-template-columns: repeat(2, 1fr); }
+            .letter-card .big-letter { font-size: 3em; }
+            .answer-btn { width: 80px; height: 80px; font-size: 2.5em; }
+            .hunt-letter { width: 50px; height: 50px; font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Letter Review: M, N, O, P</h1>
+    </div>
+
+    <div class="mascot-container">
+        <div class="mascot">🦉</div>
+        <div class="speech-bubble" id="mascotSpeech">
+            Welcome to our letter review! Today we will practise the letters M, N, O, and P. Let us get started!
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="1">Meet Letters</button>
+        <button class="tab-btn" data-tab="2">Letter Quiz</button>
+        <button class="tab-btn" data-tab="3">Matching</button>
+        <button class="tab-btn" data-tab="4">Letter Hunt</button>
+    </div>
+
+    <!-- Activity 1: Meet the Letters -->
+    <div class="game-container" id="activity1">
+        <div class="activity-title">Meet the Letters!</div>
+
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+            Tap each letter card to hear the letter sound!
+        </p>
+
+        <div class="letter-showcase">
+            <div class="letter-card m" onclick="sayLetter('M', 'Monkey')">
+                <div class="big-letter">M m</div>
+                <div class="picture">🐒</div>
+                <div class="word">Monkey</div>
+            </div>
+            <div class="letter-card n" onclick="sayLetter('N', 'Nest')">
+                <div class="big-letter">N n</div>
+                <div class="picture">🪺</div>
+                <div class="word">Nest</div>
+            </div>
+            <div class="letter-card o" onclick="sayLetter('O', 'Octopus')">
+                <div class="big-letter">O o</div>
+                <div class="picture">🐙</div>
+                <div class="word">Octopus</div>
+            </div>
+            <div class="letter-card p" onclick="sayLetter('P', 'Penguin')">
+                <div class="big-letter">P p</div>
+                <div class="picture">🐧</div>
+                <div class="word">Penguin</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #e8f5e9; border-radius: 15px;">
+            <p style="font-size: 1.2em; color: #2e7d32;">
+                <strong>Remember:</strong><br>
+                <span style="color: #c2185b;">M</span> makes the "mmm" sound like in <strong>Monkey</strong><br>
+                <span style="color: #1565c0;">N</span> makes the "nnn" sound like in <strong>Nest</strong><br>
+                <span style="color: #e65100;">O</span> makes the "oh" sound like in <strong>Octopus</strong><br>
+                <span style="color: #7b1fa2;">P</span> makes the "puh" sound like in <strong>Penguin</strong>
+            </p>
+        </div>
+
+        <button class="next-btn" onclick="showTab(2)">Start Quiz!</button>
+    </div>
+
+    <!-- Activity 2: Letter Quiz -->
+    <div class="game-container hidden" id="activity2">
+        <div class="activity-title">Which Letter?</div>
+
+        <div class="counter" id="quizCounter">Question 1 of 8</div>
+
+        <div class="quiz-question">
+            <div class="prompt">What letter does this word start with?</div>
+            <div class="item" id="quizItem">🐒</div>
+            <div class="item-word" id="quizWord">Monkey</div>
+        </div>
+
+        <div class="answer-options" id="quizOptions"></div>
+
+        <div id="feedback2" class="feedback hidden"></div>
+    </div>
+
+    <!-- Activity 3: Matching -->
+    <div class="game-container hidden" id="activity3">
+        <div class="activity-title">Match Letters to Pictures!</div>
+
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+            Tap a letter, then tap the matching picture!
+        </p>
+
+        <div class="counter" id="matchCounter">Matched: 0 / 4</div>
+
+        <div class="match-container">
+            <div class="match-column" id="letterColumn"></div>
+            <div class="match-column" id="pictureColumn"></div>
+        </div>
+
+        <div id="feedback3" class="feedback hidden"></div>
+
+        <button class="next-btn hidden" id="matchNextBtn" onclick="showTab(4)">Play Letter Hunt!</button>
+    </div>
+
+    <!-- Activity 4: Letter Hunt -->
+    <div class="game-container hidden" id="activity4">
+        <div class="activity-title">Find the Letters!</div>
+
+        <p style="text-align: center; color: #666; margin-bottom: 15px;">
+            Find and tap all the letters <strong>M, N, O, P</strong> (uppercase and lowercase)!
+        </p>
+
+        <div class="counter" id="huntCounter">Found: 0 / 16</div>
+
+        <div class="letter-grid" id="letterHuntGrid"></div>
+
+        <div id="feedback4" class="feedback hidden"></div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🏆</div>
+            <h2>Letter Champion!</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;">You reviewed all the letters!</p>
+            <div style="font-size: 3em; margin: 20px 0;">
+                <span style="color: #c2185b;">M</span>
+                <span style="color: #1565c0;">N</span>
+                <span style="color: #e65100;">O</span>
+                <span style="color: #7b1fa2;">P</span>
+            </div>
+            <p style="font-size: 1.1em; color: #666;">Great job learning your letters!</p>
+            <button class="next-btn" onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let quizRound = 0;
+        let matchedCount = 0;
+        let foundCount = 0;
+        let selectedMatch = null;
+
+        const quizItems = [
+            { emoji: '🐒', word: 'Monkey', letter: 'M' },
+            { emoji: '🪺', word: 'Nest', letter: 'N' },
+            { emoji: '🐙', word: 'Octopus', letter: 'O' },
+            { emoji: '🐧', word: 'Penguin', letter: 'P' },
+            { emoji: '🌙', word: 'Moon', letter: 'M' },
+            { emoji: '👃', word: 'Nose', letter: 'N' },
+            { emoji: '🍊', word: 'Orange', letter: 'O' },
+            { emoji: '🎹', word: 'Piano', letter: 'P' }
+        ];
+
+        const matchItems = [
+            { letter: 'M', emoji: '🐭', word: 'Mouse' },
+            { letter: 'N', emoji: '📓', word: 'Notebook' },
+            { letter: 'O', emoji: '🦉', word: 'Owl' },
+            { letter: 'P', emoji: '🥧', word: 'Pie' }
+        ];
+
+        const huntLetters = [
+            'A', 'M', 'B', 'n', 'C', 'O', 'D', 'p',
+            'E', 'm', 'F', 'N', 'G', 'o', 'H', 'P',
+            'I', 'M', 'J', 'n', 'K', 'O', 'L', 'p'
+        ];
+
+        const targetLetters = ['M', 'm', 'N', 'n', 'O', 'o', 'P', 'p'];
+
+        function clearElement(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'success') {
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'tap') {
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } else if (type === 'star') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1760, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (starsEarned / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function earnStar() {
+            if (starsEarned < 5) {
+                const stars = document.querySelectorAll('.star');
+                stars[starsEarned].classList.add('earned');
+                starsEarned++;
+                playSound('star');
+                updateProgress();
+            }
+        }
+
+        function updateMascot(message) {
+            document.getElementById('mascotSpeech').textContent = message;
+        }
+
+        function createConfetti() {
+            const colors = ['#4caf50', '#8bc34a', '#c2185b', '#1565c0', '#e65100', '#7b1fa2'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        function sayLetter(letter, word) {
+            playSound('tap');
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(letter + ' is for ' + word);
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+            updateMascot(letter + ' is for ' + word + '! Great job!');
+        }
+
+        function showTab(num) {
+            document.querySelectorAll('.game-container').forEach(c => c.classList.add('hidden'));
+            document.getElementById('activity' + num).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.tab) === num);
+            });
+
+            if (num === 2) initQuiz();
+            if (num === 3) initMatching();
+            if (num === 4) initHunt();
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => showTab(parseInt(btn.dataset.tab)));
+        });
+
+        // Quiz
+        function initQuiz() {
+            quizRound = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            const item = quizItems[quizRound];
+            document.getElementById('quizItem').textContent = item.emoji;
+            document.getElementById('quizWord').textContent = item.word;
+            document.getElementById('quizCounter').textContent = 'Question ' + (quizRound + 1) + ' of ' + quizItems.length;
+            document.getElementById('feedback2').classList.add('hidden');
+
+            const options = document.getElementById('quizOptions');
+            clearElement(options);
+
+            const letters = ['M', 'N', 'O', 'P'];
+            letters.sort(() => Math.random() - 0.5);
+
+            letters.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = letter;
+                btn.addEventListener('click', () => checkQuiz(letter, item.letter, btn));
+                options.appendChild(btn);
+            });
+
+            updateMascot('What letter does ' + item.word + ' start with?');
+        }
+
+        function checkQuiz(selected, correct, btn) {
+            const feedback = document.getElementById('feedback2');
+
+            if (selected === correct) {
+                playSound('success');
+                btn.classList.add('correct');
+                feedback.textContent = 'Correct! ' + quizItems[quizRound].word + ' starts with ' + correct + '!';
+                feedback.className = 'feedback success';
+                feedback.classList.remove('hidden');
+
+                quizRound++;
+                if (quizRound >= quizItems.length) {
+                    earnStar();
+                    earnStar();
+                    updateMascot('Amazing! You know all the letter sounds!');
+                    setTimeout(() => showTab(3), 1500);
+                } else {
+                    setTimeout(showQuizQuestion, 1500);
+                }
+            } else {
+                playSound('wrong');
+                btn.classList.add('wrong');
+                feedback.textContent = 'Try again! Listen to the sound.';
+                feedback.className = 'feedback error';
+                feedback.classList.remove('hidden');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Matching
+        function initMatching() {
+            matchedCount = 0;
+            selectedMatch = null;
+            document.getElementById('matchCounter').textContent = 'Matched: 0 / 4';
+            document.getElementById('matchNextBtn').classList.add('hidden');
+
+            const letterCol = document.getElementById('letterColumn');
+            const pictureCol = document.getElementById('pictureColumn');
+            clearElement(letterCol);
+            clearElement(pictureCol);
+
+            const shuffledLetters = [...matchItems].sort(() => Math.random() - 0.5);
+            const shuffledPictures = [...matchItems].sort(() => Math.random() - 0.5);
+
+            shuffledLetters.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'match-item';
+                div.textContent = item.letter;
+                div.dataset.letter = item.letter;
+                div.dataset.type = 'letter';
+                div.addEventListener('click', () => selectMatch(div));
+                letterCol.appendChild(div);
+            });
+
+            shuffledPictures.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'match-item';
+                div.textContent = item.emoji;
+                div.dataset.letter = item.letter;
+                div.dataset.type = 'picture';
+                div.dataset.word = item.word;
+                div.addEventListener('click', () => selectMatch(div));
+                pictureCol.appendChild(div);
+            });
+
+            updateMascot('Match each letter to the picture that starts with it!');
+        }
+
+        function selectMatch(element) {
+            if (element.classList.contains('matched')) return;
+
+            const feedback = document.getElementById('feedback3');
+
+            if (!selectedMatch) {
+                element.classList.add('selected');
+                selectedMatch = element;
+                playSound('tap');
+            } else {
+                if (selectedMatch === element) {
+                    element.classList.remove('selected');
+                    selectedMatch = null;
+                    return;
+                }
+
+                if (selectedMatch.dataset.type === element.dataset.type) {
+                    selectedMatch.classList.remove('selected');
+                    element.classList.add('selected');
+                    selectedMatch = element;
+                    playSound('tap');
+                    return;
+                }
+
+                if (selectedMatch.dataset.letter === element.dataset.letter) {
+                    playSound('success');
+                    selectedMatch.classList.remove('selected');
+                    selectedMatch.classList.add('matched');
+                    element.classList.add('matched');
+
+                    const word = selectedMatch.dataset.word || element.dataset.word;
+                    feedback.textContent = 'Great! ' + selectedMatch.dataset.letter + ' is for ' + word + '!';
+                    feedback.className = 'feedback success';
+                    feedback.classList.remove('hidden');
+
+                    matchedCount++;
+                    document.getElementById('matchCounter').textContent = 'Matched: ' + matchedCount + ' / 4';
+                    selectedMatch = null;
+
+                    if (matchedCount >= 4) {
+                        earnStar();
+                        updateMascot('You matched them all! Excellent work!');
+                        document.getElementById('matchNextBtn').classList.remove('hidden');
+                    }
+                } else {
+                    playSound('wrong');
+                    feedback.textContent = 'Try again! Think about the sound.';
+                    feedback.className = 'feedback error';
+                    feedback.classList.remove('hidden');
+                    selectedMatch.classList.remove('selected');
+                    selectedMatch = null;
+                }
+            }
+        }
+
+        // Hunt
+        function initHunt() {
+            foundCount = 0;
+            document.getElementById('huntCounter').textContent = 'Found: 0 / 16';
+
+            const grid = document.getElementById('letterHuntGrid');
+            clearElement(grid);
+
+            huntLetters.forEach(letter => {
+                const div = document.createElement('div');
+                div.className = 'hunt-letter';
+                div.textContent = letter;
+                div.dataset.letter = letter;
+                div.addEventListener('click', () => huntClick(div, letter));
+                grid.appendChild(div);
+            });
+
+            updateMascot('Find all the M, N, O, and P letters!');
+        }
+
+        function huntClick(element, letter) {
+            if (element.classList.contains('found')) return;
+
+            const feedback = document.getElementById('feedback4');
+
+            if (targetLetters.includes(letter)) {
+                playSound('success');
+                element.classList.add('found');
+                foundCount++;
+                document.getElementById('huntCounter').textContent = 'Found: ' + foundCount + ' / 16';
+
+                feedback.textContent = 'You found ' + letter.toUpperCase() + '!';
+                feedback.className = 'feedback success';
+                feedback.classList.remove('hidden');
+
+                if (foundCount >= 16) {
+                    earnStar();
+                    earnStar();
+                    createConfetti();
+                    setTimeout(() => {
+                        document.getElementById('celebration').classList.add('show');
+                    }, 500);
+                }
+            } else {
+                playSound('wrong');
+                element.classList.add('wrong-click');
+                feedback.textContent = 'That is not M, N, O, or P. Keep looking!';
+                feedback.className = 'feedback error';
+                feedback.classList.remove('hidden');
+                setTimeout(() => element.classList.remove('wrong-click'), 300);
+            }
+        }
+
+        // Initialize first activity
+        earnStar();
+    </script>
+</body>
+</html>
