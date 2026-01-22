@@ -12,7 +12,7 @@
             min-height: 100vh;
             padding: 20px;
         }
-        .container { max-width: 500px; margin: 0 auto; }
+        .container { max-width: 600px; margin: 0 auto; }
         .header { text-align: center; color: white; margin-bottom: 20px; }
         .header h1 { font-size: 2rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
 
@@ -26,6 +26,7 @@
             font-size: 0.9rem;
             margin-bottom: 15px;
             transition: all 0.3s;
+            cursor: pointer;
         }
         .back-btn:hover { background: rgba(255,255,255,0.3); }
 
@@ -63,6 +64,7 @@
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             flex: 1;
+            font-size: 1.1rem;
         }
         .speech-bubble:before {
             content: '';
@@ -72,6 +74,41 @@
             transform: translateY(-50%);
             border: 10px solid transparent;
             border-right-color: white;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px 20px 0 0;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.5); }
+        .tab-btn.active {
+            background: white;
+            color: #8e44ad;
+            transform: translateY(-3px);
+        }
+        .tab-btn.completed {
+            background: #27ae60;
+            color: white;
+        }
+        .tab-btn.completed.active {
+            background: #2ecc71;
+            color: white;
         }
 
         .game-card {
@@ -85,15 +122,15 @@
 
         .item-display {
             text-align: center;
-            font-size: 6rem;
-            margin: 20px 0;
+            font-size: 5rem;
+            margin: 15px 0;
             animation: itemBounce 1s ease-in-out infinite;
         }
         @keyframes itemBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
         .item-name {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #333;
             margin-bottom: 20px;
             font-weight: bold;
@@ -103,10 +140,11 @@
             display: flex;
             gap: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         .choice-btn {
-            padding: 20px 40px;
-            font-size: 1.5rem;
+            padding: 18px 35px;
+            font-size: 1.3rem;
             font-weight: bold;
             border: none;
             border-radius: 25px;
@@ -128,7 +166,8 @@
         }
         .choice-btn:hover { transform: scale(1.1); }
         .choice-btn:active { transform: scale(0.95); }
-        .choice-btn .arrow { font-size: 2rem; }
+        .choice-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .choice-btn .arrow { font-size: 1.8rem; }
 
         .feedback {
             text-align: center;
@@ -137,7 +176,7 @@
             margin-top: 15px;
             display: none;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             animation: feedbackPop 0.4s ease;
         }
         @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -148,8 +187,8 @@
         .next-btn {
             display: none;
             width: 100%;
-            padding: 18px;
-            font-size: 1.3rem;
+            padding: 16px;
+            font-size: 1.2rem;
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             border: none;
@@ -166,7 +205,7 @@
         .question-counter {
             text-align: center;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-bottom: 15px;
             background: rgba(0,0,0,0.2);
             padding: 8px 15px;
@@ -174,6 +213,7 @@
             display: inline-block;
         }
 
+        /* Experiment Tab */
         .experiment-area {
             background: #f8f9fa;
             border-radius: 20px;
@@ -211,6 +251,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
             margin-top: 15px;
         }
         .force-btn {
@@ -226,6 +267,101 @@
         .force-btn.soft { background: #74b9ff; color: white; }
         .force-btn.hard { background: #0984e3; color: white; }
         .force-btn:hover { transform: scale(1.05); }
+
+        /* Sorting Tab */
+        .sorting-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .sorting-zone {
+            flex: 1;
+            min-width: 140px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            padding: 15px;
+            min-height: 200px;
+            border: 3px dashed #ccc;
+            transition: all 0.3s;
+        }
+        .sorting-zone.push-zone { border-color: #3498db; background: #ebf5fb; }
+        .sorting-zone.pull-zone { border-color: #e74c3c; background: #fdedec; }
+        .sorting-zone h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .sorting-zone.push-zone h3 { color: #3498db; }
+        .sorting-zone.pull-zone h3 { color: #e74c3c; }
+        .sorting-zone.highlight { transform: scale(1.02); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+
+        .sorting-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .sorting-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 2rem;
+            cursor: grab;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .sorting-item:hover { transform: scale(1.1); }
+        .sorting-item:active { cursor: grabbing; }
+        .sorting-item .label { font-size: 0.8rem; color: #666; }
+        .sorting-item.sorted {
+            cursor: default;
+            opacity: 0.9;
+        }
+        .sorting-item.selected { border: 3px solid #9b59b6; background: #f3e5f5; }
+        .sorting-item.correct { background: #d4edda; }
+        .sorting-item.wrong { background: #f8d7da; animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Matching Tab */
+        .match-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .match-column {
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .match-item {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .match-item:hover { transform: scale(1.05); }
+        .match-item.selected { border-color: #9b59b6; background: #f3e5f5; }
+        .match-item.matched { background: #d4edda; border-color: #27ae60; cursor: default; }
+        .match-item .emoji { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+        .match-item .text { font-size: 0.9rem; color: #333; }
 
         .hidden { display: none !important; }
 
@@ -275,6 +411,44 @@
             transition: all 0.3s;
         }
         .submit-btn:hover { transform: scale(1.05); }
+
+        .complete-section-btn {
+            display: none;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .complete-section-btn.show { display: block; }
+        .complete-section-btn:hover { transform: scale(1.02); }
+
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .info-box .info-emoji { font-size: 2rem; margin-bottom: 5px; }
+        .info-box p { color: #856404; font-size: 1rem; }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.6rem; }
+            .mascot-emoji { font-size: 3rem; }
+            .choice-btn { padding: 15px 25px; font-size: 1.1rem; }
+            .item-display { font-size: 4rem; }
+            .sorting-zone { min-width: 100%; }
+            .match-column { min-width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -302,51 +476,114 @@
             </div>
         </div>
 
-        <div style="text-align: center;">
-            <span class="question-counter" id="questionCounter">Question 1 of 6</span>
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="identify" onclick="switchTab('identify')">🤔 Identify</button>
+            <button class="tab-btn" data-tab="sort" onclick="switchTab('sort')">📦 Sort</button>
+            <button class="tab-btn" data-tab="match" onclick="switchTab('match')">🔗 Match</button>
+            <button class="tab-btn" data-tab="experiment" onclick="switchTab('experiment')">🚗 Experiment</button>
         </div>
 
-        <!-- Game 1: Push or Pull -->
-        <div class="game-card" id="game1">
-            <h2>🤔 Is it PUSH or PULL?</h2>
-            <div class="item-display" id="itemDisplay">🚪</div>
-            <div class="item-name" id="itemName">Opening a door</div>
-
-            <div class="choice-btns">
-                <button class="choice-btn push" onclick="checkAnswer('push')">
-                    <span class="arrow">👉</span>
-                    <span>PUSH</span>
-                </button>
-                <button class="choice-btn pull" onclick="checkAnswer('pull')">
-                    <span class="arrow">👈</span>
-                    <span>PULL</span>
-                </button>
+        <!-- Tab 1: Identify Push or Pull -->
+        <div class="tab-content" id="tab-identify">
+            <div style="text-align: center;">
+                <span class="question-counter" id="questionCounter">Question 1 of 10</span>
             </div>
 
-            <div class="feedback" id="feedback"></div>
-            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+            <div class="game-card">
+                <h2>🤔 Is it PUSH or PULL?</h2>
+                <div class="item-display" id="itemDisplay">🚪</div>
+                <div class="item-name" id="itemName">Opening a door toward you</div>
+
+                <div class="choice-btns">
+                    <button class="choice-btn push" id="pushBtn" onclick="checkIdentify('push')">
+                        <span class="arrow">👉</span>
+                        <span>PUSH</span>
+                    </button>
+                    <button class="choice-btn pull" id="pullBtn" onclick="checkIdentify('pull')">
+                        <span class="arrow">👈</span>
+                        <span>PULL</span>
+                    </button>
+                </div>
+
+                <div class="feedback" id="identifyFeedback"></div>
+                <button class="next-btn" id="identifyNextBtn" onclick="nextIdentify()">Next Question →</button>
+            </div>
         </div>
 
-        <!-- Game 2: Car Experiment -->
-        <div class="game-card hidden" id="game2">
-            <h2>🚗 Push the Car!</h2>
-            <p style="text-align: center; color: #666; margin-bottom: 15px;">Push SOFT or HARD - see what happens!</p>
+        <!-- Tab 2: Sort Items -->
+        <div class="tab-content hidden" id="tab-sort">
+            <div class="game-card">
+                <h2>📦 Sort into PUSH or PULL!</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap an item, then tap where it belongs!</p>
 
-            <div class="experiment-area">
-                <div class="car-track">
-                    <div class="car" id="car">🚗</div>
+                <div class="sorting-items" id="sortingItems"></div>
+
+                <div class="sorting-container">
+                    <div class="sorting-zone push-zone" id="pushZone" onclick="dropInZone('push')">
+                        <h3>👉 PUSH</h3>
+                        <div class="zone-items" id="pushZoneItems"></div>
+                    </div>
+                    <div class="sorting-zone pull-zone" id="pullZone" onclick="dropInZone('pull')">
+                        <h3>👈 PULL</h3>
+                        <div class="zone-items" id="pullZoneItems"></div>
+                    </div>
                 </div>
 
-                <div class="force-btns">
-                    <button class="force-btn soft" onclick="pushCar('soft')">🤏 Soft Push</button>
-                    <button class="force-btn hard" onclick="pushCar('hard')">💪 Hard Push</button>
-                </div>
-
-                <button class="force-btn" onclick="resetCar()" style="margin-top: 10px; background: #636e72; color: white;">🔄 Reset</button>
+                <div class="feedback" id="sortFeedback"></div>
+                <button class="complete-section-btn" id="sortCompleteBtn" onclick="completeSort()">Continue to Matching! →</button>
             </div>
+        </div>
 
-            <div class="feedback" id="feedback2"></div>
-            <button class="next-btn" id="finishBtn" onclick="finishGame()">I'm a Force Scientist! →</button>
+        <!-- Tab 3: Match Actions -->
+        <div class="tab-content hidden" id="tab-match">
+            <div class="game-card">
+                <h2>🔗 Match the Force to the Action!</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap a force, then tap its matching action!</p>
+
+                <div class="match-container">
+                    <div class="match-column" id="forceColumn"></div>
+                    <div class="match-column" id="actionColumn"></div>
+                </div>
+
+                <div class="feedback" id="matchFeedback"></div>
+                <button class="complete-section-btn" id="matchCompleteBtn" onclick="completeMatch()">Continue to Experiment! →</button>
+            </div>
+        </div>
+
+        <!-- Tab 4: Experiment -->
+        <div class="tab-content hidden" id="tab-experiment">
+            <div class="game-card">
+                <h2>🚗 Force Experiment!</h2>
+
+                <div class="info-box">
+                    <div class="info-emoji">💡</div>
+                    <p>More force = more movement!</p>
+                </div>
+
+                <div class="experiment-area">
+                    <p style="color: #666; margin-bottom: 10px;">Push the car SOFT or HARD - see what happens!</p>
+                    <div class="car-track">
+                        <div class="car" id="car">🚗</div>
+                    </div>
+
+                    <div class="force-btns">
+                        <button class="force-btn soft" onclick="pushCar('soft')">🤏 Soft Push</button>
+                        <button class="force-btn hard" onclick="pushCar('hard')">💪 Hard Push</button>
+                    </div>
+
+                    <button class="force-btn" onclick="resetCar()" style="margin-top: 10px; background: #636e72; color: white;">🔄 Reset</button>
+                </div>
+
+                <div class="feedback" id="experimentFeedback"></div>
+
+                <div id="experimentTasks" style="margin-top: 20px;">
+                    <h3 style="text-align: center; margin-bottom: 15px;">🔬 Complete These Tasks:</h3>
+                    <div id="taskList"></div>
+                </div>
+
+                <button class="complete-section-btn" id="experimentCompleteBtn" onclick="finishGame()">I'm a Force Scientist! 🔬</button>
+            </div>
         </div>
     </div>
 
@@ -355,18 +592,18 @@
             <div class="trophy">🏆</div>
             <h2>FORCE SCIENTIST!</h2>
             <div class="stars-final" id="starsFinal">★★★</div>
-            <p>You understand PUSH and PULL!</p>
-            <p>Remember: Forces make things MOVE!</p>
+            <p style="font-size: 1.2rem; margin-bottom: 10px;">You understand PUSH and PULL!</p>
+            <p style="color: #666; margin-bottom: 20px;">Remember: Forces make things MOVE!</p>
             <a href="index.html" class="submit-btn">Play More Games!</a>
         </div>
     </div>
 
     <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
 
@@ -396,156 +633,526 @@
                 gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'click') {
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
             }
         }
 
-        const questions = [
-            { emoji: '🚪', name: 'Opening a door', answer: 'pull' },
-            { emoji: '📦', name: 'Sliding a box', answer: 'push' },
-            { emoji: '🛒', name: 'Shopping cart', answer: 'push' },
-            { emoji: '🧲', name: 'Magnet attracting', answer: 'pull' },
-            { emoji: '⚽', name: 'Kicking a ball', answer: 'push' },
-            { emoji: '🎣', name: 'Fishing with a rod', answer: 'pull' }
+        // Helper function to clear all children from an element
+        function clearChildren(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        // Global state
+        var starsEarned = 0;
+        var totalCorrect = 0;
+        var tabsCompleted = { identify: false, sort: false, match: false, experiment: false };
+
+        // ============== IDENTIFY TAB ==============
+        var identifyQuestions = [
+            { emoji: '🚪', name: 'Opening a door toward you', answer: 'pull', hint: 'You bring the door toward you!' },
+            { emoji: '📦', name: 'Sliding a box away', answer: 'push', hint: 'You move the box away from you!' },
+            { emoji: '🛒', name: 'Moving a shopping cart', answer: 'push', hint: 'You move the cart forward!' },
+            { emoji: '🧲', name: 'Magnet attracting metal', answer: 'pull', hint: 'The magnet brings metal closer!' },
+            { emoji: '⚽', name: 'Kicking a ball', answer: 'push', hint: 'Your foot moves the ball away!' },
+            { emoji: '🎣', name: 'Reeling in a fish', answer: 'pull', hint: 'You bring the fish toward you!' },
+            { emoji: '🪑', name: 'Pulling out a chair', answer: 'pull', hint: 'You bring the chair toward you!' },
+            { emoji: '🧹', name: 'Sweeping with a broom', answer: 'push', hint: 'You move dirt away from you!' },
+            { emoji: '🚗', name: 'Starting a stalled car', answer: 'push', hint: 'You push the car to move it!' },
+            { emoji: '🪣', name: 'Pulling water from a well', answer: 'pull', hint: 'You bring the bucket up toward you!' }
         ];
+        var identifyIndex = 0;
+        var identifyCorrect = 0;
 
-        let currentQuestion = 0;
-        let starsEarned = 0;
-        let correctAnswers = 0;
-        let pushCount = 0;
+        function loadIdentify() {
+            var q = identifyQuestions[identifyIndex];
+            document.getElementById('questionCounter').textContent = 'Question ' + (identifyIndex + 1) + ' of ' + identifyQuestions.length;
+            document.getElementById('itemDisplay').textContent = q.emoji;
+            document.getElementById('itemName').textContent = q.name;
+            document.getElementById('identifyFeedback').className = 'feedback';
+            document.getElementById('identifyNextBtn').className = 'next-btn';
+            document.getElementById('pushBtn').disabled = false;
+            document.getElementById('pullBtn').disabled = false;
+            updateSpeech(q.hint);
+        }
 
+        function checkIdentify(answer) {
+            var q = identifyQuestions[identifyIndex];
+            document.getElementById('pushBtn').disabled = true;
+            document.getElementById('pullBtn').disabled = true;
+
+            var feedback = document.getElementById('identifyFeedback');
+            if (answer === q.answer) {
+                playSound('correct');
+                feedback.textContent = '🎉 Correct! ' + q.name + ' is a ' + q.answer.toUpperCase() + '!';
+                feedback.className = 'feedback show success';
+                identifyCorrect++;
+                totalCorrect++;
+                updateSpeech('Great job! You got it right!');
+            } else {
+                playSound('wrong');
+                feedback.textContent = '❌ Not quite! ' + q.name + ' is a ' + q.answer.toUpperCase() + '.';
+                feedback.className = 'feedback show wrong';
+                updateSpeech('Remember: Push moves away, Pull brings closer!');
+            }
+
+            document.getElementById('identifyNextBtn').className = 'next-btn show';
+            updateProgress();
+        }
+
+        function nextIdentify() {
+            identifyIndex++;
+            if (identifyIndex >= identifyQuestions.length) {
+                tabsCompleted.identify = true;
+                markTabComplete('identify');
+                earnStar(1);
+                switchTab('sort');
+            } else {
+                loadIdentify();
+            }
+        }
+
+        // ============== SORT TAB ==============
+        var sortItems = [
+            { emoji: '🛷', name: 'Sled', answer: 'pull' },
+            { emoji: '🎈', name: 'Balloon', answer: 'push' },
+            { emoji: '🧳', name: 'Suitcase', answer: 'pull' },
+            { emoji: '🧊', name: 'Ice block', answer: 'push' },
+            { emoji: '🪁', name: 'Kite', answer: 'pull' },
+            { emoji: '🚲', name: 'Bike pedals', answer: 'push' },
+            { emoji: '🧵', name: 'Thread', answer: 'pull' },
+            { emoji: '🎯', name: 'Dart', answer: 'push' }
+        ];
+        var selectedSortItem = null;
+        var sortedCount = 0;
+
+        function initSort() {
+            var container = document.getElementById('sortingItems');
+            clearChildren(container);
+
+            // Shuffle items
+            var shuffled = sortItems.slice().sort(function() { return Math.random() - 0.5; });
+
+            shuffled.forEach(function(item, idx) {
+                var div = document.createElement('div');
+                div.className = 'sorting-item';
+                div.setAttribute('data-answer', item.answer);
+                div.setAttribute('data-index', idx);
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.textContent = item.emoji;
+                div.appendChild(emojiSpan);
+
+                var labelSpan = document.createElement('span');
+                labelSpan.className = 'label';
+                labelSpan.textContent = item.name;
+                div.appendChild(labelSpan);
+
+                div.onclick = function() { selectSortItem(this); };
+                container.appendChild(div);
+            });
+
+            clearChildren(document.getElementById('pushZoneItems'));
+            clearChildren(document.getElementById('pullZoneItems'));
+            sortedCount = 0;
+            updateSpeech('Tap an item, then tap the PUSH or PULL zone!');
+        }
+
+        function selectSortItem(el) {
+            if (el.classList.contains('sorted')) return;
+
+            playSound('click');
+
+            // Remove previous selection
+            var items = document.querySelectorAll('.sorting-item');
+            items.forEach(function(item) { item.classList.remove('selected'); });
+
+            el.classList.add('selected');
+            selectedSortItem = el;
+
+            document.getElementById('pushZone').classList.add('highlight');
+            document.getElementById('pullZone').classList.add('highlight');
+        }
+
+        function dropInZone(zone) {
+            if (!selectedSortItem) return;
+
+            var answer = selectedSortItem.getAttribute('data-answer');
+            var zoneContainer = document.getElementById(zone + 'ZoneItems');
+
+            if (zone === answer) {
+                playSound('correct');
+                selectedSortItem.classList.add('sorted', 'correct');
+
+                var clone = selectedSortItem.cloneNode(true);
+                clone.onclick = null;
+                clone.style.fontSize = '1.5rem';
+                clone.style.padding = '10px';
+                zoneContainer.appendChild(clone);
+
+                selectedSortItem.style.display = 'none';
+                sortedCount++;
+                totalCorrect++;
+
+                var feedback = document.getElementById('sortFeedback');
+                feedback.textContent = '✅ Correct! That\'s a ' + zone.toUpperCase() + '!';
+                feedback.className = 'feedback show success';
+
+                updateSpeech('Great sorting! Keep going!');
+            } else {
+                playSound('wrong');
+                selectedSortItem.classList.add('wrong');
+                setTimeout(function() { selectedSortItem.classList.remove('wrong'); }, 500);
+
+                var feedback = document.getElementById('sortFeedback');
+                feedback.textContent = '❌ Try again! Think about how you use it.';
+                feedback.className = 'feedback show wrong';
+
+                updateSpeech('Oops! Think: do you move it away or bring it closer?');
+            }
+
+            selectedSortItem.classList.remove('selected');
+            selectedSortItem = null;
+            document.getElementById('pushZone').classList.remove('highlight');
+            document.getElementById('pullZone').classList.remove('highlight');
+
+            if (sortedCount >= sortItems.length) {
+                document.getElementById('sortCompleteBtn').classList.add('show');
+                updateSpeech('Amazing! You sorted all the items!');
+            }
+
+            updateProgress();
+        }
+
+        function completeSort() {
+            tabsCompleted.sort = true;
+            markTabComplete('sort');
+            earnStar(2);
+            switchTab('match');
+        }
+
+        // ============== MATCH TAB ==============
+        var matchPairs = [
+            { force: { emoji: '👉', text: 'PUSH' }, action: { emoji: '🚀', text: 'Launching a rocket' } },
+            { force: { emoji: '👈', text: 'PULL' }, action: { emoji: '🏹', text: 'Drawing a bow' } },
+            { force: { emoji: '👉', text: 'PUSH' }, action: { emoji: '🎱', text: 'Hitting a ball' } },
+            { force: { emoji: '👈', text: 'PULL' }, action: { emoji: '🧲', text: 'Magnet on fridge' } },
+            { force: { emoji: '👉', text: 'PUSH' }, action: { emoji: '🚪', text: 'Closing a door' } },
+            { force: { emoji: '👈', text: 'PULL' }, action: { emoji: '🪝', text: 'Using a hook' } }
+        ];
+        var matchSelected = null;
+        var matchedPairs = 0;
+
+        function initMatch() {
+            var forceCol = document.getElementById('forceColumn');
+            var actionCol = document.getElementById('actionColumn');
+            clearChildren(forceCol);
+            clearChildren(actionCol);
+
+            // Shuffle actions
+            var shuffledActions = matchPairs.slice().sort(function() { return Math.random() - 0.5; });
+
+            matchPairs.forEach(function(pair, idx) {
+                var forceDiv = document.createElement('div');
+                forceDiv.className = 'match-item';
+                forceDiv.setAttribute('data-type', 'force');
+                forceDiv.setAttribute('data-pair', idx);
+
+                var forceEmoji = document.createElement('span');
+                forceEmoji.className = 'emoji';
+                forceEmoji.textContent = pair.force.emoji;
+                forceDiv.appendChild(forceEmoji);
+
+                var forceText = document.createElement('span');
+                forceText.className = 'text';
+                forceText.textContent = pair.force.text;
+                forceDiv.appendChild(forceText);
+
+                forceDiv.onclick = function() { selectMatch(this); };
+                forceCol.appendChild(forceDiv);
+            });
+
+            shuffledActions.forEach(function(pair, idx) {
+                var originalIdx = matchPairs.indexOf(pair);
+
+                var actionDiv = document.createElement('div');
+                actionDiv.className = 'match-item';
+                actionDiv.setAttribute('data-type', 'action');
+                actionDiv.setAttribute('data-pair', originalIdx);
+
+                var actionEmoji = document.createElement('span');
+                actionEmoji.className = 'emoji';
+                actionEmoji.textContent = pair.action.emoji;
+                actionDiv.appendChild(actionEmoji);
+
+                var actionText = document.createElement('span');
+                actionText.className = 'text';
+                actionText.textContent = pair.action.text;
+                actionDiv.appendChild(actionText);
+
+                actionDiv.onclick = function() { selectMatch(this); };
+                actionCol.appendChild(actionDiv);
+            });
+
+            matchedPairs = 0;
+            matchSelected = null;
+            updateSpeech('Match each force to its action!');
+        }
+
+        function selectMatch(el) {
+            if (el.classList.contains('matched')) return;
+
+            playSound('click');
+
+            if (!matchSelected) {
+                el.classList.add('selected');
+                matchSelected = el;
+            } else {
+                var type1 = matchSelected.getAttribute('data-type');
+                var type2 = el.getAttribute('data-type');
+
+                if (type1 === type2) {
+                    // Same column - switch selection
+                    matchSelected.classList.remove('selected');
+                    el.classList.add('selected');
+                    matchSelected = el;
+                    return;
+                }
+
+                var pair1 = parseInt(matchSelected.getAttribute('data-pair'));
+                var pair2 = parseInt(el.getAttribute('data-pair'));
+
+                if (pair1 === pair2) {
+                    // Correct match!
+                    playSound('correct');
+                    matchSelected.classList.remove('selected');
+                    matchSelected.classList.add('matched');
+                    el.classList.add('matched');
+                    matchedPairs++;
+                    totalCorrect++;
+
+                    var feedback = document.getElementById('matchFeedback');
+                    feedback.textContent = '✅ Perfect match!';
+                    feedback.className = 'feedback show success';
+
+                    updateSpeech('Great matching!');
+
+                    if (matchedPairs >= matchPairs.length) {
+                        document.getElementById('matchCompleteBtn').classList.add('show');
+                        updateSpeech('You matched them all! Time to experiment!');
+                    }
+                } else {
+                    // Wrong match
+                    playSound('wrong');
+                    matchSelected.classList.remove('selected');
+
+                    var feedback = document.getElementById('matchFeedback');
+                    feedback.textContent = '❌ Try a different pair!';
+                    feedback.className = 'feedback show wrong';
+
+                    updateSpeech('Not quite - try again!');
+                }
+
+                matchSelected = null;
+            }
+
+            updateProgress();
+        }
+
+        function completeMatch() {
+            tabsCompleted.match = true;
+            markTabComplete('match');
+            switchTab('experiment');
+        }
+
+        // ============== EXPERIMENT TAB ==============
+        var experimentTasks = [
+            { text: 'Push the car with a SOFT push', done: false, type: 'soft' },
+            { text: 'Push the car with a HARD push', done: false, type: 'hard' },
+            { text: 'Try SOFT again - watch how far it goes!', done: false, type: 'soft' },
+            { text: 'Try HARD again - compare the distance!', done: false, type: 'hard' }
+        ];
+        var taskIndex = 0;
+
+        function initExperiment() {
+            var taskList = document.getElementById('taskList');
+            clearChildren(taskList);
+
+            experimentTasks.forEach(function(task, idx) {
+                var div = document.createElement('div');
+                div.style.cssText = 'padding: 10px; margin: 5px 0; border-radius: 10px; background: #f0f0f0; display: flex; align-items: center; gap: 10px;';
+                div.id = 'task-' + idx;
+
+                var checkbox = document.createElement('span');
+                checkbox.style.cssText = 'font-size: 1.5rem;';
+                checkbox.textContent = '⬜';
+                checkbox.id = 'checkbox-' + idx;
+                div.appendChild(checkbox);
+
+                var text = document.createElement('span');
+                text.textContent = task.text;
+                div.appendChild(text);
+
+                taskList.appendChild(div);
+            });
+
+            taskIndex = 0;
+            highlightCurrentTask();
+            updateSpeech('Complete all the tasks to become a Force Scientist!');
+        }
+
+        function highlightCurrentTask() {
+            experimentTasks.forEach(function(_, idx) {
+                var taskEl = document.getElementById('task-' + idx);
+                if (idx === taskIndex) {
+                    taskEl.style.background = '#fff3cd';
+                    taskEl.style.border = '2px solid #ffc107';
+                } else if (experimentTasks[idx].done) {
+                    taskEl.style.background = '#d4edda';
+                    taskEl.style.border = '2px solid #28a745';
+                } else {
+                    taskEl.style.background = '#f0f0f0';
+                    taskEl.style.border = 'none';
+                }
+            });
+        }
+
+        function pushCar(force) {
+            playSound('push');
+            var car = document.getElementById('car');
+            var feedback = document.getElementById('experimentFeedback');
+
+            if (force === 'soft') {
+                car.style.left = '120px';
+                feedback.textContent = '🤏 Soft push = small movement!';
+                updateSpeech('A soft push makes it move a LITTLE!');
+            } else {
+                car.style.left = '85%';
+                feedback.textContent = '💪 Hard push = BIG movement!';
+                updateSpeech('A hard push makes it go FAR! More force = more movement!');
+            }
+            feedback.className = 'feedback show success';
+
+            // Check task completion
+            if (taskIndex < experimentTasks.length) {
+                var currentTask = experimentTasks[taskIndex];
+                if (currentTask.type === force && !currentTask.done) {
+                    currentTask.done = true;
+                    document.getElementById('checkbox-' + taskIndex).textContent = '✅';
+                    totalCorrect++;
+                    taskIndex++;
+                    highlightCurrentTask();
+
+                    if (taskIndex >= experimentTasks.length) {
+                        document.getElementById('experimentCompleteBtn').classList.add('show');
+                        updateSpeech('You completed all tasks! You\'re a Force Scientist!');
+                    }
+                }
+            }
+
+            updateProgress();
+        }
+
+        function resetCar() {
+            document.getElementById('car').style.left = '20px';
+            playSound('click');
+        }
+
+        // ============== SHARED FUNCTIONS ==============
         function updateSpeech(text) {
             document.getElementById('speechBubble').textContent = text;
         }
 
         function updateProgress() {
-            const percent = ((currentQuestion + pushCount / 2) / (questions.length + 1)) * 100;
-            document.getElementById('progressBar').style.width = Math.min(percent, 100) + '%';
+            var total = identifyQuestions.length + sortItems.length + matchPairs.length + experimentTasks.length;
+            var progress = (totalCorrect / total) * 100;
+            document.getElementById('progressBar').style.width = Math.min(progress, 100) + '%';
         }
 
         function earnStar(num) {
-            const star = document.getElementById('star' + num);
+            if (starsEarned >= num) return;
+            var star = document.getElementById('star' + num);
             star.classList.add('earned');
-            starsEarned++;
+            starsEarned = num;
             playSound('star');
         }
 
-        function loadQuestion() {
-            const q = questions[currentQuestion];
-            document.getElementById('questionCounter').textContent = 'Question ' + (currentQuestion + 1) + ' of ' + questions.length;
-            document.getElementById('itemDisplay').textContent = q.emoji;
-            document.getElementById('itemName').textContent = q.name;
-
-            document.getElementById('feedback').className = 'feedback';
-            document.getElementById('nextBtn').className = 'next-btn';
-            document.querySelectorAll('.choice-btn').forEach(function(btn) { btn.disabled = false; });
-
-            const hints = [
-                "Think: Do you move TOWARD it or AWAY from it?",
-                "Push means moving something AWAY from you!",
-                "Pull means bringing something TOWARD you!",
-                "Magnets can PULL things!",
-                "When you kick, your foot PUSHES the ball!",
-                "Fishing rods PULL the fish toward you!"
-            ];
-            updateSpeech(hints[currentQuestion]);
+        function markTabComplete(tabName) {
+            var btn = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+            btn.classList.add('completed');
         }
 
-        function checkAnswer(answer) {
-            const q = questions[currentQuestion];
-            document.querySelectorAll('.choice-btn').forEach(function(btn) { btn.disabled = true; });
+        function switchTab(tabName) {
+            playSound('click');
 
-            if (answer === q.answer) {
-                playSound('correct');
-                document.getElementById('feedback').textContent = '🎉 Correct! ' + q.name + ' is a ' + q.answer.toUpperCase() + '!';
-                document.getElementById('feedback').className = 'feedback show success';
-                correctAnswers++;
-                updateSpeech("Great job! You got it right!");
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabName) {
+                    btn.classList.add('active');
+                }
+            });
 
-                if (correctAnswers === 2) earnStar(1);
-                if (correctAnswers === 4) earnStar(2);
-            } else {
-                playSound('wrong');
-                document.getElementById('feedback').textContent = '❌ Not quite! ' + q.name + ' is actually a ' + q.answer.toUpperCase() + '.';
-                document.getElementById('feedback').className = 'feedback show wrong';
-                updateSpeech("Remember: Push moves away, Pull brings toward you!");
+            // Show/hide content
+            document.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.add('hidden');
+            });
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+            // Initialize tab content
+            if (tabName === 'sort' && sortedCount === 0) {
+                initSort();
+            } else if (tabName === 'match' && matchedPairs === 0) {
+                initMatch();
+            } else if (tabName === 'experiment' && taskIndex === 0) {
+                initExperiment();
+            } else if (tabName === 'identify') {
+                updateSpeech(identifyQuestions[identifyIndex].hint);
             }
-
-            document.getElementById('nextBtn').className = 'next-btn show';
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-            updateProgress();
-
-            if (currentQuestion >= questions.length) {
-                document.getElementById('game1').classList.add('hidden');
-                document.getElementById('game2').classList.remove('hidden');
-                updateSpeech("Now let's do an experiment! Push the car!");
-            } else {
-                loadQuestion();
-            }
-        }
-
-        function pushCar(force) {
-            playSound('push');
-            const car = document.getElementById('car');
-            pushCount++;
-
-            if (force === 'soft') {
-                car.style.left = '120px';
-                updateSpeech("Soft push = car moves a LITTLE!");
-                showFeedback2("🤏 Soft push makes it go a little!");
-            } else {
-                car.style.left = '350px';
-                updateSpeech("Hard push = car moves a LOT! More force = more movement!");
-                showFeedback2("💪 Hard push makes it go FAR!");
-            }
-
-            updateProgress();
-
-            if (pushCount >= 2) {
-                document.getElementById('finishBtn').classList.add('show');
-            }
-        }
-
-        function resetCar() {
-            document.getElementById('car').style.left = '20px';
-        }
-
-        function showFeedback2(message) {
-            const el = document.getElementById('feedback2');
-            el.textContent = message;
-            el.className = 'feedback show success';
         }
 
         function finishGame() {
+            tabsCompleted.experiment = true;
+            markTabComplete('experiment');
             earnStar(3);
             showCelebration();
         }
 
         function showCelebration() {
             document.getElementById('celebration').classList.add('show');
-            document.getElementById('starsFinal').textContent = '★'.repeat(starsEarned) + '☆'.repeat(3 - starsEarned);
+
+            var starText = '';
+            for (var i = 0; i < 3; i++) {
+                starText += i < starsEarned ? '★' : '☆';
+            }
+            document.getElementById('starsFinal').textContent = starText;
             launchConfetti();
         }
 
         function launchConfetti() {
-            const colors = ['#8e44ad', '#FFD700', '#3498db', '#e74c3c', '#27ae60'];
-            for (let i = 0; i < 50; i++) {
-                setTimeout(function() {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                    document.body.appendChild(confetti);
-                    setTimeout(function() { confetti.remove(); }, 3000);
-                }, i * 50);
+            var colors = ['#8e44ad', '#FFD700', '#3498db', '#e74c3c', '#27ae60'];
+            for (var i = 0; i < 50; i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        var confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                        document.body.appendChild(confetti);
+                        setTimeout(function() { confetti.remove(); }, 3000);
+                    }, idx * 50);
+                })(i);
             }
         }
 
         // Start game
-        loadQuestion();
+        loadIdentify();
     </script>
 </body>
 </html>
