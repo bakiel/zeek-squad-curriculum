@@ -645,7 +645,7 @@
     <div class="game-container hidden" id="activity3">
         <div class="activity-title">Quick Quiz!</div>
 
-        <div class="counter" id="quizCounter">Question 1 of 8</div>
+        <div class="counter" id="quizCounter">Question 1 of 12</div>
 
         <div class="quiz-container">
             <div class="quiz-item" id="quizItem">🪨</div>
@@ -663,7 +663,7 @@
     <div class="game-container hidden" id="activity4">
         <div class="activity-title">Properties Challenge!</div>
 
-        <div class="counter" id="propCounter">Question 1 of 4</div>
+        <div class="counter" id="propCounter">Question 1 of 8</div>
 
         <div class="quiz-container">
             <div class="property-demo" id="propQuestion">
@@ -701,7 +701,11 @@
             { emoji: '🧸', name: 'Teddy', type: 'solid' },
             { emoji: '💧', name: 'Water', type: 'liquid' },
             { emoji: '🍎', name: 'Apple', type: 'solid' },
-            { emoji: '🍯', name: 'Honey', type: 'liquid' }
+            { emoji: '🍯', name: 'Honey', type: 'liquid' },
+            { emoji: '🧊', name: 'Ice', type: 'solid' },
+            { emoji: '🫧', name: 'Soap', type: 'liquid' },
+            { emoji: '🪑', name: 'Chair', type: 'solid' },
+            { emoji: '🥤', name: 'Soda', type: 'liquid' }
         ];
 
         const quizItems = [
@@ -712,14 +716,22 @@
             { emoji: '✏️', type: 'solid', name: 'pencil' },
             { emoji: '🫧', type: 'liquid', name: 'soap' },
             { emoji: '🪑', type: 'solid', name: 'chair' },
-            { emoji: '🧴', type: 'liquid', name: 'lotion' }
+            { emoji: '🧴', type: 'liquid', name: 'lotion' },
+            { emoji: '🎾', type: 'solid', name: 'ball' },
+            { emoji: '☕', type: 'liquid', name: 'coffee' },
+            { emoji: '🔑', type: 'solid', name: 'key' },
+            { emoji: '🌧️', type: 'liquid', name: 'rain' }
         ];
 
         const propQuestions = [
             { question: 'Which one can you POUR?', options: ['🧱', '💧'], answer: '💧' },
             { question: 'Which one keeps its SHAPE?', options: ['🪨', '🥛'], answer: '🪨' },
             { question: 'Which one FLOWS?', options: ['📚', '🧃'], answer: '🧃' },
-            { question: 'Which one can you STACK?', options: ['💧', '🧸'], answer: '🧸' }
+            { question: 'Which one can you STACK?', options: ['💧', '🧸'], answer: '🧸' },
+            { question: 'Which one takes the shape of its container?', options: ['🧊', '🌊'], answer: '🌊' },
+            { question: 'Which one can you HOLD in your hand?', options: ['🍎', '🥛'], answer: '🍎' },
+            { question: 'Which one would SPILL if you dropped it?', options: ['📚', '☕'], answer: '☕' },
+            { question: 'Which one stays the SAME shape?', options: ['🍯', '🪑'], answer: '🪑' }
         ];
 
         function clearElement(element) {

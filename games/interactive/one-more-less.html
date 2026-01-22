@@ -581,7 +581,7 @@
     <div class="game-container hidden" id="activity3">
         <div class="activity-title">One More Practice</div>
 
-        <div class="round-counter" id="roundCounter1">Question 1 of 5</div>
+        <div class="round-counter" id="roundCounter1">Question 1 of 8</div>
 
         <div class="question-box" id="questionBox1">
             <div class="question-type">What is ONE MORE than...</div>
@@ -598,7 +598,7 @@
     <div class="game-container hidden" id="activity4">
         <div class="activity-title">One Less Practice</div>
 
-        <div class="round-counter" id="roundCounter2">Question 1 of 5</div>
+        <div class="round-counter" id="roundCounter2">Question 1 of 8</div>
 
         <div class="question-box less-type" id="questionBox2">
             <div class="question-type">What is ONE LESS than...</div>
@@ -615,7 +615,7 @@
     <div class="game-container hidden" id="activity5">
         <div class="activity-title">Mixed Challenge!</div>
 
-        <div class="round-counter" id="roundCounter3">Question 1 of 6</div>
+        <div class="round-counter" id="roundCounter3">Question 1 of 10</div>
 
         <div class="question-box" id="questionBox3">
             <div class="question-type" id="mixedType">What is ONE MORE than...</div>
@@ -762,7 +762,7 @@
             const emoji = getRandomEmoji();
             const correctAnswer = num + 1;
 
-            document.getElementById('roundCounter1').textContent = 'Question ' + (round1 + 1) + ' of 5';
+            document.getElementById('roundCounter1').textContent = 'Question ' + (round1 + 1) + ' of 8';
             document.getElementById('questionNum1').textContent = num;
             document.getElementById('questionItems1').textContent = makeItems(emoji, num);
             document.getElementById('feedback1').classList.add('hidden');
@@ -799,7 +799,7 @@
                 feedback.classList.remove('hidden');
 
                 round1++;
-                if (round1 >= 5) {
+                if (round1 >= 8) {
                     earnStar();
                     updateMascot('Excellent! You understand One More! Now try One Less!');
                     setTimeout(() => showActivity(4), 1500);
@@ -827,7 +827,7 @@
             const emoji = getRandomEmoji();
             const correctAnswer = num - 1;
 
-            document.getElementById('roundCounter2').textContent = 'Question ' + (round2 + 1) + ' of 5';
+            document.getElementById('roundCounter2').textContent = 'Question ' + (round2 + 1) + ' of 8';
             document.getElementById('questionNum2').textContent = num;
             document.getElementById('questionItems2').textContent = makeItems(emoji, num);
             document.getElementById('feedback2').classList.add('hidden');
@@ -864,7 +864,7 @@
                 feedback.classList.remove('hidden');
 
                 round2++;
-                if (round2 >= 5) {
+                if (round2 >= 8) {
                     earnStar();
                     updateMascot('Amazing! Now let us try both together!');
                     setTimeout(() => showActivity(5), 1500);
@@ -893,7 +893,7 @@
             const emoji = getRandomEmoji();
             const correctAnswer = isMore ? num + 1 : num - 1;
 
-            document.getElementById('roundCounter3').textContent = 'Question ' + (round3 + 1) + ' of 6';
+            document.getElementById('roundCounter3').textContent = 'Question ' + (round3 + 1) + ' of 10';
             document.getElementById('mixedType').textContent = isMore ? 'What is ONE MORE than...' : 'What is ONE LESS than...';
             document.getElementById('questionNum3').textContent = num;
             document.getElementById('questionItems3').textContent = makeItems(emoji, num);
@@ -939,7 +939,7 @@
                 feedback.classList.remove('hidden');
 
                 round3++;
-                if (round3 >= 6) {
+                if (round3 >= 10) {
                     earnStar();
                     earnStar();
                     earnStar();

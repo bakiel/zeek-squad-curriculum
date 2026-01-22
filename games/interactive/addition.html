@@ -303,7 +303,7 @@
             <h2>Count and Add!</h2>
             <p style="text-align: center; color: #666; margin-bottom: 15px;">Count the items and pick the answer!</p>
 
-            <div class="score-display">Problem: <span id="problemNum">1</span> / 5</div>
+            <div class="score-display">Problem: <span id="problemNum">1</span> / 10</div>
 
             <div class="equation-display">
                 <div class="item-group" id="group1"></div>
@@ -323,7 +323,7 @@
             <h2>Addition Stories!</h2>
             <p style="text-align: center; color: #666; margin-bottom: 15px;">Read the story and find the answer!</p>
 
-            <div class="score-display">Story: <span id="storyNum">1</span> / 4</div>
+            <div class="score-display">Story: <span id="storyNum">1</span> / 8</div>
 
             <div class="story-problem" id="storyProblem">
                 <!-- Story will be inserted by JS -->
@@ -354,14 +354,23 @@
             { num1: 3, num2: 2, emoji: '🌟' },
             { num1: 1, num2: 3, emoji: '🐦' },
             { num1: 2, num2: 2, emoji: '🎈' },
-            { num1: 1, num2: 4, emoji: '🍪' }
+            { num1: 1, num2: 4, emoji: '🍪' },
+            { num1: 4, num2: 1, emoji: '🐟' },
+            { num1: 3, num2: 3, emoji: '🦋' },
+            { num1: 2, num2: 3, emoji: '🌸' },
+            { num1: 4, num2: 2, emoji: '🍓' },
+            { num1: 1, num2: 5, emoji: '🐝' }
         ];
 
         const stories = [
             { text: '2 birds are on a tree. 1 more flies in!', emoji: '🐦', num1: 2, num2: 1 },
             { text: '3 cookies on a plate. Mom adds 2 more!', emoji: '🍪', num1: 3, num2: 2 },
             { text: '1 puppy is playing. 2 friends join!', emoji: '🐕', num1: 1, num2: 2 },
-            { text: '2 balloons float up. 3 more go up too!', emoji: '🎈', num1: 2, num2: 3 }
+            { text: '2 balloons float up. 3 more go up too!', emoji: '🎈', num1: 2, num2: 3 },
+            { text: '4 fish swim in the pond. 2 more jump in!', emoji: '🐟', num1: 4, num2: 2 },
+            { text: '3 butterflies on a flower. 3 more land!', emoji: '🦋', num1: 3, num2: 3 },
+            { text: '5 stars twinkle in the sky. 1 more appears!', emoji: '⭐', num1: 5, num2: 1 },
+            { text: '2 bees buzz around. 4 friends come help!', emoji: '🐝', num1: 2, num2: 4 }
         ];
 
         let currentProblem = 0;

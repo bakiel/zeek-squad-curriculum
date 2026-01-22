@@ -134,8 +134,8 @@
 
         .emotions-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
             margin-bottom: 20px;
         }
 
@@ -219,6 +219,10 @@
         .answer-btn.scared { background: #ce93d8; }
         .answer-btn.surprised { background: #ffcc80; }
         .answer-btn.excited { background: #81c784; }
+        .answer-btn.worried { background: #b0bec5; }
+        .answer-btn.calm { background: #80deea; }
+        .answer-btn.proud { background: #fff59d; }
+        .answer-btn.shy { background: #f8bbd0; }
 
         .answer-btn.correct {
             animation: correctPulse 0.5s ease;
@@ -502,7 +506,7 @@
             }
 
             .emotions-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
 
             .emotion-card .emoji {
@@ -644,7 +648,11 @@
             { emoji: '😠', name: 'Angry', description: 'We feel angry when things seem unfair. Take deep breaths to calm down.' },
             { emoji: '😨', name: 'Scared', description: 'We feel scared when something seems dangerous. Tell a grown-up if you are afraid!' },
             { emoji: '😲', name: 'Surprised', description: 'We feel surprised when something unexpected happens!' },
-            { emoji: '🤩', name: 'Excited', description: 'We feel excited when we can not wait for something fun!' }
+            { emoji: '🤩', name: 'Excited', description: 'We feel excited when we can not wait for something fun!' },
+            { emoji: '😟', name: 'Worried', description: 'We feel worried when we think something bad might happen. Talk to someone you trust!' },
+            { emoji: '😌', name: 'Calm', description: 'We feel calm when we are peaceful and relaxed. Deep breathing helps us feel calm!' },
+            { emoji: '😊', name: 'Proud', description: 'We feel proud when we do something good or try our best!' },
+            { emoji: '😳', name: 'Shy', description: 'We feel shy when we meet new people or are in new places. It is OK to take your time!' }
         ];
 
         const scenarios = [
@@ -653,7 +661,11 @@
             { icon: '👻', text: 'You hear a spooky noise at night.', answer: 'Scared' },
             { icon: '🎢', text: 'You are going to a theme park tomorrow!', answer: 'Excited' },
             { icon: '🍪', text: 'Someone takes your cookie without asking.', answer: 'Angry' },
-            { icon: '🎈', text: 'A big balloon pops right next to you!', answer: 'Surprised' }
+            { icon: '🎈', text: 'A big balloon pops right next to you!', answer: 'Surprised' },
+            { icon: '📝', text: 'You have a big test at school tomorrow.', answer: 'Worried' },
+            { icon: '🌳', text: 'You are sitting under a tree on a nice day.', answer: 'Calm' },
+            { icon: '🏆', text: 'You learned to tie your shoes all by yourself!', answer: 'Proud' },
+            { icon: '👋', text: 'A new kid in class wants to be your friend.', answer: 'Shy' }
         ];
 
         const mirrorFaces = [
@@ -661,7 +673,10 @@
             { prompt: 'Show me a SAD face!', emoji: '😢', emotion: 'Sad' },
             { prompt: 'Show me a SURPRISED face!', emoji: '😲', emotion: 'Surprised' },
             { prompt: 'Show me an ANGRY face!', emoji: '😠', emotion: 'Angry' },
-            { prompt: 'Show me a SCARED face!', emoji: '😨', emotion: 'Scared' }
+            { prompt: 'Show me a SCARED face!', emoji: '😨', emotion: 'Scared' },
+            { prompt: 'Show me an EXCITED face!', emoji: '🤩', emotion: 'Excited' },
+            { prompt: 'Show me a WORRIED face!', emoji: '😟', emotion: 'Worried' },
+            { prompt: 'Show me a CALM face!', emoji: '😌', emotion: 'Calm' }
         ];
 
         const copingStrategies = [
@@ -672,7 +687,11 @@
             { icon: '🎵', text: 'Listen to music' },
             { icon: '📚', text: 'Read a book' },
             { icon: '🏃', text: 'Go for a walk' },
-            { icon: '🧸', text: 'Hug a stuffed animal' }
+            { icon: '🧸', text: 'Hug a stuffed animal' },
+            { icon: '🌈', text: 'Think happy thoughts' },
+            { icon: '🤗', text: 'Talk to a friend' },
+            { icon: '🎮', text: 'Play a game' },
+            { icon: '😴', text: 'Take a rest' }
         ];
 
         function clearElement(element) {
@@ -827,7 +846,7 @@
             const options = document.getElementById('answerOptions');
             clearElement(options);
 
-            const answers = ['Happy', 'Sad', 'Angry', 'Scared', 'Surprised', 'Excited'];
+            const answers = ['Happy', 'Sad', 'Angry', 'Scared', 'Surprised', 'Excited', 'Worried', 'Calm', 'Proud', 'Shy'];
             const shuffled = answers.sort(() => Math.random() - 0.5).slice(0, 4);
             if (!shuffled.includes(scenario.answer)) {
                 shuffled[0] = scenario.answer;
@@ -888,7 +907,7 @@
             const btns = document.getElementById('mirrorButtons');
             clearElement(btns);
 
-            const options = ['😊', '😢', '😲', '😠', '😨'];
+            const options = ['😊', '😢', '😲', '😠', '😨', '🤩', '😟', '😌'];
             options.forEach(emoji => {
                 const btn = document.createElement('button');
                 btn.className = 'emotion-btn';
@@ -963,7 +982,7 @@
 
             setTimeout(() => {
                 breathCount++;
-                if (breathCount < 3) {
+                if (breathCount < 5) {
                     instruction.textContent = 'Great! Let us do it again...';
                     circle.textContent = 'Breathe';
                     setTimeout(doBreathe, 1000);

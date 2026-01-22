@@ -658,7 +658,7 @@
     <div class="game-container hidden" id="activity4">
         <div class="activity-title">Story Quiz!</div>
 
-        <div class="counter" id="quizCounter">Question 1 of 4</div>
+        <div class="counter" id="quizCounter">Question 1 of 8</div>
 
         <div class="quiz-card">
             <div class="quiz-question" id="quizQuestion">What did the caterpillar turn into?</div>
@@ -730,7 +730,9 @@
         const sequenceSteps = [
             { emoji: '🥚', label: 'Egg' },
             { emoji: '🐛', label: 'Caterpillar' },
-            { emoji: '🍎', label: 'Eating' },
+            { emoji: '🍎', label: 'Eating fruit' },
+            { emoji: '🎂', label: 'Saturday feast' },
+            { emoji: '🥬', label: 'Green leaf' },
             { emoji: '🪺', label: 'Cocoon' },
             { emoji: '🦋', label: 'Butterfly' }
         ];
@@ -739,7 +741,11 @@
             { q: 'What did the caterpillar turn into?', options: ['🐸 Frog', '🦋 Butterfly', '🐦 Bird', '🐝 Bee'], answer: 1 },
             { q: 'What did he eat on Monday?', options: ['🍎 Apple', '🍐 Pear', '🍊 Orange', '🍓 Strawberry'], answer: 0 },
             { q: 'Why did the caterpillar get a tummy ache?', options: ['He was cold', 'He ate too much', 'He was tired', 'He was scared'], answer: 1 },
-            { q: 'What made him feel better?', options: ['🍕 Pizza', '🥬 Green leaf', '🍰 Cake', '🧁 Cupcake'], answer: 1 }
+            { q: 'What made him feel better?', options: ['🍕 Pizza', '🥬 Green leaf', '🍰 Cake', '🧁 Cupcake'], answer: 1 },
+            { q: 'How many strawberries did he eat on Friday?', options: ['3 strawberries', '4 strawberries', '5 strawberries', '6 strawberries'], answer: 2 },
+            { q: 'Where did the egg lay in the beginning?', options: ['On the ground', 'On a leaf', 'In a tree', 'In the water'], answer: 1 },
+            { q: 'What did the caterpillar build around himself?', options: ['A nest', 'A house', 'A cocoon', 'A bed'], answer: 2 },
+            { q: 'How many oranges did he eat on Thursday?', options: ['2 oranges', '3 oranges', '4 oranges', '5 oranges'], answer: 2 }
         ];
 
         let quizRound = 0;

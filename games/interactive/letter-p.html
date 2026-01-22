@@ -369,7 +369,7 @@
             <h2>Find All the P's!</h2>
             <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap every letter P you see!</p>
 
-            <div class="score-display">Found: <span id="foundCount">0</span> / 6</div>
+            <div class="score-display">Found: <span id="foundCount">0</span> / 10</div>
 
             <div class="letter-grid" id="letterGrid">
                 <!-- Letters will be added by JS -->
@@ -407,8 +407,8 @@
     <script>
         let foundPs = 0;
         let correctWords = 0;
-        const totalPs = 6;
-        const totalPWords = 4;
+        const totalPs = 10;
+        const totalPWords = 8;
 
         // Sound effects
         function playSound(type) {
@@ -517,7 +517,7 @@
         }
 
         function initLetterGrid() {
-            const letters = ['P', 'B', 'D', 'P', 'R', 'P', 'Q', 'P', 'D', 'B', 'P', 'R', 'Q', 'B', 'P'];
+            const letters = ['P', 'B', 'D', 'P', 'R', 'P', 'Q', 'P', 'D', 'B', 'P', 'R', 'Q', 'B', 'P', 'D', 'P', 'R', 'B', 'P', 'Q', 'D', 'P', 'B', 'P'];
             const grid = document.getElementById('letterGrid');
             grid.textContent = '';
 
@@ -568,7 +568,14 @@
                 { word: 'Ball', emoji: '⚽', startsWithP: false },
                 { word: 'Pig', emoji: '🐷', startsWithP: true },
                 { word: 'Pumpkin', emoji: '🎃', startsWithP: true },
-                { word: 'Dog', emoji: '🐕', startsWithP: false }
+                { word: 'Dog', emoji: '🐕', startsWithP: false },
+                { word: 'Pencil', emoji: '✏️', startsWithP: true },
+                { word: 'Apple', emoji: '🍎', startsWithP: false },
+                { word: 'Panda', emoji: '🐼', startsWithP: true },
+                { word: 'Sun', emoji: '☀️', startsWithP: false },
+                { word: 'Peach', emoji: '🍑', startsWithP: true },
+                { word: 'Parrot', emoji: '🦜', startsWithP: true },
+                { word: 'Fish', emoji: '🐟', startsWithP: false }
             ];
 
             const container = document.getElementById('wordCards');

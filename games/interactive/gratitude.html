@@ -349,6 +349,18 @@
             <button class="thankful-btn" onclick="selectThankful(this)">
                 <span class="emoji">📚</span> My School
             </button>
+            <button class="thankful-btn" onclick="selectThankful(this)">
+                <span class="emoji">🐕</span> My Pet
+            </button>
+            <button class="thankful-btn" onclick="selectThankful(this)">
+                <span class="emoji">🌞</span> Sunny Days
+            </button>
+            <button class="thankful-btn" onclick="selectThankful(this)">
+                <span class="emoji">👩‍🏫</span> My Teachers
+            </button>
+            <button class="thankful-btn" onclick="selectThankful(this)">
+                <span class="emoji">🌳</span> Nature
+            </button>
 
             <button class="next-btn" id="next1" onclick="completeGame1()" disabled>Next Activity</button>
         </div>
@@ -374,6 +386,22 @@
                 <p>I AM LOVED!</p>
             </div>
 
+            <div class="affirmation-card" onclick="sayAffirmation(this, 'I AM SMART!')">
+                <p>I AM SMART!</p>
+            </div>
+
+            <div class="affirmation-card" onclick="sayAffirmation(this, 'I AM A GOOD FRIEND!')">
+                <p>I AM A GOOD FRIEND!</p>
+            </div>
+
+            <div class="affirmation-card" onclick="sayAffirmation(this, 'I BELIEVE IN MYSELF!')">
+                <p>I BELIEVE IN MYSELF!</p>
+            </div>
+
+            <div class="affirmation-card" onclick="sayAffirmation(this, 'I CAN LEARN NEW THINGS!')">
+                <p>I CAN LEARN NEW THINGS!</p>
+            </div>
+
             <button class="next-btn" id="next2" onclick="completeGame2()" disabled>Next Activity</button>
         </div>
 
@@ -383,6 +411,9 @@
             <p style="text-align: center; color: #666; margin-bottom: 15px;">Make heart hands and send love! Tap the hearts!</p>
 
             <div class="heart-container">
+                <span class="heart" onclick="sendHeart(this)">💖</span>
+                <span class="heart" onclick="sendHeart(this)">💖</span>
+                <span class="heart" onclick="sendHeart(this)">💖</span>
                 <span class="heart" onclick="sendHeart(this)">💖</span>
                 <span class="heart" onclick="sendHeart(this)">💖</span>
                 <span class="heart" onclick="sendHeart(this)">💖</span>
@@ -476,7 +507,7 @@
                 selectedThankful++;
                 playSound('select');
 
-                if (selectedThankful >= 3) {
+                if (selectedThankful >= 5) {
                     document.getElementById('next1').disabled = false;
                 }
             }
@@ -506,7 +537,7 @@
                     speechSynthesis.speak(utterance);
                 }
 
-                if (affirmationsSaid >= 4) {
+                if (affirmationsSaid >= 8) {
                     document.getElementById('next2').disabled = false;
                 }
             }
@@ -529,7 +560,7 @@
                 heartsSent++;
                 playSound('select');
 
-                if (heartsSent >= 3) {
+                if (heartsSent >= 5) {
                     document.getElementById('next3').disabled = false;
                 }
             }

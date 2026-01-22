@@ -359,10 +359,13 @@
 
             <div class="scenario-box" id="scenario">
                 <span class="big-emoji">🪙</span>
-                <p>You have 3 coins. Where should they go?</p>
+                <p>You have 6 coins. Where should they go?</p>
             </div>
 
             <div class="coin-pile" id="coinPile">
+                <span class="coin" onclick="selectCoin(this)">🪙</span>
+                <span class="coin" onclick="selectCoin(this)">🪙</span>
+                <span class="coin" onclick="selectCoin(this)">🪙</span>
                 <span class="coin" onclick="selectCoin(this)">🪙</span>
                 <span class="coin" onclick="selectCoin(this)">🪙</span>
                 <span class="coin" onclick="selectCoin(this)">🪙</span>
@@ -394,24 +397,18 @@
             <h2>Saving Smart!</h2>
             <p style="text-align: center; color: #666; margin-bottom: 15px;">Pick the SMART choice!</p>
 
+            <div class="score-display">Question: <span id="quizNum">1</span> / 5</div>
+
             <div class="scenario-box" id="quizScenario">
-                <span class="big-emoji">🧸</span>
-                <p>You want a toy that costs 5 coins. You have 3 coins. What should you do?</p>
+                <span class="big-emoji" id="quizEmoji">🧸</span>
+                <p id="quizQuestion">You want a toy that costs 5 coins. You have 3 coins. What should you do?</p>
             </div>
 
             <div id="quizOptions">
-                <button class="action-btn" onclick="checkQuiz(this, false)">
-                    <span class="emoji">😢</span> Give up! I'll never get it.
-                </button>
-                <button class="action-btn" onclick="checkQuiz(this, true)">
-                    <span class="emoji">💪</span> SAVE more coins until I have 5!
-                </button>
-                <button class="action-btn" onclick="checkQuiz(this, false)">
-                    <span class="emoji">🍬</span> Spend my 3 coins on candy instead.
-                </button>
+                <!-- Options will be added by JS -->
             </div>
 
-            <button class="next-btn hidden" id="next3" onclick="finishGame()">Finish!</button>
+            <button class="next-btn hidden" id="next3" onclick="nextQuiz()">Next Question</button>
         </div>
 
         <!-- Celebration -->
@@ -433,12 +430,61 @@
         let selectedCoin = null;
         let coinsPlaced = 0;
         let jarCounts = { spend: 0, save: 0, share: 0 };
+        let currentQuiz = 0;
 
         const jarDescriptions = {
             spend: "SPEND jar is for things you need NOW! Like snacks or small toys.",
             save: "SAVE jar is for BIG things later! Save up for something special!",
             share: "SHARE jar is for helping others! Give to people who need it."
         };
+
+        const quizQuestions = [
+            {
+                emoji: '🧸',
+                question: 'You want a toy that costs 5 coins. You have 3 coins. What should you do?',
+                options: [
+                    { text: 'Give up! I\'ll never get it.', emoji: '😢', correct: false },
+                    { text: 'SAVE more coins until I have 5!', emoji: '💪', correct: true },
+                    { text: 'Spend my 3 coins on candy instead.', emoji: '🍬', correct: false }
+                ]
+            },
+            {
+                emoji: '🎂',
+                question: 'It\'s your friend\'s birthday! You have 4 coins. What should you do?',
+                options: [
+                    { text: 'Keep all the coins for myself.', emoji: '😈', correct: false },
+                    { text: 'Use my SHARE jar to buy a small gift!', emoji: '🎁', correct: true },
+                    { text: 'Tell them I forgot their birthday.', emoji: '🙈', correct: false }
+                ]
+            },
+            {
+                emoji: '🍦',
+                question: 'You really want ice cream right now. You have 2 coins. What jar is that?',
+                options: [
+                    { text: 'SAVE jar - for later!', emoji: '🏦', correct: false },
+                    { text: 'SPEND jar - for things I want now!', emoji: '🍨', correct: true },
+                    { text: 'SHARE jar - to give away!', emoji: '💝', correct: false }
+                ]
+            },
+            {
+                emoji: '🚲',
+                question: 'You want a bike that costs 20 coins. You have 5 coins. What\'s the best plan?',
+                options: [
+                    { text: 'Buy 4 small toys instead.', emoji: '🎲', correct: false },
+                    { text: 'Put coins in SAVE jar every week!', emoji: '📈', correct: true },
+                    { text: 'Give up, it\'s too expensive.', emoji: '😞', correct: false }
+                ]
+            },
+            {
+                emoji: '🐕',
+                question: 'The animal shelter needs help. You have 3 coins. What\'s the kind thing to do?',
+                options: [
+                    { text: 'Keep my coins, I need them!', emoji: '💰', correct: false },
+                    { text: 'Use SHARE jar to help the animals!', emoji: '❤️', correct: true },
+                    { text: 'Spend it all on candy.', emoji: '🍭', correct: false }
+                ]
+            }
+        ];
 
         function playSound(type) {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -527,7 +573,7 @@
             selectedCoin.style.transform = '';
             selectedCoin = null;
 
-            if (coinsPlaced >= 3) {
+            if (coinsPlaced >= 6) {
                 document.getElementById('next2').disabled = false;
             }
         }
@@ -540,6 +586,33 @@
 
             document.getElementById('game2').classList.add('hidden');
             document.getElementById('game3').classList.remove('hidden');
+            showQuiz();
+        }
+
+        function showQuiz() {
+            const q = quizQuestions[currentQuiz];
+            document.getElementById('quizEmoji').textContent = q.emoji;
+            document.getElementById('quizQuestion').textContent = q.question;
+            document.getElementById('quizNum').textContent = currentQuiz + 1;
+
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.textContent = '';
+
+            q.options.forEach(function(opt) {
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                btn.onclick = function() { checkQuiz(btn, opt.correct); };
+
+                const emoji = document.createElement('span');
+                emoji.className = 'emoji';
+                emoji.textContent = opt.emoji;
+
+                btn.appendChild(emoji);
+                btn.appendChild(document.createTextNode(' ' + opt.text));
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('next3').classList.add('hidden');
         }
 
         function checkQuiz(btn, isCorrect) {
@@ -551,12 +624,24 @@
                     b.onclick = null;
                 });
 
-                document.getElementById('next3').classList.remove('hidden');
+                if (currentQuiz < quizQuestions.length - 1) {
+                    document.getElementById('next3').classList.remove('hidden');
+                    document.getElementById('next3').textContent = 'Next Question';
+                } else {
+                    document.getElementById('next3').classList.remove('hidden');
+                    document.getElementById('next3').textContent = 'Finish!';
+                    document.getElementById('next3').onclick = finishGame;
+                }
             } else {
                 btn.classList.add('wrong');
                 playSound('wrong');
                 setTimeout(function() { btn.classList.remove('wrong'); }, 500);
             }
+        }
+
+        function nextQuiz() {
+            currentQuiz++;
+            showQuiz();
         }
 
         function finishGame() {

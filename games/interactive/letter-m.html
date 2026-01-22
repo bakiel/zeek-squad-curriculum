@@ -564,7 +564,7 @@
             Tap on every letter M you see!
         </p>
 
-        <div class="m-counter" id="mCounter">Found: 0 / 6</div>
+        <div class="m-counter" id="mCounter">Found: 0 / 10</div>
 
         <div class="letter-grid" id="letterGrid"></div>
 
@@ -597,7 +597,7 @@
         let currentActivity = 1;
         let starsEarned = 0;
         let mFound = 0;
-        let totalMs = 6;
+        let totalMs = 10;
         let currentWordRound = 0;
 
         const wordRounds = [
@@ -618,6 +618,18 @@
                 { image: '🏠', word: 'House', startsWithM: false },
                 { image: '🎵', word: 'Music', startsWithM: true },
                 { image: '📚', word: 'Book', startsWithM: false }
+            ],
+            [
+                { image: '🐵', word: 'Monkey', startsWithM: true },
+                { image: '🐕', word: 'Dog', startsWithM: false },
+                { image: '🪞', word: 'Mirror', startsWithM: true },
+                { image: '🪑', word: 'Chair', startsWithM: false }
+            ],
+            [
+                { image: '⛰️', word: 'Mountain', startsWithM: true },
+                { image: '🌊', word: 'Ocean', startsWithM: false },
+                { image: '🧲', word: 'Magnet', startsWithM: true },
+                { image: '🔔', word: 'Bell', startsWithM: false }
             ]
         ];
 
@@ -862,7 +874,7 @@
             mFound = 0;
             document.getElementById('mCounter').textContent = 'Found: 0 / ' + totalMs;
 
-            const letters = ['A', 'B', 'M', 'D', 'E', 'M', 'G', 'H', 'I', 'M', 'K', 'L', 'M', 'N', 'O', 'M', 'Q', 'R', 'S', 'M'];
+            const letters = ['A', 'B', 'M', 'D', 'E', 'M', 'G', 'H', 'I', 'M', 'K', 'L', 'M', 'N', 'O', 'M', 'Q', 'R', 'S', 'M', 'T', 'M', 'V', 'W', 'M'];
             const shuffled = letters.sort(() => Math.random() - 0.5);
 
             shuffled.forEach((letter) => {
@@ -873,7 +885,7 @@
                 grid.appendChild(cell);
             });
 
-            updateMascot('Can you find all 6 letter M\'s? Tap each M you see!');
+            updateMascot('Can you find all 10 letter M\'s? Tap each M you see!');
         }
 
         function checkLetter(letter, cell) {
