@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saving Money - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+        .mascot-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .mascot {
+            font-size: 4rem;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            max-width: 250px;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+        .speech-bubble p {
+            color: #f5576c;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+        }
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .star {
+            font-size: 1.8rem;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        .star.earned {
+            opacity: 1;
+            animation: starPop 0.5s ease;
+        }
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .game-card h2 {
+            color: #f5576c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        .jars-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .jar {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .jar:hover {
+            transform: scale(1.1);
+        }
+        .jar.selected {
+            transform: scale(1.15);
+        }
+        .jar .emoji {
+            font-size: 3rem;
+            display: block;
+        }
+        .jar .label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .jar.spend .label { color: #ef4444; }
+        .jar.save .label { color: #22c55e; }
+        .jar.share .label { color: #3b82f6; }
+        .coin-pile {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .coin {
+            font-size: 2.5rem;
+            cursor: grab;
+            transition: all 0.3s;
+            animation: shine 2s infinite;
+        }
+        .coin:hover {
+            transform: scale(1.2);
+        }
+        .coin.placed {
+            opacity: 0.3;
+            cursor: default;
+        }
+        @keyframes shine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            font-family: inherit;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .action-btn:hover {
+            border-color: #f5576c;
+            background: #fef2f2;
+        }
+        .action-btn.correct {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+        .action-btn.wrong {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+        .action-btn .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .scenario-box {
+            background: #fef3c7;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .scenario-box p {
+            font-size: 1.1rem;
+            color: #92400e;
+        }
+        .scenario-box .big-emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .jar-totals {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 15px;
+        }
+        .jar-total {
+            text-align: center;
+        }
+        .jar-total .emoji {
+            font-size: 2rem;
+        }
+        .jar-total .count {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .jar-total.spend .count { color: #ef4444; }
+        .jar-total.save .count { color: #22c55e; }
+        .jar-total.share .count { color: #3b82f6; }
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: inherit;
+        }
+        .next-btn:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .hidden { display: none !important; }
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            z-index: 100;
+        }
+        .celebration h1 {
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .trophy {
+            font-size: 6rem;
+            animation: bounce 1s infinite;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .chant-box {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .chant-box p {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Saving Money</h1>
+        </div>
+
+        <div class="mascot-container">
+            <span class="mascot">🐷</span>
+            <div class="speech-bubble">
+                <p id="mascot-text">Hi! I'm Penny Pig! Let's learn about saving money!</p>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">⭐</span>
+            <span class="star" id="star2">⭐</span>
+            <span class="star" id="star3">⭐</span>
+        </div>
+
+        <!-- Game 1: Learn the Three Jars -->
+        <div class="game-card" id="game1">
+            <h2>The Three Jars!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap each jar to learn what it's for!</p>
+
+            <div class="jars-container">
+                <div class="jar spend" onclick="learnJar(this, 'spend')">
+                    <span class="emoji">🏺</span>
+                    <span class="label">SPEND</span>
+                </div>
+                <div class="jar save" onclick="learnJar(this, 'save')">
+                    <span class="emoji">🏺</span>
+                    <span class="label">SAVE</span>
+                </div>
+                <div class="jar share" onclick="learnJar(this, 'share')">
+                    <span class="emoji">🏺</span>
+                    <span class="label">SHARE</span>
+                </div>
+            </div>
+
+            <div class="chant-box">
+                <p id="jarInfo">Tap a jar to learn!</p>
+            </div>
+
+            <button class="next-btn" id="next1" onclick="completeGame1()" disabled>I Know the Jars!</button>
+        </div>
+
+        <!-- Game 2: Sort the Coins -->
+        <div class="game-card hidden" id="game2">
+            <h2>Sort the Coins!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 10px;">Put coins in the right jars!</p>
+
+            <div class="scenario-box" id="scenario">
+                <span class="big-emoji">🪙</span>
+                <p>You have 3 coins. Where should they go?</p>
+            </div>
+
+            <div class="coin-pile" id="coinPile">
+                <span class="coin" onclick="selectCoin(this)">🪙</span>
+                <span class="coin" onclick="selectCoin(this)">🪙</span>
+                <span class="coin" onclick="selectCoin(this)">🪙</span>
+            </div>
+
+            <div class="jars-container">
+                <div class="jar spend" onclick="placeCoin('spend')">
+                    <span class="emoji">🏺</span>
+                    <span class="label">SPEND</span>
+                    <div class="jar-count" id="spendCount">0</div>
+                </div>
+                <div class="jar save" onclick="placeCoin('save')">
+                    <span class="emoji">🏺</span>
+                    <span class="label">SAVE</span>
+                    <div class="jar-count" id="saveCount">0</div>
+                </div>
+                <div class="jar share" onclick="placeCoin('share')">
+                    <span class="emoji">🏺</span>
+                    <span class="label">SHARE</span>
+                    <div class="jar-count" id="shareCount">0</div>
+                </div>
+            </div>
+
+            <button class="next-btn" id="next2" onclick="completeGame2()" disabled>Done Sorting!</button>
+        </div>
+
+        <!-- Game 3: Saving Quiz -->
+        <div class="game-card hidden" id="game3">
+            <h2>Saving Smart!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Pick the SMART choice!</p>
+
+            <div class="scenario-box" id="quizScenario">
+                <span class="big-emoji">🧸</span>
+                <p>You want a toy that costs 5 coins. You have 3 coins. What should you do?</p>
+            </div>
+
+            <div id="quizOptions">
+                <button class="action-btn" onclick="checkQuiz(this, false)">
+                    <span class="emoji">😢</span> Give up! I'll never get it.
+                </button>
+                <button class="action-btn" onclick="checkQuiz(this, true)">
+                    <span class="emoji">💪</span> SAVE more coins until I have 5!
+                </button>
+                <button class="action-btn" onclick="checkQuiz(this, false)">
+                    <span class="emoji">🍬</span> Spend my 3 coins on candy instead.
+                </button>
+            </div>
+
+            <button class="next-btn hidden" id="next3" onclick="finishGame()">Finish!</button>
+        </div>
+
+        <!-- Celebration -->
+        <div class="celebration hidden" id="celebration">
+            <span class="trophy">🏆</span>
+            <h1>You're a Smart Saver!</h1>
+            <div class="stars" style="margin: 20px 0;">
+                <span class="star earned">⭐</span>
+                <span class="star earned">⭐</span>
+                <span class="star earned">⭐</span>
+            </div>
+            <p style="color: white; font-size: 1.2rem;">"Save now, enjoy later!"</p>
+            <button class="next-btn" style="max-width: 250px; margin-top: 30px;" onclick="window.location.href='index.html#thursday'">Back to Games</button>
+        </div>
+    </div>
+
+    <script>
+        let jarsLearned = 0;
+        let selectedCoin = null;
+        let coinsPlaced = 0;
+        let jarCounts = { spend: 0, save: 0, share: 0 };
+
+        const jarDescriptions = {
+            spend: "SPEND jar is for things you need NOW! Like snacks or small toys.",
+            save: "SAVE jar is for BIG things later! Save up for something special!",
+            share: "SHARE jar is for helping others! Give to people who need it."
+        };
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'coin') {
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.05);
+            } else if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            } else if (type === 'celebration') {
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.15);
+                oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.3);
+                oscillator.frequency.setValueAtTime(1047, audioContext.currentTime + 0.45);
+            }
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        function learnJar(jar, type) {
+            if (!jar.classList.contains('selected')) {
+                jar.classList.add('selected');
+                jarsLearned++;
+                playSound('coin');
+
+                document.getElementById('jarInfo').textContent = jarDescriptions[type];
+
+                // Speak the description
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(jarDescriptions[type]);
+                    utterance.rate = 0.9;
+                    speechSynthesis.speak(utterance);
+                }
+
+                if (jarsLearned >= 3) {
+                    document.getElementById('next1').disabled = false;
+                }
+            }
+        }
+
+        function completeGame1() {
+            playSound('correct');
+            document.getElementById('star1').classList.add('earned');
+            document.getElementById('progress').style.width = '33%';
+            document.getElementById('mascot-text').textContent = "Great! Now let's sort some coins!";
+
+            document.getElementById('game1').classList.add('hidden');
+            document.getElementById('game2').classList.remove('hidden');
+        }
+
+        function selectCoin(coin) {
+            if (coin.classList.contains('placed')) return;
+
+            document.querySelectorAll('.coin').forEach(function(c) {
+                c.style.transform = '';
+            });
+
+            selectedCoin = coin;
+            coin.style.transform = 'scale(1.3)';
+            playSound('coin');
+        }
+
+        function placeCoin(jarType) {
+            if (!selectedCoin || selectedCoin.classList.contains('placed')) return;
+
+            selectedCoin.classList.add('placed');
+            jarCounts[jarType]++;
+            coinsPlaced++;
+
+            document.getElementById(jarType + 'Count').textContent = jarCounts[jarType];
+            playSound('coin');
+
+            selectedCoin.style.transform = '';
+            selectedCoin = null;
+
+            if (coinsPlaced >= 3) {
+                document.getElementById('next2').disabled = false;
+            }
+        }
+
+        function completeGame2() {
+            playSound('correct');
+            document.getElementById('star2').classList.add('earned');
+            document.getElementById('progress').style.width = '66%';
+            document.getElementById('mascot-text').textContent = "Awesome! Now answer the saving question!";
+
+            document.getElementById('game2').classList.add('hidden');
+            document.getElementById('game3').classList.remove('hidden');
+        }
+
+        function checkQuiz(btn, isCorrect) {
+            if (isCorrect) {
+                btn.classList.add('correct');
+                playSound('correct');
+
+                document.querySelectorAll('.action-btn').forEach(function(b) {
+                    b.onclick = null;
+                });
+
+                document.getElementById('next3').classList.remove('hidden');
+            } else {
+                btn.classList.add('wrong');
+                playSound('wrong');
+                setTimeout(function() { btn.classList.remove('wrong'); }, 500);
+            }
+        }
+
+        function finishGame() {
+            playSound('celebration');
+            document.getElementById('star3').classList.add('earned');
+            document.getElementById('progress').style.width = '100%';
+
+            document.getElementById('game3').classList.add('hidden');
+            document.getElementById('celebration').classList.remove('hidden');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#f093fb', '#ffd93d', '#6bcb77', '#4d96ff', '#f5576c'];
+            const celebration = document.getElementById('celebration');
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                celebration.appendChild(confetti);
+            }
+        }
+    </script>
+</body>
+</html>
