@@ -200,8 +200,8 @@
 
         <!-- Tab Navigation -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('tuesday')">📅 Tuesday</button>
-            <button class="tab-btn" onclick="showTab('wednesday')">📅 Wednesday</button>
+            <button class="tab-btn active" onclick="showTab('tuesday', this)">📅 Tuesday</button>
+            <button class="tab-btn" onclick="showTab('wednesday', this)">📅 Wednesday</button>
         </div>
 
         <!-- TUESDAY GAMES -->
@@ -407,23 +407,46 @@
     </div>
 
     <script>
-        function showTab(tabId) {
+        function showTab(tabId, btn) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
 
             // Deactivate all tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
             });
 
             // Show selected tab content
             document.getElementById(tabId).classList.add('active');
 
-            // Activate clicked button
-            event.target.classList.add('active');
+            // Activate correct button
+            if (btn) {
+                btn.classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    if (b.textContent.toLowerCase().includes(tabId)) {
+                        b.classList.add('active');
+                    }
+                });
+            }
         }
+
+        // Auto-select tab based on URL hash or day of week
+        document.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash.replace('#', '');
+            const today = new Date().getDay();
+
+            if (hash === 'wednesday' || hash === 'wed') {
+                showTab('wednesday');
+            } else if (hash === 'tuesday' || hash === 'tue') {
+                showTab('tuesday');
+            } else if (today === 3) {
+                // Auto-select Wednesday on Wednesdays
+                showTab('wednesday');
+            }
+        });
     </script>
 </body>
 </html>
