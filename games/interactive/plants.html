@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Plants - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn { display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; transition: all 0.3s; cursor: pointer; }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: plantGrow 2s ease-in-out infinite; }
+        @keyframes plantGrow { 0%, 100% { transform: scaleY(1) rotate(-3deg); } 50% { transform: scaleY(1.1) rotate(3deg); } }
+        .speech-bubble { background: white; padding: 15px 20px; border-radius: 20px; flex: 1; position: relative; font-size: 1.1rem; color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .speech-bubble:before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); border: 10px solid transparent; border-right-color: white; }
+
+        .progress-container { background: rgba(255,255,255,0.3); border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 60% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0deg); } }
+
+        .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { padding: 10px 12px; border: none; background: rgba(255,255,255,0.2); color: white; border-radius: 10px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+        .tab-btn:hover { background: rgba(255,255,255,0.3); }
+        .tab-btn.active { background: white; color: #27ae60; font-weight: bold; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .game-area { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .question-counter { text-align: center; color: #666; margin-bottom: 15px; font-size: 1rem; }
+
+        .instruction { background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); color: white; padding: 15px 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
+
+        /* Plant Parts Diagram */
+        .plant-diagram { text-align: center; margin: 20px 0; }
+        .plant-svg { max-width: 250px; margin: 0 auto; }
+        .plant-part { cursor: pointer; transition: all 0.3s; }
+        .plant-part:hover { transform: scale(1.1); }
+        .plant-part.highlighted { animation: pulse 0.5s ease; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        .part-buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+        .part-btn { padding: 12px 20px; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer; font-family: inherit; transition: all 0.3s; background: #f0f0f0; }
+        .part-btn:hover { background: #27ae60; color: white; transform: scale(1.05); }
+        .part-btn.correct { background: #27ae60; color: white; }
+        .part-btn.wrong { background: #e74c3c; color: white; }
+
+        /* Sort Game */
+        .sort-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .sort-zone { flex: 1; min-width: 140px; background: #f8f9fa; border-radius: 15px; padding: 15px; min-height: 200px; border: 3px dashed #ddd; }
+        .sort-zone h3 { text-align: center; color: #27ae60; margin-bottom: 10px; font-size: 1rem; }
+        .sort-zone .emoji { font-size: 2rem; text-align: center; display: block; }
+
+        .draggable-items { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+        .drag-item { padding: 12px 18px; background: white; border-radius: 10px; cursor: grab; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: all 0.3s; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+        .drag-item:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .drag-item .item-emoji { font-size: 1.5rem; }
+        .drag-item.correct { background: #d5f5e3; border: 2px solid #27ae60; }
+        .drag-item.wrong { background: #fadbd8; border: 2px solid #e74c3c; animation: wrongShake 0.5s ease; }
+        @keyframes wrongShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        /* Life Cycle */
+        .lifecycle-container { text-align: center; }
+        .lifecycle-stages { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+        .stage-slot { width: 80px; height: 100px; border: 3px dashed #27ae60; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.8rem; color: #666; background: #f8f9fa; }
+        .stage-slot.filled { border-style: solid; background: #d5f5e3; }
+        .stage-slot .stage-emoji { font-size: 2.5rem; }
+        .stage-slot .stage-label { font-size: 0.75rem; margin-top: 5px; }
+
+        .stage-options { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .stage-option { padding: 10px 15px; background: white; border-radius: 10px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: all 0.3s; display: flex; flex-direction: column; align-items: center; }
+        .stage-option:hover { transform: scale(1.05); background: #e8f5e9; }
+        .stage-option .opt-emoji { font-size: 2rem; }
+        .stage-option .opt-label { font-size: 0.8rem; margin-top: 5px; }
+        .stage-option.used { opacity: 0.4; pointer-events: none; }
+
+        /* Plant Needs */
+        .needs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+        .need-card { background: #f8f9fa; padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s; border: 3px solid transparent; }
+        .need-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .need-card .need-emoji { font-size: 3rem; margin-bottom: 10px; }
+        .need-card .need-label { font-size: 1rem; font-weight: bold; color: #333; }
+        .need-card.correct { background: #d5f5e3; border-color: #27ae60; }
+        .need-card.wrong { background: #fadbd8; border-color: #e74c3c; }
+
+        .celebration { display: none; text-align: center; padding: 30px; }
+        .celebration.show { display: block; animation: celebrationPop 0.5s ease; }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { font-size: 2rem; color: #27ae60; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; animation: trophyBounce 1s ease infinite; }
+        @keyframes trophyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: confettiFall 3s ease-out forwards; }
+        @keyframes confettiFall { to { top: 100vh; transform: rotate(720deg); } }
+
+        .next-btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; font-family: inherit; margin-top: 15px; transition: all 0.3s; }
+        .next-btn:hover { transform: scale(1.02); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">← Back to Games</a>
+        <div class="header"><h1>🌱 Types of Plants!</h1></div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🌻</div>
+            <div class="speech-bubble" id="mascotMessage">Hi friend! I am Sunny the Sunflower! Let us learn about plants together! Plants are living things that grow!</div>
+        </div>
+
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="stars">
+            <span class="star" id="star1">⭐</span>
+            <span class="star" id="star2">⭐</span>
+            <span class="star" id="star3">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="parts">🌿 Parts</button>
+            <button class="tab-btn" data-tab="types">🌳 Types</button>
+            <button class="tab-btn" data-tab="lifecycle">🔄 Life</button>
+            <button class="tab-btn" data-tab="needs">💧 Needs</button>
+        </div>
+
+        <div class="tab-content active" id="parts-tab">
+            <div class="game-area">
+                <div class="instruction">Tap the part of the plant I name!</div>
+                <div class="question-counter" id="partsCounter">Question 1 of 4</div>
+                <div class="plant-diagram">
+                    <svg class="plant-svg" viewBox="0 0 200 300" width="200" height="300">
+                        <g id="roots" class="plant-part" onclick="checkPart('roots')">
+                            <path d="M100 270 Q80 290 60 285 M100 270 Q90 285 85 295 M100 270 Q110 285 115 295 M100 270 Q120 290 140 285" stroke="#8B4513" stroke-width="4" fill="none"/>
+                            <text x="100" y="298" text-anchor="middle" font-size="12" fill="#666">Roots</text>
+                        </g>
+                        <g id="stem" class="plant-part" onclick="checkPart('stem')">
+                            <rect x="95" y="120" width="10" height="150" fill="#228B22" rx="3"/>
+                            <text x="120" y="200" font-size="12" fill="#666">Stem</text>
+                        </g>
+                        <g id="leaves" class="plant-part" onclick="checkPart('leaves')">
+                            <ellipse cx="70" cy="160" rx="30" ry="15" fill="#32CD32" transform="rotate(-30 70 160)"/>
+                            <ellipse cx="130" cy="160" rx="30" ry="15" fill="#32CD32" transform="rotate(30 130 160)"/>
+                            <ellipse cx="65" cy="200" rx="25" ry="12" fill="#32CD32" transform="rotate(-20 65 200)"/>
+                            <ellipse cx="135" cy="200" rx="25" ry="12" fill="#32CD32" transform="rotate(20 135 200)"/>
+                            <text x="155" y="145" font-size="12" fill="#666">Leaves</text>
+                        </g>
+                        <g id="flower" class="plant-part" onclick="checkPart('flower')">
+                            <circle cx="100" cy="80" r="30" fill="#FFD700"/>
+                            <ellipse cx="100" cy="45" rx="12" ry="20" fill="#FF6B6B"/>
+                            <ellipse cx="130" cy="65" rx="12" ry="20" fill="#FF6B6B" transform="rotate(72 130 65)"/>
+                            <ellipse cx="120" cy="105" rx="12" ry="20" fill="#FF6B6B" transform="rotate(144 120 105)"/>
+                            <ellipse cx="80" cy="105" rx="12" ry="20" fill="#FF6B6B" transform="rotate(-144 80 105)"/>
+                            <ellipse cx="70" cy="65" rx="12" ry="20" fill="#FF6B6B" transform="rotate(-72 70 65)"/>
+                            <text x="100" y="20" text-anchor="middle" font-size="12" fill="#666">Flower</text>
+                        </g>
+                    </svg>
+                </div>
+                <div id="partQuestion" style="text-align: center; font-size: 1.3rem; font-weight: bold; color: #27ae60; margin-top: 15px;">Tap the ROOTS!</div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="types-tab">
+            <div class="game-area">
+                <div class="instruction">Sort the plants into the right groups!</div>
+                <div class="question-counter" id="typesCounter">Sorted: 0 / 8</div>
+                <div class="sort-container">
+                    <div class="sort-zone" id="treeZone" onclick="sortPlant('tree')">
+                        <span class="emoji">🌳</span>
+                        <h3>Trees</h3>
+                    </div>
+                    <div class="sort-zone" id="flowerZone" onclick="sortPlant('flower')">
+                        <span class="emoji">🌸</span>
+                        <h3>Flowers</h3>
+                    </div>
+                    <div class="sort-zone" id="vegZone" onclick="sortPlant('vegetable')">
+                        <span class="emoji">🥕</span>
+                        <h3>Vegetables</h3>
+                    </div>
+                </div>
+                <div class="draggable-items" id="plantItems"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="lifecycle-tab">
+            <div class="game-area">
+                <div class="instruction">Put the plant life cycle in order!</div>
+                <div class="lifecycle-container">
+                    <div class="lifecycle-stages" id="lifecycleSlots"></div>
+                    <div class="stage-options" id="stageOptions"></div>
+                </div>
+                <button class="next-btn hidden" id="nextLifecycle" onclick="resetLifecycle()">Try Again!</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="needs-tab">
+            <div class="game-area">
+                <div class="instruction">What do plants need to grow? Tap the correct answers!</div>
+                <div class="question-counter" id="needsCounter">Found: 0 / 4</div>
+                <div class="needs-grid" id="needsGrid"></div>
+            </div>
+        </div>
+
+        <div class="celebration" id="celebration">
+            <div class="trophy">🏆</div>
+            <h2>Plant Expert!</h2>
+            <p>You learned all about plants!</p>
+            <button class="next-btn" onclick="location.reload()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        function clearChildren(element) { while (element.firstChild) { element.removeChild(element.firstChild); } }
+
+        var audioContext = null;
+        function initAudio() { if (!audioContext) { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } }
+
+        function playSound(type) {
+            initAudio();
+            var oscillator = audioContext.createOscillator();
+            var gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            if (type === 'correct') { oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); }
+            else if (type === 'wrong') { oscillator.frequency.setValueAtTime(200, audioContext.currentTime); oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1); }
+            else if (type === 'star') { oscillator.frequency.setValueAtTime(880, audioContext.currentTime); oscillator.frequency.setValueAtTime(1108.73, audioContext.currentTime + 0.1); gainNode.gain.setValueAtTime(0.3, audioContext.currentTime); }
+            else if (type === 'click') { oscillator.frequency.setValueAtTime(400, audioContext.currentTime); gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); }
+            else if (type === 'complete') { oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.15); oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.3); oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.45); }
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        var totalScore = 0, maxScore = 24, starsEarned = 0;
+        var tabsCompleted = { parts: false, types: false, lifecycle: false, needs: false };
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                playSound('click');
+                var tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                this.classList.add('active');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+
+        function updateProgress() {
+            var percent = (totalScore / maxScore) * 100;
+            document.getElementById('progressBar').style.width = Math.min(percent, 100) + '%';
+            if (percent >= 33 && starsEarned < 1) { starsEarned = 1; document.getElementById('star1').classList.add('earned'); playSound('star'); }
+            if (percent >= 66 && starsEarned < 2) { starsEarned = 2; document.getElementById('star2').classList.add('earned'); playSound('star'); }
+            if (percent >= 100 && starsEarned < 3) { starsEarned = 3; document.getElementById('star3').classList.add('earned'); playSound('star'); }
+        }
+
+        function updateMascot(message) { document.getElementById('mascotMessage').textContent = message; }
+        function checkAllComplete() { if (tabsCompleted.parts && tabsCompleted.types && tabsCompleted.lifecycle && tabsCompleted.needs) { showCelebration(); } }
+
+        function showCelebration() {
+            playSound('complete');
+            document.getElementById('celebration').classList.add('show');
+            var colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#27ae60', '#FF8E53'];
+            for (var i = 0; i < 50; i++) {
+                setTimeout(function() {
+                    var confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(function() { confetti.remove(); }, 3000);
+                }, i * 50);
+            }
+        }
+
+        // PARTS TAB
+        var plantParts = ['roots', 'stem', 'leaves', 'flower'];
+        var partDescriptions = {
+            roots: 'Roots grow underground and drink water!',
+            stem: 'The stem holds the plant up tall!',
+            leaves: 'Leaves make food from sunlight!',
+            flower: 'The flower makes seeds for new plants!'
+        };
+        var currentPartIndex = 0;
+
+        function updatePartQuestion() {
+            if (currentPartIndex >= plantParts.length) {
+                tabsCompleted.parts = true;
+                totalScore += 2;
+                updateProgress();
+                updateMascot('You know all the plant parts! Plants have roots, stems, leaves, and flowers!');
+                checkAllComplete();
+                return;
+            }
+            document.getElementById('partsCounter').textContent = 'Question ' + (currentPartIndex + 1) + ' of ' + plantParts.length;
+            document.getElementById('partQuestion').textContent = 'Tap the ' + plantParts[currentPartIndex].toUpperCase() + '!';
+        }
+
+        function checkPart(partName) {
+            var correctPart = plantParts[currentPartIndex];
+            var element = document.getElementById(partName);
+
+            if (partName === correctPart) {
+                element.classList.add('highlighted');
+                totalScore++;
+                playSound('correct');
+                updateMascot('Correct! ' + partDescriptions[partName]);
+                updateProgress();
+                setTimeout(function() {
+                    element.classList.remove('highlighted');
+                    currentPartIndex++;
+                    updatePartQuestion();
+                }, 1500);
+            } else {
+                playSound('wrong');
+                updateMascot('That is the ' + partName + '. Try to find the ' + correctPart + '!');
+            }
+        }
+        updatePartQuestion();
+
+        // TYPES TAB
+        var plants = [
+            { emoji: '🌲', name: 'Pine', type: 'tree' },
+            { emoji: '🌳', name: 'Oak', type: 'tree' },
+            { emoji: '🌷', name: 'Tulip', type: 'flower' },
+            { emoji: '🌹', name: 'Rose', type: 'flower' },
+            { emoji: '🥕', name: 'Carrot', type: 'vegetable' },
+            { emoji: '🥬', name: 'Lettuce', type: 'vegetable' },
+            { emoji: '🌴', name: 'Palm', type: 'tree' },
+            { emoji: '🌻', name: 'Sunflower', type: 'flower' }
+        ];
+        var currentPlant = null;
+        var sortedCount = 0;
+
+        function initTypesGame() {
+            var container = document.getElementById('plantItems');
+            clearChildren(container);
+            var shuffled = plants.slice().sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(plant, index) {
+                var item = document.createElement('div');
+                item.className = 'drag-item';
+                item.id = 'plant-' + index;
+                item.onclick = function() { selectPlant(plant, item); };
+
+                var emoji = document.createElement('span');
+                emoji.className = 'item-emoji';
+                emoji.textContent = plant.emoji;
+                item.appendChild(emoji);
+
+                var name = document.createTextNode(plant.name);
+                item.appendChild(name);
+
+                container.appendChild(item);
+            });
+        }
+
+        function selectPlant(plant, element) {
+            document.querySelectorAll('.drag-item').forEach(function(el) { el.style.border = ''; });
+            element.style.border = '3px solid #27ae60';
+            currentPlant = { plant: plant, element: element };
+            updateMascot('Now tap the correct category for ' + plant.name + '!');
+            playSound('click');
+        }
+
+        function sortPlant(type) {
+            if (!currentPlant) {
+                updateMascot('First tap a plant to select it!');
+                return;
+            }
+
+            if (currentPlant.plant.type === type) {
+                currentPlant.element.classList.add('correct');
+                currentPlant.element.style.pointerEvents = 'none';
+                sortedCount++;
+                totalScore++;
+                playSound('correct');
+                updateMascot('Correct! ' + currentPlant.plant.name + ' is a ' + type + '!');
+                document.getElementById('typesCounter').textContent = 'Sorted: ' + sortedCount + ' / ' + plants.length;
+                updateProgress();
+
+                if (sortedCount >= plants.length) {
+                    tabsCompleted.types = true;
+                    totalScore += 2;
+                    updateProgress();
+                    updateMascot('Amazing! You sorted all the plants correctly!');
+                    checkAllComplete();
+                }
+            } else {
+                currentPlant.element.classList.add('wrong');
+                playSound('wrong');
+                updateMascot(currentPlant.plant.name + ' is not a ' + type + '. Try again!');
+                setTimeout(function() { currentPlant.element.classList.remove('wrong'); }, 500);
+            }
+            currentPlant = null;
+        }
+        initTypesGame();
+
+        // LIFECYCLE TAB
+        var lifecycleStages = [
+            { emoji: '🌱', label: 'Seed', order: 1 },
+            { emoji: '🌿', label: 'Sprout', order: 2 },
+            { emoji: '🪴', label: 'Plant', order: 3 },
+            { emoji: '🌸', label: 'Flower', order: 4 }
+        ];
+        var currentSlot = 0;
+
+        function initLifecycle() {
+            var slotsContainer = document.getElementById('lifecycleSlots');
+            var optionsContainer = document.getElementById('stageOptions');
+            clearChildren(slotsContainer);
+            clearChildren(optionsContainer);
+            currentSlot = 0;
+
+            for (var i = 0; i < 4; i++) {
+                var slot = document.createElement('div');
+                slot.className = 'stage-slot';
+                slot.id = 'slot-' + i;
+                slot.textContent = (i + 1);
+                slotsContainer.appendChild(slot);
+            }
+
+            var shuffled = lifecycleStages.slice().sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(stage) {
+                var option = document.createElement('div');
+                option.className = 'stage-option';
+                option.onclick = function() { selectStage(stage, option); };
+
+                var emoji = document.createElement('span');
+                emoji.className = 'opt-emoji';
+                emoji.textContent = stage.emoji;
+                option.appendChild(emoji);
+
+                var label = document.createElement('span');
+                label.className = 'opt-label';
+                label.textContent = stage.label;
+                option.appendChild(label);
+
+                optionsContainer.appendChild(option);
+            });
+        }
+
+        function selectStage(stage, element) {
+            var expectedOrder = currentSlot + 1;
+
+            if (stage.order === expectedOrder) {
+                var slot = document.getElementById('slot-' + currentSlot);
+                slot.classList.add('filled');
+                clearChildren(slot);
+
+                var emoji = document.createElement('span');
+                emoji.className = 'stage-emoji';
+                emoji.textContent = stage.emoji;
+                slot.appendChild(emoji);
+
+                var label = document.createElement('span');
+                label.className = 'stage-label';
+                label.textContent = stage.label;
+                slot.appendChild(label);
+
+                element.classList.add('used');
+                currentSlot++;
+                totalScore++;
+                playSound('correct');
+                updateMascot('Correct! ' + stage.label + ' comes ' + (expectedOrder === 1 ? 'first' : 'next') + '!');
+                updateProgress();
+
+                if (currentSlot >= 4) {
+                    tabsCompleted.lifecycle = true;
+                    totalScore += 2;
+                    updateProgress();
+                    updateMascot('Perfect! Seed, Sprout, Plant, Flower - that is the life cycle!');
+                    checkAllComplete();
+                }
+            } else {
+                playSound('wrong');
+                updateMascot('Not quite! What comes ' + (expectedOrder === 1 ? 'first' : 'after ' + lifecycleStages[expectedOrder - 2].label) + '?');
+            }
+        }
+
+        function resetLifecycle() {
+            initLifecycle();
+            playSound('click');
+        }
+        initLifecycle();
+
+        // NEEDS TAB
+        var needsItems = [
+            { emoji: '💧', label: 'Water', isNeed: true },
+            { emoji: '☀️', label: 'Sunlight', isNeed: true },
+            { emoji: '🌍', label: 'Soil', isNeed: true },
+            { emoji: '💨', label: 'Air', isNeed: true },
+            { emoji: '🍕', label: 'Pizza', isNeed: false },
+            { emoji: '📱', label: 'Phone', isNeed: false },
+            { emoji: '🎮', label: 'Games', isNeed: false },
+            { emoji: '🧸', label: 'Toys', isNeed: false }
+        ];
+        var foundNeeds = 0;
+
+        function initNeedsGame() {
+            var container = document.getElementById('needsGrid');
+            clearChildren(container);
+            var shuffled = needsItems.slice().sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(item) {
+                var card = document.createElement('div');
+                card.className = 'need-card';
+                card.onclick = function() { checkNeed(item, card); };
+
+                var emoji = document.createElement('div');
+                emoji.className = 'need-emoji';
+                emoji.textContent = item.emoji;
+                card.appendChild(emoji);
+
+                var label = document.createElement('div');
+                label.className = 'need-label';
+                label.textContent = item.label;
+                card.appendChild(label);
+
+                container.appendChild(card);
+            });
+        }
+
+        function checkNeed(item, card) {
+            if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+
+            if (item.isNeed) {
+                card.classList.add('correct');
+                foundNeeds++;
+                totalScore++;
+                playSound('correct');
+                updateMascot('Yes! Plants need ' + item.label.toLowerCase() + ' to grow!');
+                document.getElementById('needsCounter').textContent = 'Found: ' + foundNeeds + ' / 4';
+                updateProgress();
+
+                if (foundNeeds >= 4) {
+                    tabsCompleted.needs = true;
+                    totalScore += 2;
+                    updateProgress();
+                    updateMascot('Excellent! Plants need water, sunlight, soil, and air!');
+                    checkAllComplete();
+                }
+            } else {
+                card.classList.add('wrong');
+                playSound('wrong');
+                updateMascot('Plants do not need ' + item.label.toLowerCase() + '! Try again!');
+                setTimeout(function() { card.classList.remove('wrong'); }, 800);
+            }
+        }
+        initNeedsGame();
+    </script>
+</body>
+</html>

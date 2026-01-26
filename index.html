@@ -3,18 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zeek Squad - Coding for Kids</title>
+    <title>Zeek Squad - Georgia Hebrew Academy</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            font-size: 16px;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 16px; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
@@ -31,7 +23,6 @@
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-
         nav .nav-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -39,7 +30,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
         nav .logo {
             color: white;
             font-size: 1.3rem;
@@ -47,12 +37,10 @@
             text-decoration: none;
             white-space: nowrap;
         }
-
         nav .nav-links {
             display: flex;
             gap: 8px;
         }
-
         nav .nav-links a {
             color: white;
             text-decoration: none;
@@ -63,29 +51,33 @@
             transition: background 0.3s;
             white-space: nowrap;
         }
-
-        nav .nav-links a:hover,
-        nav .nav-links a.active {
+        nav .nav-links a:hover, nav .nav-links a.active {
             background: rgba(255,255,255,0.2);
         }
 
-        /* Main Content */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 15px;
-        }
+        main { max-width: 1200px; margin: 0 auto; padding: 20px 15px; }
 
-        /* Section Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px 25px;
+            border-radius: 20px;
             margin-bottom: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
+            text-align: center;
         }
+        .hero h1 { font-size: 2rem; margin-bottom: 12px; line-height: 1.2; }
+        .hero p { font-size: 1.05rem; opacity: 0.9; max-width: 600px; margin: 0 auto; line-height: 1.5; }
 
-        .tab-btn {
+        /* Week Selector */
+        .week-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .week-btn {
             padding: 12px 24px;
             border: none;
             background: white;
@@ -95,39 +87,61 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            white-space: nowrap;
         }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-
-        .tab-btn:active {
-            transform: translateY(0);
-        }
-
-        .tab-btn.active {
+        .week-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        .week-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
+        .week-btn.locked { opacity: 0.5; cursor: not-allowed; }
+        .week-btn.locked:hover { transform: none; }
 
-        /* Content Sections */
-        .section {
-            display: none;
-            animation: fadeIn 0.3s ease;
+        /* Day Tabs */
+        .day-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .day-tab {
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .day-tab:hover { background: #f0f0f0; }
+        .day-tab.active {
+            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+            color: white;
         }
 
-        .section.active {
-            display: block;
+        /* Subject Filter */
+        .subject-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
+        .filter-btn:hover { border-color: #667eea; }
+        .filter-btn.active { background: #667eea; color: white; border-color: #667eea; }
 
-        /* Day Headers */
+        /* Day Header */
         .day-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -138,32 +152,33 @@
             align-items: center;
             gap: 12px;
         }
+        .day-header:first-child { margin-top: 0; }
+        .day-header .day-icon { font-size: 2rem; }
+        .day-header h2 { font-size: 1.3rem; }
+        .day-header p { font-size: 0.9rem; opacity: 0.9; margin-top: 3px; }
 
-        .day-header:first-child {
-            margin-top: 0;
+        /* Subject Badges */
+        .subject-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
+        .badge-literacy { background: #FF6B6B; color: white; }
+        .badge-math { background: #4ECDC4; color: white; }
+        .badge-science { background: #45B7D1; color: white; }
+        .badge-sel { background: #96CEB4; color: white; }
+        .badge-hebrew { background: #667eea; color: white; }
+        .badge-social { background: #FFEAA7; color: #333; }
 
-        .day-header .day-icon {
-            font-size: 2rem;
-        }
-
-        .day-header h2 {
-            font-size: 1.3rem;
-        }
-
-        .day-header p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-top: 3px;
-        }
-
-        /* Games Grid - Responsive */
+        /* Games Grid */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
-
         .game-card {
             background: white;
             border-radius: 20px;
@@ -171,16 +186,7 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s, box-shadow 0.3s;
         }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        }
-
-        .game-card:active {
-            transform: translateY(-2px);
-        }
-
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
         .game-card .game-image {
             height: 140px;
             display: flex;
@@ -188,24 +194,9 @@
             justify-content: center;
             font-size: 3.5rem;
         }
-
-        .game-card .game-info {
-            padding: 20px;
-        }
-
-        .game-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .game-card p {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-
+        .game-card .game-info { padding: 20px; }
+        .game-card h3 { font-size: 1.25rem; margin-bottom: 8px; color: #333; }
+        .game-card p { color: #666; margin-bottom: 15px; line-height: 1.5; font-size: 0.95rem; }
         .game-card .play-btn {
             display: block;
             width: 100%;
@@ -217,144 +208,28 @@
             border-radius: 10px;
             font-weight: bold;
             font-size: 1.05rem;
-            transition: opacity 0.3s, transform 0.2s;
+            transition: opacity 0.3s;
         }
+        .game-card .play-btn:hover { opacity: 0.9; }
 
-        .game-card .play-btn:hover {
-            opacity: 0.9;
-        }
+        /* Background Colors */
+        .bg-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-teal { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .bg-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .bg-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .bg-pink { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); }
+        .bg-green { background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); }
+        .bg-gold { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+        .bg-dark { background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%); }
 
-        .game-card .play-btn:active {
-            transform: scale(0.98);
-        }
+        /* Week Content */
+        .week-content { display: none; }
+        .week-content.active { display: block; }
+        .day-content { display: none; }
+        .day-content.active { display: block; }
 
-        /* Worksheet Cards */
-        .worksheet-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .worksheet-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .worksheet-card p {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-
-        .worksheet-card ul {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .worksheet-card ul li {
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-            color: #555;
-        }
-
-        .worksheet-card ul li:last-child {
-            border-bottom: none;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .download-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: opacity 0.3s, transform 0.2s;
-        }
-
-        .download-btn:hover {
-            opacity: 0.9;
-        }
-
-        .download-btn:active {
-            transform: scale(0.98);
-        }
-
-        .download-btn.secondary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .download-btn.print {
-            background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
-        }
-
-        /* Week Cards - Responsive */
-        .week-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
-
-        .week-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .week-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .week-card:active {
-            transform: translateY(-1px);
-        }
-
-        .week-card .week-num {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-        }
-
-        .week-card h3 {
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-
-        .week-card p {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        /* Resources - Responsive */
-        .resource-list {
-            display: grid;
-            gap: 12px;
-        }
-
+        /* Resource Section */
+        .resource-list { display: grid; gap: 12px; }
         .resource-item {
             background: white;
             padding: 18px 20px;
@@ -367,72 +242,32 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             transition: all 0.3s;
         }
+        .resource-item:hover { transform: translateX(5px); box-shadow: 0 5px 20px rgba(0,0,0,0.12); }
+        .resource-item .icon { font-size: 2.2rem; flex-shrink: 0; }
+        .resource-item .info h3 { color: #333; margin-bottom: 4px; font-size: 1rem; }
+        .resource-item .info p { color: #666; font-size: 0.85rem; line-height: 1.4; }
 
-        .resource-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
-        }
-
-        .resource-item:active {
-            transform: translateX(2px);
-        }
-
-        .resource-item .icon {
-            font-size: 2.2rem;
-            flex-shrink: 0;
-        }
-
-        .resource-item .info {
-            min-width: 0;
-        }
-
-        .resource-item .info h3 {
-            color: #333;
-            margin-bottom: 4px;
+        /* Section Tabs */
+        .tabs { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: white;
+            border-radius: 10px;
             font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+        .tab-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
 
-        .resource-item .info p {
-            color: #666;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Colors for game cards */
-        .bg-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .bg-teal { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
-        .bg-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .bg-blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .bg-pink { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); }
-        .bg-green { background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); }
-        .bg-dark { background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%); }
-        .bg-gold { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
-
-        /* Hero Banner - Responsive */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 35px 25px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 2rem;
-            margin-bottom: 12px;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.05rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-
-        /* Mobile menu */
+        /* Menu Toggle */
         .menu-toggle {
             display: none;
             background: none;
@@ -443,47 +278,9 @@
             padding: 5px;
         }
 
-        /* Subject badges */
-        .subject-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .badge-literacy { background: #e3f2fd; color: #1565c0; }
-        .badge-math { background: #fff3e0; color: #e65100; }
-        .badge-science { background: #e8f5e9; color: #2e7d32; }
-        .badge-sel { background: #fce4ec; color: #c2185b; }
-        .badge-life { background: #f3e5f5; color: #7b1fa2; }
-
-        /* ========== TABLET STYLES ========== */
-        @media (max-width: 992px) {
-            .games-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .week-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* ========== MOBILE LANDSCAPE & SMALL TABLETS ========== */
+        /* Responsive */
         @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-
-            nav {
-                padding: 10px 15px;
-            }
-
+            .menu-toggle { display: block; }
             nav .nav-links {
                 display: none;
                 position: absolute;
@@ -494,149 +291,17 @@
                 flex-direction: column;
                 padding: 15px;
                 gap: 5px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             }
-
-            nav .nav-links.show {
-                display: flex;
-            }
-
-            nav .nav-links a {
-                padding: 12px 20px;
-                text-align: center;
-                border-radius: 10px;
-            }
-
-            main {
-                padding: 15px 12px;
-            }
-
-            .tabs {
-                gap: 6px;
-                margin-bottom: 20px;
-            }
-
-            .tab-btn {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-                flex: 1;
-                min-width: 0;
-            }
-
-            .hero {
-                padding: 30px 20px;
-                border-radius: 15px;
-                margin-bottom: 20px;
-            }
-
-            .hero h1 {
-                font-size: 1.6rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .games-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-
-            .day-header {
-                padding: 12px 15px;
-            }
-
-            .day-header h2 {
-                font-size: 1.1rem;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .download-btn {
-                justify-content: center;
-            }
+            nav .nav-links.show { display: flex; }
+            nav .nav-links a { padding: 12px 20px; text-align: center; border-radius: 10px; }
+            .games-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .hero h1 { font-size: 1.6rem; }
         }
 
-        /* ========== MOBILE PORTRAIT ========== */
         @media (max-width: 480px) {
-            html {
-                font-size: 15px;
-            }
-
-            .games-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .week-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-        }
-
-        /* ========== TOUCH DEVICE OPTIMIZATIONS ========== */
-        @media (hover: none) and (pointer: coarse) {
-            .game-card:hover {
-                transform: none;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            }
-
-            .game-card:active {
-                transform: scale(0.98);
-            }
-
-            .week-card:hover {
-                transform: none;
-            }
-
-            .week-card:active {
-                transform: scale(0.98);
-            }
-
-            .resource-item:hover {
-                transform: none;
-            }
-
-            .resource-item:active {
-                transform: scale(0.98);
-            }
-
-            .tab-btn:hover {
-                transform: none;
-            }
-
-            .tab-btn:active {
-                transform: scale(0.95);
-            }
-
-            .play-btn:active {
-                transform: scale(0.95) !important;
-            }
-        }
-
-        /* ========== PRINT STYLES ========== */
-        @media print {
-            nav, .tabs, .play-btn {
-                display: none;
-            }
-
-            .hero {
-                background: #667eea;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .section {
-                display: block !important;
-                page-break-inside: avoid;
-            }
-
-            .game-card, .week-card, .resource-item {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
+            .games-grid { grid-template-columns: 1fr; gap: 15px; }
+            .week-selector { gap: 5px; }
+            .week-btn { padding: 10px 16px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -644,13 +309,12 @@
     <nav>
         <div class="nav-container">
             <a href="#" class="logo">Zeek Squad</a>
-            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
             <div class="nav-links" id="navLinks">
                 <a href="#" class="active" onclick="showSection('games'); return false;">Games</a>
-                <a href="#" onclick="showSection('worksheets'); return false;">Worksheets</a>
-                <a href="#" onclick="showSection('curriculum'); return false;">Curriculum</a>
                 <a href="#" onclick="showSection('resources'); return false;">Resources</a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://us02web.zoom.us/j/4575919892?pwd=aVQ2Vkh1ZnF6ZjdMUGFueW9YWCtmQT09" target="_blank">Join Zoom</a>
+                <a href="https://github.com/bakiel/zeek-squad-curriculum" target="_blank">GitHub</a>
             </div>
         </div>
     </nav>
@@ -658,354 +322,400 @@
     <main>
         <div class="hero">
             <h1>Welcome to Zeek Squad!</h1>
-            <p>Interactive learning games and worksheets for kindergarten. Choose a day below to see activities!</p>
+            <p>Georgia Hebrew Academy Interactive Learning Platform. Select a week and day to explore activities!</p>
         </div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="showSection('games')">Games</button>
-            <button class="tab-btn" onclick="showSection('worksheets')">Worksheets</button>
-            <button class="tab-btn" onclick="showSection('curriculum')">Curriculum</button>
-            <button class="tab-btn" onclick="showSection('resources')">Resources</button>
+            <button class="tab-btn active" onclick="showSection('games')">📚 Games</button>
+            <button class="tab-btn" onclick="showSection('resources')">📁 Resources</button>
         </div>
 
         <!-- GAMES SECTION -->
         <section id="games" class="section active">
-
-            <!-- MONDAY -->
-            <div class="day-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span class="day-icon">📅</span>
-                <div>
-                    <h2>Monday Games</h2>
-                    <p>Feelings, Letter M, One More/Less, Solids & Liquids, Hungry Caterpillar</p>
-                </div>
-            </div>
-            <div class="games-grid">
-                <div class="game-card">
-                    <div class="game-image bg-pink">😊</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-sel">Social-Emotional</span>
-                        <h3>My Feelings</h3>
-                        <p>Learn to identify and express different emotions. Match feelings to faces and situations!</p>
-                        <a href="games/interactive/feelings.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-pink">🐭</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Letter M</h3>
-                        <p>Meet the letter M! Find M words like Mouse, Moon, and Milk. Practice tracing and sounds.</p>
-                        <a href="games/interactive/letter-m.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-orange">➕</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-math">Math</span>
-                        <h3>One More / One Less</h3>
-                        <p>Practice adding one and subtracting one from numbers 1-10. Build number sense!</p>
-                        <a href="games/interactive/one-more-less.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-blue">🧊</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-science">Science</span>
-                        <h3>Solids & Liquids</h3>
-                        <p>Sort objects into solids and liquids. Learn about states of matter through play!</p>
-                        <a href="games/interactive/solids-liquids.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-green">🐛</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Hungry Caterpillar</h3>
-                        <p>Sequence the story of the Very Hungry Caterpillar. Practice days of the week!</p>
-                        <a href="games/interactive/hungry-caterpillar.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
+            <!-- Week Selector -->
+            <div class="week-selector">
+                <button class="week-btn active" onclick="showWeek(1)">Week 1</button>
+                <button class="week-btn locked" onclick="showWeek(2)" disabled>Week 2 🔒</button>
+                <button class="week-btn locked" onclick="showWeek(3)" disabled>Week 3 🔒</button>
+                <button class="week-btn locked" onclick="showWeek(4)" disabled>Week 4 🔒</button>
             </div>
 
-            <!-- TUESDAY -->
-            <div class="day-header" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
-                <span class="day-icon">📅</span>
-                <div>
-                    <h2>Tuesday Games</h2>
-                    <p>My Strengths, Letter N, Comparing, Push & Pull, Chicka Chicka</p>
+            <!-- Week 1 Content -->
+            <div class="week-content active" id="week-1">
+                <div class="day-tabs">
+                    <button class="day-tab active" onclick="showDay(1, 'monday')">📅 Monday</button>
+                    <button class="day-tab" onclick="showDay(1, 'tuesday')">📅 Tuesday</button>
+                    <button class="day-tab" onclick="showDay(1, 'wednesday')">📅 Wednesday</button>
+                    <button class="day-tab" onclick="showDay(1, 'thursday')">📅 Thursday</button>
+                    <button class="day-tab" onclick="showDay(1, 'all')">📋 All Days</button>
                 </div>
-            </div>
-            <div class="games-grid">
-                <div class="game-card">
-                    <div class="game-image bg-gold">⭐</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-sel">Social-Emotional</span>
-                        <h3>My Strengths</h3>
-                        <p>Discover your special talents and abilities! Build confidence and self-awareness.</p>
-                        <a href="games/interactive/my-strengths.html" class="play-btn">Play Now</a>
+
+                <!-- Monday -->
+                <div class="day-content active" id="week-1-monday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Monday - Yom Sheni</h2>
+                            <p>Gratitude, Letter Q, Addition, Types of Plants, Maps, Hebrew Aleph</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-green">🙏</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Gratitude</h3>
+                                <p>What are you thankful for? Share gratitude and learn to appreciate the good things!</p>
+                                <a href="games/interactive/gratitude.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-purple">👑</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter Q</h3>
+                                <p>Q says /kw/ like Queen! Trace, find, and practice words that start with Q.</p>
+                                <a href="games/interactive/letter-q.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition with Pictures</h3>
+                                <p>Learn to add by counting pictures! 1 + 1 = 2. Fun addition practice.</p>
+                                <a href="games/interactive/addition.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌱</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Types of Plants</h3>
+                                <p>Learn about plant parts, types, life cycles, and what plants need to grow!</p>
+                                <a href="games/interactive/plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🗺️</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-social">Social Studies</span>
+                                <h3>Maps</h3>
+                                <p>Learn directions, map symbols, land and water features. Find the treasure!</p>
+                                <a href="games/interactive/maps.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Aleph</h3>
+                                <p>ALEPH is the first letter! Learn Hebrew affirmations: ANI YACHOL!</p>
+                                <a href="games/interactive/hebrew-aleph.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="game-card">
-                    <div class="game-image bg-pink">🪺</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Letter N</h3>
-                        <p>Find the letter N! Learn words like Nest, Nose, Nut, and Nine with fun activities.</p>
-                        <a href="games/interactive/letter-n.html" class="play-btn">Play Now</a>
+
+                <!-- Tuesday -->
+                <div class="day-content" id="week-1-tuesday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Tuesday - Yom Shlishi</h2>
+                            <p>Kindness, Letter R, Addition, Types of Plants, Maps, Hebrew Bet</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-pink">💝</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Kindness</h3>
+                                <p>What is kindness? Practice kind words and learn about being nice to others!</p>
+                                <a href="games/interactive/kindness.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-pink">🐰</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter R</h3>
+                                <p>R says /r/ like Rabbit! ROAR with Ruby Rabbit and find R words.</p>
+                                <a href="games/interactive/letter-r.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition with Pictures</h3>
+                                <p>More addition practice! Count pictures and add them together.</p>
+                                <a href="games/interactive/addition.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌻</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Types of Plants</h3>
+                                <p>Sort plants into trees, flowers, and vegetables. Review plant parts!</p>
+                                <a href="games/interactive/plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🏘️</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-social">Social Studies</span>
+                                <h3>Neighborhood Maps</h3>
+                                <p>Learn about your neighborhood! Houses, roads, and map symbols.</p>
+                                <a href="games/interactive/maps.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Bet</h3>
+                                <p>BET says /b/ like BAYIT (house)! Learn Hebrew letter sounds.</p>
+                                <a href="games/interactive/hebrew-bet.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="game-card">
-                    <div class="game-image bg-orange">⚖️</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-math">Math</span>
-                        <h3>Comparing Numbers</h3>
-                        <p>Which is more? Which is less? Compare groups and numbers up to 10.</p>
-                        <a href="games/interactive/comparing.html" class="play-btn">Play Now</a>
+
+                <!-- Wednesday -->
+                <div class="day-content" id="week-1-wednesday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Wednesday - Yom Revii</h2>
+                            <p>Respect, Letter S, Addition, Types of Plants, Maps, Hebrew Gimel</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-purple">🤝</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Respect</h3>
+                                <p>RESPECT means treating others nicely! Practice polite words and actions.</p>
+                                <a href="games/interactive/respect.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🐍</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter S</h3>
+                                <p>S says /s/ like Snake! Sssslither with Sammy Snake and find S words.</p>
+                                <a href="games/interactive/letter-s.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Adding to 5</h3>
+                                <p>Practice sums up to 5! 3 + 2 = ? Count and find the answer.</p>
+                                <a href="games/interactive/addition.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌿</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Plant Life Cycle</h3>
+                                <p>Seed, sprout, plant, flower! Learn the plant life cycle stages.</p>
+                                <a href="games/interactive/plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🌍</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-social">Social Studies</span>
+                                <h3>Land and Water</h3>
+                                <p>Maps show LAND (green) and WATER (blue)! Find mountains and rivers.</p>
+                                <a href="games/interactive/maps.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">ג</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Gimel</h3>
+                                <p>GIMEL says /g/ like GAMAL (camel)! Continue Hebrew letter learning.</p>
+                                <a href="games/interactive/hebrew-gimel.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="game-card">
-                    <div class="game-image bg-teal">🚗</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-science">Science</span>
-                        <h3>Push & Pull</h3>
-                        <p>Explore forces! Sort actions into push and pull movements.</p>
-                        <a href="games/interactive/push-pull.html" class="play-btn">Play Now</a>
+
+                <!-- Thursday -->
+                <div class="day-content" id="week-1-thursday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Thursday - Yom Chamishi</h2>
+                            <p>Responsibility, Letter T, Addition Review, Plant Review, Treasure Maps, Hebrew Dalet</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-teal">✅</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Responsibility</h3>
+                                <p>Being responsible means doing what you should do! Learn about home jobs.</p>
+                                <a href="games/interactive/responsibility.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🐯</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter T</h3>
+                                <p>T says /t/ like Tiger! Tick-tock with Timmy Tiger and find T words.</p>
+                                <a href="games/interactive/letter-t.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">🏆</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition Challenge</h3>
+                                <p>Week review! Show what you learned about addition with pictures.</p>
+                                <a href="games/interactive/addition.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🧑‍🌾</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Plant Care Quiz</h3>
+                                <p>Week review! What do plants need? Take the plant expert quiz!</p>
+                                <a href="games/interactive/plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">💎</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-social">Social Studies</span>
+                                <h3>Treasure Maps</h3>
+                                <p>Follow the clues! X marks the spot. Find the treasure using map skills!</p>
+                                <a href="games/interactive/maps.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">ד</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Dalet</h3>
+                                <p>DALET says /d/ like DELET (door)! Review ALEPH through DALET. Shabbat Shalom!</p>
+                                <a href="games/interactive/hebrew-dalet.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="game-card">
-                    <div class="game-image bg-green">🌴</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Chicka Chicka Boom Boom</h3>
-                        <p>Letters climb the coconut tree! Practice alphabet recognition and sequencing.</p>
-                        <a href="games/interactive/chicka-chicka.html" class="play-btn">Play Now</a>
+
+                <!-- All Days -->
+                <div class="day-content" id="week-1-all">
+                    <div class="day-header" style="background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);">
+                        <span class="day-icon">📋</span>
+                        <div>
+                            <h2>All Week 1 Games</h2>
+                            <p>Complete collection of all interactive games for Week 1</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <!-- Letters -->
+                        <div class="game-card">
+                            <div class="game-image bg-purple">👑</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter Q</h3>
+                                <p>Q says /kw/ like Queen! Monday letter.</p>
+                                <a href="games/interactive/letter-q.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-pink">🐰</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter R</h3>
+                                <p>R says /r/ like Rabbit! Tuesday letter.</p>
+                                <a href="games/interactive/letter-r.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🐍</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter S</h3>
+                                <p>S says /s/ like Snake! Wednesday letter.</p>
+                                <a href="games/interactive/letter-s.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🐯</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter T</h3>
+                                <p>T says /t/ like Tiger! Thursday letter.</p>
+                                <a href="games/interactive/letter-t.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Math & Science -->
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition with Pictures</h3>
+                                <p>Learn to add by counting pictures!</p>
+                                <a href="games/interactive/addition.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌱</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Types of Plants</h3>
+                                <p>Plant parts, types, and life cycles!</p>
+                                <a href="games/interactive/plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🗺️</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-social">Social Studies</span>
+                                <h3>Maps</h3>
+                                <p>Directions, symbols, and treasure!</p>
+                                <a href="games/interactive/maps.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- TYCS -->
+                        <div class="game-card">
+                            <div class="game-image bg-green">🙏</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Gratitude</h3>
+                                <p>What are you thankful for?</p>
+                                <a href="games/interactive/gratitude.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- WEDNESDAY -->
-            <div class="day-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <span class="day-icon">📅</span>
-                <div>
-                    <h2>Wednesday Games</h2>
-                    <p>Teamwork, Letter O, Counting Forward, Light & Shadows, Sequencing</p>
-                </div>
-            </div>
-            <div class="games-grid">
-                <div class="game-card">
-                    <div class="game-image bg-purple">🤝</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-sel">Social-Emotional</span>
-                        <h3>Teamwork</h3>
-                        <p>Learn how to work together! Discover cooperation and helping others.</p>
-                        <a href="games/interactive/teamwork.html" class="play-btn">Play Now</a>
+            <!-- Placeholder for future weeks -->
+            <div class="week-content" id="week-2">
+                <div class="day-header">
+                    <span class="day-icon">🔒</span>
+                    <div>
+                        <h2>Week 2 - Coming Soon!</h2>
+                        <p>New content will be added as the curriculum progresses.</p>
                     </div>
                 </div>
-                <div class="game-card">
-                    <div class="game-image bg-orange">🍊</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Letter O</h3>
-                        <p>Discover letter O! Words like Orange, Octopus, and Owl. Practice the /o/ sound.</p>
-                        <a href="games/interactive/letter-o.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-teal">🔢</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-math">Math</span>
-                        <h3>Counting Forward</h3>
-                        <p>Jump and count to 10! Practice "What comes next?" and fill in missing numbers.</p>
-                        <a href="games/interactive/counting-forward.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-dark">🔦</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-science">Science</span>
-                        <h3>Light & Shadows</h3>
-                        <p>Discover what makes light and how shadows change! Interactive experiments.</p>
-                        <a href="games/interactive/light-shadows.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-blue">📋</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Sequence Game</h3>
-                        <p>Put events in order! Practice first, next, then, last with fun stories.</p>
-                        <a href="games/interactive/sequence-game.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- THURSDAY -->
-            <div class="day-header" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
-                <span class="day-icon">📅</span>
-                <div>
-                    <h2>Thursday Games</h2>
-                    <p>Gratitude, Letter P, Addition, Animals, Saving Money</p>
-                </div>
-            </div>
-            <div class="games-grid">
-                <div class="game-card">
-                    <div class="game-image bg-pink">🙏</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-sel">Social-Emotional</span>
-                        <h3>Gratitude</h3>
-                        <p>Learn to be thankful! Identify things we appreciate in our lives.</p>
-                        <a href="games/interactive/gratitude.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image" style="background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 100%);">🐷</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-literacy">Literacy</span>
-                        <h3>Letter P</h3>
-                        <p>Meet letter P! Words like Pig, Pizza, and Purple. Practice the /p/ sound.</p>
-                        <a href="games/interactive/letter-p.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-orange">➕</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-math">Math</span>
-                        <h3>Addition to 10</h3>
-                        <p>Practice adding numbers! Use pictures and counting to solve addition problems.</p>
-                        <a href="games/interactive/addition.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-green">🦁</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-science">Science</span>
-                        <h3>Animals</h3>
-                        <p>Learn about animals! Sort by habitat, diet, and characteristics.</p>
-                        <a href="games/interactive/animals.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image bg-gold">💰</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-life">Life Skills</span>
-                        <h3>Saving Money</h3>
-                        <p>Learn about saving! Sort coins and understand needs vs wants.</p>
-                        <a href="games/interactive/saving-money.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <div class="game-image" style="background: linear-gradient(135deg, #e91e63 0%, #f48fb1 100%);">💵</div>
-                    <div class="game-info">
-                        <span class="subject-badge badge-life">Life Skills</span>
-                        <h3>Needs vs Wants</h3>
-                        <p>Learn the difference between needs and wants with Benny Bunny!</p>
-                        <a href="games/interactive/needs-wants.html" class="play-btn">Play Now</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- WORKSHEETS SECTION -->
-        <section id="worksheets" class="section">
-            <div class="worksheet-card">
-                <h3>Letter Review: M, N, O, P</h3>
-                <p>Complete worksheet set for reviewing letters M through P. Perfect for end-of-week review or assessment.</p>
-                <ul>
-                    <li><strong>Page 1:</strong> Meet the Letters - Introduction to M, N, O, P with uppercase tracing</li>
-                    <li><strong>Page 2:</strong> Lowercase Tracing - Practice writing lowercase letters with lines</li>
-                    <li><strong>Page 3:</strong> Matching Activity - Match uppercase to lowercase and letters to pictures</li>
-                    <li><strong>Page 4:</strong> Beginning Sounds - Circle and write the beginning letter of words</li>
-                    <li><strong>Page 5:</strong> Letter Hunt - Find and circle M, N, O, P in a letter grid</li>
-                    <li><strong>Page 6:</strong> Review Quiz - 10 multiple choice questions</li>
-                </ul>
-                <div class="btn-group">
-                    <a href="worksheets/letter-review-m-to-p.pdf" download class="download-btn">
-                        <span>📥</span> Download PDF (A4)
-                    </a>
-                    <a href="worksheets/letter-review-m-to-p.html" target="_blank" class="download-btn print">
-                        <span>🖨️</span> Print from Browser
-                    </a>
-                    <a href="worksheets/letter-review-m-to-p-interactive.html" target="_blank" class="download-btn secondary">
-                        <span>🎮</span> Interactive Version
-                    </a>
-                </div>
-            </div>
-
-            <div class="worksheet-card">
-                <h3>More Worksheets Coming Soon</h3>
-                <p>Additional worksheets for math, science, and other subjects are in development. Check back for updates!</p>
-                <ul>
-                    <li>Number Writing Practice (1-10)</li>
-                    <li>Shapes Identification</li>
-                    <li>Color Words</li>
-                    <li>Sight Words Practice</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- CURRICULUM SECTION -->
-        <section id="curriculum" class="section">
-            <div class="week-grid">
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-01" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 1</span>
-                    <h3>Welcome to Zeek Squad</h3>
-                    <p>Introduction, meet the characters, classroom routines</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-02" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 2</span>
-                    <h3>Computer Basics</h3>
-                    <p>Parts of a computer, mouse and keyboard skills</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-03" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 3</span>
-                    <h3>What is Coding?</h3>
-                    <p>Algorithms, following instructions, sequences</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-04" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 4</span>
-                    <h3>Patterns Everywhere</h3>
-                    <p>Recognising and creating patterns</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-05" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 5</span>
-                    <h3>Loops - Do It Again!</h3>
-                    <p>Understanding repetition and efficiency</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-06" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 6</span>
-                    <h3>Making Decisions</h3>
-                    <p>If-then statements and conditions</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-07" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 7</span>
-                    <h3>Variables</h3>
-                    <p>Storing and changing information</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-08" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 8</span>
-                    <h3>Functions</h3>
-                    <p>Reusable code blocks and shortcuts</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-09" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 9</span>
-                    <h3>Bug Hunters</h3>
-                    <p>Debugging strategies and testing</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-10" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 10</span>
-                    <h3>Digital Citizens</h3>
-                    <p>Online safety and responsibility</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-11" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 11</span>
-                    <h3>Create and Share</h3>
-                    <p>Project planning and collaboration</p>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/curriculum/week-12" class="week-card" target="_blank" rel="noopener">
-                    <span class="week-num">Week 12</span>
-                    <h3>Showcase</h3>
-                    <p>Presentations and celebration</p>
-                </a>
             </div>
         </section>
 
@@ -1016,49 +726,28 @@
                     <span class="icon">🎮</span>
                     <div class="info">
                         <h3>All Interactive Games</h3>
-                        <p>Complete collection of all 22 interactive games organized by day</p>
+                        <p>Complete collection of all interactive games</p>
                     </div>
                 </a>
-                <a href="worksheets/letter-review-m-to-p.pdf" class="resource-item" download>
-                    <span class="icon">📄</span>
+                <a href="worksheets/letter-review-m-to-p-interactive.html" class="resource-item">
+                    <span class="icon">📝</span>
                     <div class="info">
-                        <h3>Letter Review Worksheet (PDF)</h3>
-                        <p>Download printable A4 worksheet for letters M, N, O, P</p>
+                        <h3>Letter Review Worksheets</h3>
+                        <p>Interactive worksheets for letter practice</p>
                     </div>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/resources/parent-guides/welcome-letter.md" class="resource-item" target="_blank" rel="noopener">
-                    <span class="icon">👨‍👩‍👧</span>
+                <a href="https://us02web.zoom.us/j/4575919892?pwd=aVQ2Vkh1ZnF6ZjdMUGFueW9YWCtmQT09" class="resource-item" target="_blank">
+                    <span class="icon">📹</span>
                     <div class="info">
-                        <h3>Parent Welcome Letter</h3>
-                        <p>Introduction to the programme for parents and guardians</p>
+                        <h3>Join Zoom Class</h3>
+                        <p>Click to join the live Zoom session</p>
                     </div>
                 </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/blob/main/docs/curriculum-overview.md" class="resource-item" target="_blank" rel="noopener">
-                    <span class="icon">📋</span>
-                    <div class="info">
-                        <h3>Curriculum Overview</h3>
-                        <p>Complete 12-week learning objectives and lesson breakdown</p>
-                    </div>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/resources/educator-resources" class="resource-item" target="_blank" rel="noopener">
-                    <span class="icon">👩‍🏫</span>
-                    <div class="info">
-                        <h3>Educator Resources</h3>
-                        <p>Teaching guides, activity sheets, and assessment tools</p>
-                    </div>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum/tree/main/assets" class="resource-item" target="_blank" rel="noopener">
-                    <span class="icon">🖼️</span>
-                    <div class="info">
-                        <h3>Assets & Images</h3>
-                        <p>Logos, flyers, QR codes, and visual materials</p>
-                    </div>
-                </a>
-                <a href="https://github.com/bakiel/zeek-squad-curriculum" class="resource-item" target="_blank" rel="noopener">
+                <a href="https://github.com/bakiel/zeek-squad-curriculum" class="resource-item" target="_blank">
                     <span class="icon">💻</span>
                     <div class="info">
                         <h3>GitHub Repository</h3>
-                        <p>Full source code and all curriculum files</p>
+                        <p>Full source code and curriculum files</p>
                     </div>
                 </a>
             </div>
@@ -1067,72 +756,48 @@
 
     <script>
         function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(function(s) {
-                s.classList.remove('active');
-            });
-
-            // Show selected section
+            document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
             document.getElementById(sectionId).classList.add('active');
-
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(function(btn) {
-                btn.classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn').forEach(function(tab) {
+                if (tab.textContent.toLowerCase().includes(sectionId)) { tab.classList.add('active'); }
             });
-
-            // Find and activate the correct tab
-            var tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(function(tab) {
-                if (tab.textContent.toLowerCase().includes(sectionId)) {
-                    tab.classList.add('active');
-                }
-            });
-
-            // Update nav links
             document.querySelectorAll('.nav-links a').forEach(function(link) {
                 link.classList.remove('active');
-                if (link.textContent.toLowerCase() === sectionId) {
-                    link.classList.add('active');
-                }
+                if (link.textContent.toLowerCase() === sectionId) { link.classList.add('active'); }
             });
-
-            // Close mobile menu
             document.getElementById('navLinks').classList.remove('show');
+        }
 
-            // Update URL hash
-            window.location.hash = sectionId;
+        function showWeek(weekNum) {
+            document.querySelectorAll('.week-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.querySelectorAll('.week-content').forEach(function(content) { content.classList.remove('active'); });
+            event.target.classList.add('active');
+            var weekContent = document.getElementById('week-' + weekNum);
+            if (weekContent) { weekContent.classList.add('active'); }
+            // Reset to first day
+            showDay(weekNum, 'monday');
+        }
 
-            // Scroll to top smoothly
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function showDay(weekNum, dayName) {
+            var weekContent = document.getElementById('week-' + weekNum);
+            if (!weekContent) return;
+            weekContent.querySelectorAll('.day-tab').forEach(function(tab) { tab.classList.remove('active'); });
+            weekContent.querySelectorAll('.day-content').forEach(function(content) { content.classList.remove('active'); });
+            event.target.classList.add('active');
+            var dayContent = document.getElementById('week-' + weekNum + '-' + dayName);
+            if (dayContent) { dayContent.classList.add('active'); }
         }
 
         function toggleMenu() {
             document.getElementById('navLinks').classList.toggle('show');
         }
 
-        // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             var nav = document.querySelector('nav');
             var navLinks = document.getElementById('navLinks');
-            var menuToggle = document.querySelector('.menu-toggle');
-
             if (!nav.contains(e.target) && navLinks.classList.contains('show')) {
                 navLinks.classList.remove('show');
-            }
-        });
-
-        // Handle escape key to close menu
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('navLinks').classList.remove('show');
-            }
-        });
-
-        // Handle URL hash on page load
-        window.addEventListener('load', function() {
-            var hash = window.location.hash.substring(1);
-            if (hash && document.getElementById(hash)) {
-                showSection(hash);
             }
         });
     </script>
