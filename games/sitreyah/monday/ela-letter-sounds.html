@@ -270,9 +270,9 @@
 </head>
 <body>
     <div class="start-screen" id="startScreen">
-        <h1>Letter Sounds!</h1>
+        <h1>Letter S!</h1>
         <div class="mascot-big">🦋</div>
-        <p>Learn what sounds letters make!</p>
+        <p>Today we learn the letter S!</p>
         <button class="start-btn" onclick="startGame()">Let's Play!</button>
     </div>
 
@@ -303,7 +303,7 @@
 
         <div class="game-container">
             <div class="question-area">
-                <div class="big-letter" id="targetLetter" onclick="playLetterSound()">A</div>
+                <div class="big-letter" id="targetLetter" onclick="playLetterSound()">S</div>
                 <div class="instruction">Tap the picture that starts with this letter!</div>
             </div>
 
@@ -380,20 +380,20 @@
         }
 
         var letterData = [
-            { letter: 'A', audioKey: 'letterA', correct: { emoji: '🍎', word: 'Apple' }, wrong: [
-                { emoji: '🐕', word: 'Dog' }, { emoji: '🐱', word: 'Cat' }, { emoji: '🐟', word: 'Fish' }
-            ]},
-            { letter: 'B', audioKey: 'letterB', correct: { emoji: '🦋', word: 'Butterfly' }, wrong: [
-                { emoji: '🌺', word: 'Flower' }, { emoji: '🌙', word: 'Moon' }, { emoji: '⭐', word: 'Star' }
-            ]},
-            { letter: 'C', audioKey: 'letterC', correct: { emoji: '🐱', word: 'Cat' }, wrong: [
-                { emoji: '🐕', word: 'Dog' }, { emoji: '🐦', word: 'Bird' }, { emoji: '🐸', word: 'Frog' }
-            ]},
-            { letter: 'D', audioKey: 'letterD', correct: { emoji: '🐕', word: 'Dog' }, wrong: [
-                { emoji: '🐱', word: 'Cat' }, { emoji: '🐦', word: 'Bird' }, { emoji: '🐟', word: 'Fish' }
-            ]},
             { letter: 'S', audioKey: 'letterS', correct: { emoji: '☀️', word: 'Sun' }, wrong: [
                 { emoji: '🌙', word: 'Moon' }, { emoji: '🌧️', word: 'Rain' }, { emoji: '❄️', word: 'Snow' }
+            ]},
+            { letter: 'S', audioKey: 'letterS', correct: { emoji: '⭐', word: 'Star' }, wrong: [
+                { emoji: '🌙', word: 'Moon' }, { emoji: '🍎', word: 'Apple' }, { emoji: '🐸', word: 'Frog' }
+            ]},
+            { letter: 'S', audioKey: 'letterS', correct: { emoji: '🐍', word: 'Snake' }, wrong: [
+                { emoji: '🐕', word: 'Dog' }, { emoji: '🐱', word: 'Cat' }, { emoji: '🐦', word: 'Bird' }
+            ]},
+            { letter: 'S', audioKey: 'letterS', correct: { emoji: '🍓', word: 'Strawberry' }, wrong: [
+                { emoji: '🍌', word: 'Banana' }, { emoji: '🍊', word: 'Orange' }, { emoji: '🍇', word: 'Grapes' }
+            ]},
+            { letter: 'S', audioKey: 'letterS', correct: { emoji: '🧦', word: 'Sock' }, wrong: [
+                { emoji: '👕', word: 'Shirt' }, { emoji: '👖', word: 'Pants' }, { emoji: '🧢', word: 'Hat' }
             ]}
         ];
 
