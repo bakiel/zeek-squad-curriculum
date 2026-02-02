@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Story Time - Sitreyah</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 15px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+        .dot.active { background: white; transform: scale(1.2); }
+        .dot.completed { background: #fbbf24; }
+
+        .story-container {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .story-illustration {
+            text-align: center;
+            font-size: 6rem;
+            margin-bottom: 20px;
+            animation: storyPop 0.5s ease;
+        }
+        @keyframes storyPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .story-text {
+            font-size: 1.3rem;
+            color: #374151;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+        .highlight {
+            color: #8b5cf6;
+            font-weight: bold;
+        }
+
+        .read-aloud-btn {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        .question-area {
+            background: #f3e8ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: auto;
+        }
+        .question {
+            font-size: 1.1rem;
+            color: #6b21a8;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .answer-btn {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 3px solid #e9d5ff;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-family: inherit;
+        }
+        .answer-btn:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+        }
+        .answer-btn.correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+        .answer-btn.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .nav-btn.prev {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .nav-btn.next {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        .celebration-content h2 { color: #8b5cf6; font-size: 2rem; }
+        .celebration-content .big-emoji { font-size: 5rem; margin: 20px 0; }
+        .stars { text-align: center; font-size: 2.5rem; margin: 15px 0; }
+        .star { color: #fbbf24; }
+        .play-again-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .sound-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>📖 Story Time</h1>
+            <p>The Little Star's Big Dream</p>
+        </div>
+
+        <div class="progress-dots" id="progressDots"></div>
+
+        <div class="story-container">
+            <div class="story-illustration" id="illustration">⭐</div>
+            <div class="story-text" id="storyText"></div>
+            <button class="read-aloud-btn" onclick="readAloud()">🔊 Read to Me</button>
+
+            <div class="question-area" id="questionArea" style="display: none;">
+                <div class="question" id="question"></div>
+                <div class="answers" id="answers"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevPage()">← Back</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextPage()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <h2>The End!</h2>
+            <div class="big-emoji">📖⭐🌙</div>
+            <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+            </div>
+            <p>Great job listening to the story!</p>
+            <button class="play-again-btn" onclick="restartStory()">Read Again!</button>
+        </div>
+    </div>
+
+    <script>
+        const story = [
+            {
+                illustration: '⭐',
+                text: 'Once upon a time, there was a little star named Stella who lived high up in the night sky.',
+                plainText: 'Once upon a time, there was a little star named Stella who lived high up in the night sky.',
+                question: null
+            },
+            {
+                illustration: '🌙⭐',
+                text: 'Stella looked down at Earth every night. She saw children playing and laughing.',
+                plainText: 'Stella looked down at Earth every night. She saw children playing and laughing.',
+                question: {
+                    text: 'What did Stella see children doing?',
+                    answers: ['Sleeping', 'Playing and laughing', 'Eating'],
+                    correct: 1
+                }
+            },
+            {
+                illustration: '⭐💭',
+                text: '"I wish I could play with the children," Stella said. "But I am too far away."',
+                plainText: 'I wish I could play with the children, Stella said. But I am too far away.',
+                question: null
+            },
+            {
+                illustration: '🌙✨⭐',
+                text: 'The Moon heard Stella and smiled. "Little star, you help children every night!"',
+                plainText: 'The Moon heard Stella and smiled. Little star, you help children every night!',
+                question: {
+                    text: 'Who talked to Stella?',
+                    answers: ['The Sun', 'The Moon', 'A cloud'],
+                    correct: 1
+                }
+            },
+            {
+                illustration: '👧😴⭐',
+                text: '"When children look up and see you twinkling, they feel happy and safe," said the Moon.',
+                plainText: 'When children look up and see you twinkling, they feel happy and safe, said the Moon.',
+                question: null
+            },
+            {
+                illustration: '⭐✨',
+                text: 'Stella began to twinkle her brightest! She was so happy to help.',
+                plainText: 'Stella began to twinkle her brightest! She was so happy to help.',
+                question: {
+                    text: 'How did Stella feel?',
+                    answers: ['Sad', 'Angry', 'Happy'],
+                    correct: 2
+                }
+            },
+            {
+                illustration: '🌙⭐🌟✨',
+                text: 'From that night on, Stella twinkled with all her heart. And children everywhere smiled when they saw her.',
+                plainText: 'From that night on, Stella twinkled with all her heart. And children everywhere smiled when they saw her.',
+                question: null
+            },
+            {
+                illustration: '⭐💛',
+                text: 'The End! Remember: Even small things can make a big difference!',
+                plainText: 'The End! Remember: Even small things can make a big difference!',
+                question: null
+            }
+        ];
+
+        let currentPage = 0;
+        let soundEnabled = true;
+
+        function playTone(freq, duration) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function initDots() {
+            const dotsContainer = document.getElementById('progressDots');
+            dotsContainer.textContent = '';
+            story.forEach(function(_, i) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (i === 0) dot.classList.add('active');
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach(function(dot, i) {
+                dot.classList.remove('active');
+                if (i < currentPage) dot.classList.add('completed');
+                if (i === currentPage) dot.classList.add('active');
+            });
+        }
+
+        function showPage() {
+            const page = story[currentPage];
+            document.getElementById('illustration').textContent = page.illustration;
+            document.getElementById('storyText').textContent = page.text;
+
+            const questionArea = document.getElementById('questionArea');
+            if (page.question) {
+                questionArea.style.display = 'block';
+                document.getElementById('question').textContent = page.question.text;
+
+                const answersDiv = document.getElementById('answers');
+                answersDiv.textContent = '';
+
+                page.question.answers.forEach(function(answer, i) {
+                    const btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = answer;
+                    btn.onclick = function() { checkAnswer(btn, i === page.question.correct); };
+                    answersDiv.appendChild(btn);
+                });
+            } else {
+                questionArea.style.display = 'none';
+            }
+
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').textContent = currentPage === story.length - 1 ? 'Finish!' : 'Next →';
+
+            updateDots();
+            playTone(600, 0.1);
+        }
+
+        function readAloud() {
+            if (!soundEnabled) return;
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const text = story[currentPage].plainText;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.85;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function checkAnswer(btn, isCorrect) {
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(function(b) { b.onclick = null; });
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                playTone(523, 0.1);
+                setTimeout(function() { playTone(659, 0.1); }, 100);
+            } else {
+                btn.classList.add('wrong');
+                playTone(200, 0.2);
+                setTimeout(function() {
+                    buttons[story[currentPage].question.correct].classList.add('correct');
+                }, 500);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < story.length - 1) {
+                currentPage++;
+                showPage();
+            } else {
+                document.getElementById('celebration').classList.add('show');
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                showPage();
+            }
+        }
+
+        function restartStory() {
+            currentPage = 0;
+            document.getElementById('celebration').classList.remove('show');
+            initDots();
+            showPage();
+        }
+
+        document.getElementById('soundToggle').addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            this.textContent = soundEnabled ? '🔊' : '🔇';
+        });
+
+        initDots();
+        showPage();
+    </script>
+</body>
+</html>
