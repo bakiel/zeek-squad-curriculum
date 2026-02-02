@@ -110,6 +110,7 @@
         .game-header.financial { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .game-header.sel { background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); }
         .game-header.story { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .game-header.coding { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .game-header .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
         .game-header h2 { font-size: 1.5rem; margin-bottom: 5px; }
         .game-header .subject {
@@ -154,6 +155,7 @@
         .play-btn.financial { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .play-btn.sel { background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); }
         .play-btn.story { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .play-btn.coding { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .play-btn:hover { opacity: 0.9; transform: scale(1.02); }
         .instructions {
             background: white;
@@ -204,6 +206,7 @@
             <button class="tab-btn" onclick="showTab('wednesday', this)">Wed</button>
             <button class="tab-btn" onclick="showTab('thursday', this)">Thu</button>
             <button class="tab-btn" onclick="showTab('monday', this)">Mon</button>
+            <button class="tab-btn" onclick="showTab('coding', this)">💻</button>
         </div>
 
         <!-- TUESDAY GAMES -->
@@ -574,6 +577,46 @@
                         <li>🦋 Watch him become a butterfly</li>
                     </ul>
                     <a href="hungry-caterpillar.html" class="play-btn story">▶ Play Hungry Caterpillar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CODING GAMES -->
+        <div id="coding" class="tab-content">
+            <!-- Code Blocks Game -->
+            <div class="game-card">
+                <div class="game-header coding">
+                    <span class="emoji">🤖</span>
+                    <h2>Code Blocks Adventure</h2>
+                    <span class="subject">Coding / Algorithms</span>
+                </div>
+                <div class="game-body">
+                    <p>Learn to code by helping Zeek the Robot reach the goal! Drag and drop code blocks to build your program.</p>
+                    <ul>
+                        <li>🧩 Drag code blocks to build programs</li>
+                        <li>🔄 Learn about loops and sequences</li>
+                        <li>🧠 Plan paths around obstacles</li>
+                        <li>⭐ 5 levels from easy to challenging!</li>
+                    </ul>
+                    <a href="code-blocks.html" class="play-btn coding">▶ Play Code Blocks</a>
+                </div>
+            </div>
+
+            <!-- More coding games coming soon placeholder -->
+            <div class="game-card">
+                <div class="game-header coding" style="opacity: 0.7;">
+                    <span class="emoji">🔮</span>
+                    <h2>More Coming Soon!</h2>
+                    <span class="subject">Coding / Programming</span>
+                </div>
+                <div class="game-body">
+                    <p>More exciting coding games are on the way! Stay tuned for:</p>
+                    <ul>
+                        <li>🐞 Debug the Bug - Find and fix errors</li>
+                        <li>🎨 Pattern Painter - Create patterns with code</li>
+                        <li>🌟 Event Quest - Learn about events and triggers</li>
+                    </ul>
+                    <button class="play-btn coding" style="opacity: 0.5; cursor: not-allowed;">🔒 Coming Soon</button>
                 </div>
             </div>
         </div>
