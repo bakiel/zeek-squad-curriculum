@@ -17,6 +17,41 @@
         .header { text-align: center; color: white; margin-bottom: 15px; }
         .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
 
+        .start-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        .start-screen.hidden { display: none; }
+        .start-screen h1 { color: white; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+        .start-screen .mascot-big { font-size: 8rem; margin: 20px 0; animation: bounce 1s ease-in-out infinite; }
+        .start-screen p { color: white; font-size: 1.3rem; margin-bottom: 30px; }
+        .start-btn {
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            background: white;
+            color: #10b981;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .progress-bar-container {
             background: rgba(255,255,255,0.3);
             border-radius: 15px;
@@ -48,9 +83,15 @@
             margin-bottom: 20px;
         }
         .mascot { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
+        .mascot.speaking { animation: talk 0.3s ease-in-out infinite; }
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+        @keyframes talk {
+            0%, 100% { transform: scale(1) rotate(0); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
         }
         .speech-bubble {
             background: white;
@@ -96,6 +137,10 @@
         .count-item {
             font-size: 2.5rem;
             animation: itemPop 0.3s ease;
+            transition: transform 0.2s ease;
+        }
+        .count-item.highlight {
+            transform: scale(1.3);
         }
         @keyframes itemPop {
             0% { transform: scale(0); }
@@ -217,9 +262,31 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
             z-index: 100;
         }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 1001;
+            animation: confettiFall 3s linear forwards;
+        }
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="start-screen" id="startScreen">
+        <h1>Counting Fun!</h1>
+        <div class="mascot-big">🐸</div>
+        <p>Let's count together!</p>
+        <button class="start-btn" onclick="startGame()">Let's Count!</button>
+    </div>
+
     <button class="sound-toggle" id="soundToggle">🔊</button>
 
     <div class="container">
@@ -239,9 +306,9 @@
         </div>
 
         <div class="mascot-area">
-            <div class="mascot">🐸</div>
+            <div class="mascot" id="mascot">🐸</div>
             <div class="speech-bubble">
-                <p id="mascotText">Hi! I'm Freddy Frog! Let's count together!</p>
+                <p id="mascotText">Hi! I'm Freddy Frog!</p>
             </div>
         </div>
 
@@ -274,142 +341,203 @@
     </div>
 
     <script>
-        const items = ['🍎', '🌟', '🐦', '🌺', '🦋', '🐟', '🎈', '🍪', '🍓', '🌈'];
+        var audioFiles = {
+            welcome: 'audio/maths/welcome.mp3',
+            instruction: 'audio/maths/instruction.mp3',
+            num1: 'audio/maths/num-1.mp3',
+            num2: 'audio/maths/num-2.mp3',
+            num3: 'audio/maths/num-3.mp3',
+            num4: 'audio/maths/num-4.mp3',
+            num5: 'audio/maths/num-5.mp3',
+            num6: 'audio/maths/num-6.mp3',
+            num7: 'audio/maths/num-7.mp3',
+            num8: 'audio/maths/num-8.mp3',
+            num9: 'audio/maths/num-9.mp3',
+            num10: 'audio/maths/num-10.mp3',
+            correct1: 'audio/maths/correct1.mp3',
+            correct2: 'audio/maths/correct2.mp3',
+            correct3: 'audio/maths/correct3.mp3',
+            wrong: 'audio/maths/wrong.mp3',
+            celebration: 'audio/maths/celebration.mp3'
+        };
 
-        let currentRound = 0;
-        let score = 0;
-        let totalRounds = 6;
-        let soundEnabled = true;
-        let correctAnswer = 0;
+        var audioCache = {};
+        Object.keys(audioFiles).forEach(function(key) {
+            audioCache[key] = new Audio(audioFiles[key]);
+            audioCache[key].preload = 'auto';
+        });
 
-        function playTone(freq, duration) {
-            if (!soundEnabled) return;
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.frequency.value = freq;
-                osc.type = 'sine';
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-                osc.start();
-                osc.stop(ctx.currentTime + duration);
-            } catch(e) {}
+        var currentAudio = null;
+        var soundEnabled = true;
+
+        function playAudio(key, callback) {
+            if (!soundEnabled) {
+                if (callback) callback();
+                return;
+            }
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            var audio = audioCache[key];
+            if (audio) {
+                currentAudio = audio;
+                audio.currentTime = 0;
+                document.getElementById('mascot').classList.add('speaking');
+                audio.onended = function() {
+                    document.getElementById('mascot').classList.remove('speaking');
+                    if (callback) callback();
+                };
+                audio.play().catch(function() {
+                    document.getElementById('mascot').classList.remove('speaking');
+                    if (callback) callback();
+                });
+            } else if (callback) {
+                callback();
+            }
         }
 
-        function playCorrectSound() {
-            playTone(523, 0.15);
-            setTimeout(() => playTone(659, 0.15), 100);
-            setTimeout(() => playTone(784, 0.2), 200);
-        }
+        var items = ['🍎', '🌟', '🐦', '🌺', '🦋', '🐟', '🎈', '🍪', '🍓', '🌈'];
+        var currentRound = 0;
+        var score = 0;
+        var totalRounds = 6;
+        var correctAnswer = 0;
 
-        function playWrongSound() {
-            playTone(200, 0.3);
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            playAudio('welcome', function() {
+                playAudio('instruction', function() {
+                    startRound();
+                });
+            });
         }
 
         function countAloud() {
             if (!soundEnabled) return;
-            if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
-                let count = 0;
-                const interval = setInterval(() => {
+            var count = 0;
+            var itemElements = document.querySelectorAll('.count-item');
+
+            function countNext() {
+                if (count < correctAnswer) {
                     count++;
-                    const utterance = new SpeechSynthesisUtterance(count.toString());
-                    utterance.rate = 0.8;
-                    speechSynthesis.speak(utterance);
+                    var audioKey = 'num' + count;
 
-                    // Highlight items as we count
-                    const itemElements = document.querySelectorAll('.count-item');
                     if (itemElements[count - 1]) {
-                        itemElements[count - 1].style.transform = 'scale(1.3)';
-                        itemElements[count - 1].style.transition = 'transform 0.2s';
-                        setTimeout(() => {
-                            itemElements[count - 1].style.transform = 'scale(1)';
-                        }, 300);
+                        itemElements[count - 1].classList.add('highlight');
+                        setTimeout(function() {
+                            itemElements[count - 1].classList.remove('highlight');
+                        }, 400);
                     }
 
-                    if (count >= correctAnswer) {
-                        clearInterval(interval);
-                    }
-                }, 600);
+                    playAudio(audioKey, function() {
+                        setTimeout(countNext, 200);
+                    });
+                }
             }
+            countNext();
         }
 
         function startRound() {
-            // Generate random count between 1 and 10
             correctAnswer = Math.floor(Math.random() * 10) + 1;
-            const itemEmoji = items[Math.floor(Math.random() * items.length)];
+            var itemEmoji = items[Math.floor(Math.random() * items.length)];
 
-            // Display items
-            const display = document.getElementById('itemsDisplay');
+            var display = document.getElementById('itemsDisplay');
             display.textContent = '';
 
-            for (let i = 0; i < correctAnswer; i++) {
-                const item = document.createElement('span');
+            for (var i = 0; i < correctAnswer; i++) {
+                var item = document.createElement('span');
                 item.className = 'count-item';
                 item.textContent = itemEmoji;
                 item.style.animationDelay = (i * 0.1) + 's';
                 display.appendChild(item);
             }
 
-            document.getElementById('mascotText').textContent = `Count the ${itemEmoji}! How many?`;
+            document.getElementById('mascotText').textContent = 'Count the ' + itemEmoji + '! How many?';
             document.getElementById('instruction').textContent = 'Tap the right number!';
 
-            // Create number choices (1-10)
-            const choicesDiv = document.getElementById('choices');
+            var choicesDiv = document.getElementById('choices');
             choicesDiv.textContent = '';
 
-            for (let i = 1; i <= 10; i++) {
-                const btn = document.createElement('button');
+            for (var j = 1; j <= 10; j++) {
+                var btn = document.createElement('button');
                 btn.className = 'choice-btn';
-                btn.textContent = i;
-                btn.onclick = () => checkAnswer(btn, i === correctAnswer);
+                btn.textContent = j;
+                (function(num) {
+                    btn.onclick = function() { checkAnswer(btn, num === correctAnswer); };
+                })(j);
                 choicesDiv.appendChild(btn);
             }
         }
 
         function checkAnswer(btn, isCorrect) {
-            const buttons = document.querySelectorAll('.choice-btn');
-            buttons.forEach(b => b.onclick = null);
+            var buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(function(b) { b.onclick = null; });
 
             if (isCorrect) {
                 btn.classList.add('correct');
-                playCorrectSound();
                 score++;
 
-                const messages = ["Hooray!", "You got it!", "Amazing!", "Ribbit! Great job!"];
+                var correctAudios = ['correct1', 'correct2', 'correct3'];
+                var randomCorrect = correctAudios[Math.floor(Math.random() * correctAudios.length)];
+
+                var messages = ["Hooray!", "You got it!", "Amazing!", "Ribbit! Great job!"];
                 document.getElementById('mascotText').textContent = messages[Math.floor(Math.random() * messages.length)];
 
                 if (score >= 2) document.getElementById('star1').classList.add('earned');
                 if (score >= 4) document.getElementById('star2').classList.add('earned');
                 if (score >= 6) document.getElementById('star3').classList.add('earned');
 
-                setTimeout(() => {
-                    currentRound++;
-                    document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
+                playAudio(randomCorrect, function() {
+                    setTimeout(function() {
+                        currentRound++;
+                        document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
 
-                    if (currentRound >= totalRounds) {
-                        document.getElementById('celebration').classList.add('show');
-                    } else {
-                        startRound();
-                    }
-                }, 1500);
+                        if (currentRound >= totalRounds) {
+                            showCelebration();
+                        } else {
+                            startRound();
+                        }
+                    }, 500);
+                });
             } else {
                 btn.classList.add('wrong');
-                playWrongSound();
                 document.getElementById('mascotText').textContent = "Try again! Count carefully!";
 
-                setTimeout(() => {
-                    btn.classList.remove('wrong');
-                    buttons.forEach(b => {
-                        if (!b.classList.contains('correct')) {
-                            const num = parseInt(b.textContent);
-                            b.onclick = () => checkAnswer(b, num === correctAnswer);
-                        }
-                    });
-                }, 800);
+                playAudio('wrong', function() {
+                    setTimeout(function() {
+                        btn.classList.remove('wrong');
+                        buttons.forEach(function(b) {
+                            if (!b.classList.contains('correct')) {
+                                var num = parseInt(b.textContent);
+                                b.onclick = function() { checkAnswer(b, num === correctAnswer); };
+                            }
+                        });
+                    }, 300);
+                });
+            }
+        }
+
+        function showCelebration() {
+            createConfetti();
+            document.getElementById('celebration').classList.add('show');
+            playAudio('celebration');
+        }
+
+        function createConfetti() {
+            var colors = ['#10b981', '#34d399', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6'];
+            for (var i = 0; i < 50; i++) {
+                (function(index) {
+                    setTimeout(function() {
+                        var confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                        document.body.appendChild(confetti);
+                        setTimeout(function() { confetti.remove(); }, 4000);
+                    }, index * 50);
+                })(i);
             }
         }
 
@@ -418,7 +546,7 @@
             score = 0;
             document.getElementById('celebration').classList.remove('show');
             document.getElementById('progressBar').style.width = '0%';
-            document.querySelectorAll('.star').forEach(s => s.classList.remove('earned'));
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
             document.getElementById('mascotText').textContent = "Let's count together!";
             startRound();
         }
@@ -426,9 +554,12 @@
         document.getElementById('soundToggle').addEventListener('click', function() {
             soundEnabled = !soundEnabled;
             this.textContent = soundEnabled ? '🔊' : '🔇';
+            if (!soundEnabled && currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                document.getElementById('mascot').classList.remove('speaking');
+            }
         });
-
-        startRound();
     </script>
 </body>
 </html>
