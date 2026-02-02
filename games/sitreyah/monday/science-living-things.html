@@ -1,519 +1,1106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Living Things - Family World School</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-            min-height: 100vh;
-            padding: 15px;
-            overflow-x: hidden;
-        }
-        .container { max-width: 500px; margin: 0 auto; }
-        .header { text-align: center; color: white; margin-bottom: 15px; }
-        .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living & Non-Living Things - Interactive Whiteboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap');
 
-        .start-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            padding: 20px;
-        }
-        .start-screen.hidden { display: none; }
-        .start-screen h1 { color: white; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
-        .start-screen .mascot-big { font-size: 8rem; margin: 20px 0; animation: bounce 1s ease-in-out infinite; }
-        .start-screen p { color: white; font-size: 1.3rem; margin-bottom: 30px; }
-        .start-btn {
-            padding: 20px 50px;
-            font-size: 1.5rem;
-            background: white;
-            color: #f59e0b;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+  :root {
+    --green: #2ECC71;
+    --green-dark: #27AE60;
+    --green-light: #E8F8F0;
+    --blue: #3498DB;
+    --blue-dark: #2980B9;
+    --blue-light: #EBF5FB;
+    --orange: #F39C12;
+    --orange-dark: #E67E22;
+    --pink: #E74C8B;
+    --purple: #9B59B6;
+    --yellow: #F1C40F;
+    --red: #E74C3C;
+    --gray: #BDC3C7;
+    --dark: #2C3E50;
+    --bg: #FEFCF3;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  }
 
-        .progress-bar-container {
-            background: rgba(255,255,255,0.3);
-            border-radius: 15px;
-            height: 20px;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #22c55e, #16a34a);
-            border-radius: 15px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .stars { text-align: center; font-size: 2.5rem; margin-bottom: 15px; }
-        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
-        .star.earned { color: #22c55e; filter: drop-shadow(0 0 10px #22c55e); animation: starPop 0.5s ease; }
-        @keyframes starPop {
-            0% { transform: scale(0) rotate(-180deg); }
-            50% { transform: scale(1.4) rotate(20deg); }
-            100% { transform: scale(1) rotate(0); }
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
-        .mascot-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .mascot { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
-        .mascot.speaking { animation: talk 0.3s ease-in-out infinite; }
-        @keyframes talk {
-            0%, 100% { transform: scale(1) rotate(0); }
-            25% { transform: scale(1.1) rotate(-5deg); }
-            75% { transform: scale(1.1) rotate(5deg); }
-        }
-        .speech-bubble {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 20px;
-            position: relative;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            flex: 1;
-        }
-        .speech-bubble:before {
-            content: '';
-            position: absolute;
-            left: -12px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: 12px solid transparent;
-            border-right-color: white;
-        }
-        .speech-bubble p { color: #f59e0b; font-size: 1.1rem; font-weight: bold; }
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(135deg, var(--green) 0%, #58D68D 50%, var(--blue) 100%);
+    padding: 18px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(46,204,113,0.3);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: shimmer 8s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { transform: translateX(-5%); }
+    50% { transform: translateX(5%); }
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2.4rem;
+    color: white;
+    text-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+    position: relative;
+    letter-spacing: 1px;
+  }
+  .header p {
+    color: rgba(255,255,255,0.92);
+    font-size: 1rem;
+    font-weight: 600;
+    position: relative;
+    margin-top: 2px;
+  }
 
-        .game-container {
-            background: white;
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
+  /* ===== NAV TABS ===== */
+  .nav-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px 0;
+    background: white;
+    border-bottom: 3px solid #f0f0f0;
+    flex-wrap: wrap;
+  }
+  .nav-tab {
+    padding: 10px 22px;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 20px 20px 0 0;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    top: 3px;
+  }
+  .nav-tab:hover { background: #eee; color: #555; }
+  .nav-tab.active {
+    background: var(--bg);
+    color: var(--dark);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    top: 3px;
+    border-bottom: 3px solid var(--bg);
+  }
+  .nav-tab.active[data-tab="learn"] { color: var(--green-dark); }
+  .nav-tab.active[data-tab="sort"] { color: var(--orange-dark); }
+  .nav-tab.active[data-tab="circle"] { color: var(--purple); }
+  .nav-tab.active[data-tab="quiz"] { color: var(--blue-dark); }
 
-        .question-area {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .big-emoji {
-            font-size: 6rem;
-            margin-bottom: 15px;
-            animation: float 2s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .question-text {
-            font-size: 1.3rem;
-            color: #374151;
-            font-weight: bold;
-        }
-        .instruction {
-            font-size: 1rem;
-            color: #64748b;
-            margin-top: 10px;
-        }
+  /* ===== SECTIONS ===== */
+  .section { display: none; padding: 20px; max-width: 1100px; margin: 0 auto; }
+  .section.active { display: block; animation: fadeSlide 0.4s ease; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        .choices {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .choice-btn {
-            padding: 25px 15px;
-            font-size: 1.1rem;
-            border: 4px solid #fef3c7;
-            border-radius: 20px;
-            background: #fffbeb;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-        .choice-btn .emoji { font-size: 3rem; }
-        .choice-btn .label { font-weight: bold; color: #92400e; }
-        .choice-btn:hover {
-            transform: scale(1.05);
-            border-color: #f59e0b;
-        }
-        .choice-btn.correct {
-            background: #dcfce7;
-            border-color: #22c55e;
-            animation: correctPulse 0.5s ease;
-        }
-        .choice-btn.wrong {
-            background: #fee2e2;
-            border-color: #ef4444;
-            animation: shake 0.5s ease;
-        }
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
+  /* ===== LEARN SECTION ===== */
+  .learn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .info-card {
+    border-radius: 20px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease;
+  }
+  .info-card:hover { transform: translateY(-3px); }
+  .info-card.living {
+    background: linear-gradient(145deg, var(--green-light) 0%, #D5F5E3 100%);
+    border: 3px solid var(--green);
+  }
+  .info-card.nonliving {
+    background: linear-gradient(145deg, var(--blue-light) 0%, #D6EAF8 100%);
+    border: 3px solid var(--blue);
+  }
+  .info-card h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.7rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .info-card.living h2 { color: var(--green-dark); }
+  .info-card.nonliving h2 { color: var(--blue-dark); }
+  .info-card .emoji-icon { font-size: 1.8rem; }
+  .info-card ul { list-style: none; padding: 0; }
+  .info-card ul li {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--dark);
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px dashed rgba(0,0,0,0.08);
+  }
+  .info-card ul li:last-child { border-bottom: none; }
+  .info-card ul li .bullet {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .living .bullet { background: var(--green); color: white; }
+  .nonliving .bullet { background: var(--blue); color: white; }
 
-        .celebration {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .celebration.show { display: flex; }
-        .celebration-content {
-            background: white;
-            padding: 40px;
-            border-radius: 30px;
-            text-align: center;
-            animation: popIn 0.5s ease;
-        }
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-        .celebration-content h2 { color: #f59e0b; font-size: 2rem; }
-        .celebration-content .big-emoji { font-size: 5rem; margin: 20px 0; }
-        .play-again-btn, .home-btn {
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            margin: 10px;
-        }
-        .home-btn {
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-        }
+  .examples-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .example-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    width: 110px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+  .example-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+  .example-card .big-emoji { font-size: 2.8rem; display: block; margin-bottom: 6px; }
+  .example-card .label {
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--dark);
+  }
 
-        .sound-toggle {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 100;
-        }
+  /* ===== SORT SECTION ===== */
+  .sort-instruction {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.4rem;
+    color: var(--dark);
+    margin: 10px 0 20px;
+  }
+  .sort-instruction span { color: var(--orange); }
 
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            top: -10px;
-            z-index: 1001;
-            animation: confettiFall 3s linear forwards;
-        }
-        @keyframes confettiFall {
-            to {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-    </style>
+  .sort-area {
+    display: grid;
+    grid-template-columns: 1fr 280px 1fr;
+    gap: 16px;
+    align-items: start;
+    min-height: 460px;
+  }
+
+  .drop-zone {
+    min-height: 420px;
+    border-radius: 24px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .drop-zone.living-zone {
+    background: linear-gradient(180deg, var(--green-light) 0%, #C8F7DC 100%);
+    border: 3px dashed var(--green);
+  }
+  .drop-zone.nonliving-zone {
+    background: linear-gradient(180deg, var(--blue-light) 0%, #BEE0F7 100%);
+    border: 3px dashed var(--blue);
+  }
+  .drop-zone.drag-over {
+    border-style: solid;
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(0,0,0,0.1);
+  }
+  .drop-zone.living-zone.drag-over { background: #B8F0D0; }
+  .drop-zone.nonliving-zone.drag-over { background: #A8D8F0; }
+
+  .drop-zone h3 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+  .drop-zone.living-zone h3 { color: var(--green-dark); }
+  .drop-zone.nonliving-zone h3 { color: var(--blue-dark); }
+  .drop-zone .zone-hint {
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .items-tray {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    padding-top: 10px;
+  }
+  .items-tray h3 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+
+  .drag-item {
+    background: white;
+    border: 3px solid #eee;
+    border-radius: 16px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+    width: 200px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--dark);
+  }
+  .drag-item:active { cursor: grabbing; }
+  .drag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    border-color: var(--orange);
+  }
+  .drag-item .item-emoji { font-size: 1.8rem; }
+  .drag-item.correct {
+    border-color: var(--green) !important;
+    background: #E8FFF0;
+    animation: popCorrect 0.4s ease;
+  }
+  .drag-item.wrong {
+    border-color: var(--red) !important;
+    background: #FFF0F0;
+    animation: shake 0.5s ease;
+  }
+  @keyframes popCorrect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+
+  .sort-score {
+    text-align: center;
+    margin-top: 16px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem;
+    color: var(--dark);
+  }
+  .sort-score .score-num { color: var(--green); font-size: 1.6rem; }
+
+  /* ===== CIRCLE SECTION ===== */
+  .circle-instruction {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.4rem;
+    color: var(--dark);
+    margin: 10px 0 20px;
+  }
+  .circle-instruction span { color: var(--purple); }
+
+  .circle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .circle-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 12px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 4px solid transparent;
+    position: relative;
+  }
+  .circle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+  .circle-card .card-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; }
+  .circle-card .card-label {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+  .circle-card.selected {
+    border-color: var(--green);
+    background: var(--green-light);
+    box-shadow: 0 0 0 4px rgba(46,204,113,0.2);
+  }
+  .circle-card.selected::after {
+    content: '\2713';
+    position: absolute;
+    top: 8px; right: 10px;
+    background: var(--green);
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+    animation: popIn 0.3s ease;
+  }
+  .circle-card.wrong-select {
+    border-color: var(--red);
+    background: #FFF5F5;
+    animation: shake 0.5s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  .circle-score {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  /* ===== QUIZ SECTION ===== */
+  .quiz-instruction {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.4rem;
+    color: var(--dark);
+    margin: 10px 0 20px;
+  }
+  .quiz-instruction span { color: var(--blue-dark); }
+
+  .quiz-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 750px;
+    margin: 0 auto;
+  }
+  .quiz-row {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+  }
+  .quiz-row:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+  .quiz-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 1rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .quiz-row .quiz-text {
+    flex: 1;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+  .quiz-btns {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .quiz-btn {
+    padding: 8px 18px;
+    border: 3px solid #ddd;
+    border-radius: 12px;
+    background: white;
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #888;
+  }
+  .quiz-btn:hover { border-color: #bbb; background: #fafafa; }
+  .quiz-btn.living-btn:hover { border-color: var(--green); color: var(--green-dark); }
+  .quiz-btn.nonliving-btn:hover { border-color: var(--blue); color: var(--blue-dark); }
+  .quiz-btn.chosen-correct {
+    border-color: var(--green);
+    background: var(--green-light);
+    color: var(--green-dark);
+    animation: popCorrect 0.3s ease;
+  }
+  .quiz-btn.chosen-wrong {
+    border-color: var(--red);
+    background: #FFF0F0;
+    color: var(--red);
+    animation: shake 0.4s ease;
+  }
+  .quiz-btn.disabled { pointer-events: none; opacity: 0.5; }
+
+  .quiz-row.answered-correct { border-left: 5px solid var(--green); }
+  .quiz-row.answered-wrong { border-left: 5px solid var(--red); }
+
+  /* ===== SHARED ELEMENTS ===== */
+  .check-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+  .check-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .check-btn:active { transform: translateY(0); }
+  .check-btn.green { background: linear-gradient(135deg, var(--green), #58D68D); }
+  .check-btn.purple { background: linear-gradient(135deg, var(--purple), #BB8FCE); }
+  .check-btn.orange { background: linear-gradient(135deg, var(--orange), #F5B041); }
+  .check-btn.blue { background: linear-gradient(135deg, var(--blue), #5DADE2); }
+
+  .reset-btn {
+    display: block;
+    margin: 10px auto 0;
+    padding: 8px 24px;
+    border: 2px solid #ddd;
+    border-radius: 50px;
+    background: white;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1rem;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: #bbb; color: #666; background: #fafafa; }
+
+  .result-banner {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.5rem;
+    padding: 14px;
+    border-radius: 16px;
+    margin-top: 16px;
+    display: none;
+  }
+  .result-banner.show { display: block; animation: fadeSlide 0.4s ease; }
+  .result-banner.perfect { background: #E8FFF0; color: var(--green-dark); border: 2px solid var(--green); }
+  .result-banner.good { background: #FFF8E1; color: var(--orange-dark); border: 2px solid var(--orange); }
+  .result-banner.try-again { background: #FFF0F0; color: var(--red); border: 2px solid var(--red); }
+
+  /* ===== CONFETTI ===== */
+  .confetti-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 10px; height: 10px;
+    top: -20px;
+    animation: confettiFall 3s ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 850px) {
+    .learn-grid { grid-template-columns: 1fr; }
+    .sort-area { grid-template-columns: 1fr; }
+    .sort-area .drop-zone { min-height: 120px; }
+    .circle-grid { grid-template-columns: repeat(3, 1fr); }
+    .header h1 { font-size: 1.8rem; }
+  }
+  @media (max-width: 550px) {
+    .circle-grid { grid-template-columns: repeat(2, 1fr); }
+    .quiz-row { flex-wrap: wrap; }
+    .nav-tab { font-size: 0.9rem; padding: 8px 14px; }
+  }
+</style>
 </head>
 <body>
-    <div class="start-screen" id="startScreen">
-        <h1>Living Things!</h1>
-        <div class="mascot-big">🌱</div>
-        <p>Learn about living and non-living things!</p>
-        <button class="start-btn" onclick="startGame()">Let's Learn!</button>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🌿 Living & Non-Living Things 🪨</h1>
+  <p>Interactive Whiteboard Activity — Kindergarten Science</p>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="nav-tab active" data-tab="learn" onclick="switchTab('learn')">📖 Learn</button>
+  <button class="nav-tab" data-tab="sort" onclick="switchTab('sort')">🎯 Sort It!</button>
+  <button class="nav-tab" data-tab="circle" onclick="switchTab('circle')">⭕ Circle It!</button>
+  <button class="nav-tab" data-tab="quiz" onclick="switchTab('quiz')">✅ Quiz</button>
+</div>
+
+<!-- ==================== LEARN ==================== -->
+<div class="section active" id="section-learn">
+  <div class="learn-grid">
+    <div class="info-card living">
+      <h2><span class="emoji-icon">🌱</span> Living Things</h2>
+      <ul>
+        <li><span class="bullet">🌱</span> They <strong>grow</strong> bigger</li>
+        <li><span class="bullet">🍎</span> They need <strong>food & water</strong></li>
+        <li><span class="bullet">🏃</span> They can <strong>move</strong></li>
+        <li><span class="bullet">💨</span> They <strong>breathe</strong> air</li>
+        <li><span class="bullet">👶</span> They can <strong>have babies</strong></li>
+      </ul>
+    </div>
+    <div class="info-card nonliving">
+      <h2><span class="emoji-icon">🪨</span> Non-Living Things</h2>
+      <ul>
+        <li><span class="bullet">🚫</span> They do <strong>NOT</strong> grow</li>
+        <li><span class="bullet">🚫</span> They do <strong>NOT</strong> need food</li>
+        <li><span class="bullet">🚫</span> They do <strong>NOT</strong> move on their own</li>
+        <li><span class="bullet">🚫</span> They do <strong>NOT</strong> breathe</li>
+        <li><span class="bullet">🚫</span> They do <strong>NOT</strong> have babies</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="text-align:center; font-family:'Baloo 2',cursive; font-size:1.3rem; color:var(--dark); margin-top:24px;">
+    🌍 Examples of Living Things
+  </h3>
+  <div class="examples-row">
+    <div class="example-card"><span class="big-emoji">🐕</span><span class="label">Dog</span></div>
+    <div class="example-card"><span class="big-emoji">🌻</span><span class="label">Flower</span></div>
+    <div class="example-card"><span class="big-emoji">🐟</span><span class="label">Fish</span></div>
+    <div class="example-card"><span class="big-emoji">🌳</span><span class="label">Tree</span></div>
+    <div class="example-card"><span class="big-emoji">🦋</span><span class="label">Butterfly</span></div>
+    <div class="example-card"><span class="big-emoji">🐦</span><span class="label">Bird</span></div>
+  </div>
+
+  <h3 style="text-align:center; font-family:'Baloo 2',cursive; font-size:1.3rem; color:var(--dark); margin-top:20px;">
+    🏠 Examples of Non-Living Things
+  </h3>
+  <div class="examples-row">
+    <div class="example-card"><span class="big-emoji">🪨</span><span class="label">Rock</span></div>
+    <div class="example-card"><span class="big-emoji">📚</span><span class="label">Book</span></div>
+    <div class="example-card"><span class="big-emoji">🚗</span><span class="label">Car</span></div>
+    <div class="example-card"><span class="big-emoji">⚽</span><span class="label">Ball</span></div>
+    <div class="example-card"><span class="big-emoji">🥤</span><span class="label">Cup</span></div>
+    <div class="example-card"><span class="big-emoji">✏️</span><span class="label">Pencil</span></div>
+  </div>
+</div>
+
+<!-- ==================== SORT ==================== -->
+<div class="section" id="section-sort">
+  <p class="sort-instruction">
+    <span>🎯 Drag</span> each item into the correct group!
+  </p>
+  <div class="sort-area">
+    <!-- Living Drop Zone -->
+    <div class="drop-zone living-zone" id="living-zone"
+         ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'living')">
+      <h3>🌱 Living</h3>
+      <p class="zone-hint">Drop living things here</p>
     </div>
 
-    <button class="sound-toggle" id="soundToggle">🔊</button>
-
-    <div class="container">
-        <div class="header">
-            <h1>🌱 Living Things</h1>
-            <p>Is it living or non-living?</p>
-        </div>
-
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-
-        <div class="stars">
-            <span class="star" id="star1">⭐</span>
-            <span class="star" id="star2">⭐</span>
-            <span class="star" id="star3">⭐</span>
-        </div>
-
-        <div class="mascot-area">
-            <div class="mascot" id="mascot">🌻</div>
-            <div class="speech-bubble">
-                <p id="mascotText">Living things grow and need food!</p>
-            </div>
-        </div>
-
-        <div class="game-container">
-            <div class="question-area">
-                <div class="big-emoji" id="questionEmoji">🐕</div>
-                <div class="question-text" id="questionText">Is a dog living?</div>
-                <div class="instruction">Tap your answer!</div>
-            </div>
-
-            <div class="choices" id="choices">
-                <button class="choice-btn" onclick="checkAnswer(this, true)">
-                    <span class="emoji">✅</span>
-                    <span class="label">Living</span>
-                </button>
-                <button class="choice-btn" onclick="checkAnswer(this, false)">
-                    <span class="emoji">❌</span>
-                    <span class="label">Non-Living</span>
-                </button>
-            </div>
-        </div>
+    <!-- Items Tray -->
+    <div class="items-tray" id="items-tray">
+      <h3>🎒 Items</h3>
     </div>
 
-    <div class="celebration" id="celebration">
-        <div class="celebration-content">
-            <h2>Super Scientist!</h2>
-            <div class="big-emoji">🎉🌱🔬</div>
-            <div class="stars">
-                <span class="star earned">⭐</span>
-                <span class="star earned">⭐</span>
-                <span class="star earned">⭐</span>
-            </div>
-            <p>You know about living things!</p>
-            <button class="play-again-btn" onclick="restartGame()">Play Again!</button>
-            <button class="home-btn" onclick="window.location.href='index.html'">Back to Games</button>
-        </div>
+    <!-- Non-Living Drop Zone -->
+    <div class="drop-zone nonliving-zone" id="nonliving-zone"
+         ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'nonliving')">
+      <h3>🪨 Non-Living</h3>
+      <p class="zone-hint">Drop non-living things here</p>
     </div>
+  </div>
 
-    <script>
-        var audioFiles = {
-            welcome: 'audio/science/welcome.mp3',
-            instruction: 'audio/science/living-things.mp3',
-            correct1: 'audio/science/correct1.mp3',
-            correct2: 'audio/science/correct2.mp3',
-            correct3: 'audio/science/correct3.mp3',
-            wrong: 'audio/science/wrong.mp3',
-            celebration: 'audio/science/celebration.mp3'
-        };
+  <div class="sort-score" id="sort-score"></div>
+  <div class="result-banner" id="sort-result"></div>
+  <button class="reset-btn" onclick="resetSort()">🔄 Reset</button>
+</div>
 
-        var audioCache = {};
-        Object.keys(audioFiles).forEach(function(key) {
-            audioCache[key] = new Audio(audioFiles[key]);
-            audioCache[key].preload = 'auto';
-        });
+<!-- ==================== CIRCLE ==================== -->
+<div class="section" id="section-circle">
+  <p class="circle-instruction">
+    <span>⭕ Tap</span> on every <strong>living thing</strong> to circle it!
+  </p>
+  <div class="circle-grid" id="circle-grid"></div>
+  <button class="check-btn purple" onclick="checkCircle()">✨ Check My Answers!</button>
+  <div class="result-banner" id="circle-result"></div>
+  <button class="reset-btn" onclick="resetCircle()">🔄 Reset</button>
+</div>
 
-        var currentAudio = null;
-        var soundEnabled = true;
+<!-- ==================== QUIZ ==================== -->
+<div class="section" id="section-quiz">
+  <p class="quiz-instruction">
+    <span>✅ Read</span> each sentence and choose <strong>Living</strong> or <strong>Non-Living</strong>!
+  </p>
+  <div class="quiz-list" id="quiz-list"></div>
+  <div class="quiz-score" style="text-align:center; margin-top:16px;">
+    <div class="result-banner" id="quiz-result"></div>
+  </div>
+  <button class="reset-btn" onclick="resetQuiz()">🔄 Reset</button>
+</div>
 
-        function playAudio(key, callback) {
-            if (!soundEnabled) {
-                if (callback) callback();
-                return;
-            }
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
-            var audio = audioCache[key];
-            if (audio) {
-                currentAudio = audio;
-                audio.currentTime = 0;
-                document.getElementById('mascot').classList.add('speaking');
-                audio.onended = function() {
-                    document.getElementById('mascot').classList.remove('speaking');
-                    if (callback) callback();
-                };
-                audio.play().catch(function() {
-                    document.getElementById('mascot').classList.remove('speaking');
-                    if (callback) callback();
-                });
-            } else if (callback) {
-                callback();
-            }
-        }
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti-container"></div>
 
-        var questions = [
-            { emoji: '🐕', name: 'dog', isLiving: true, fact: 'Dogs are living! They eat, grow, and breathe.' },
-            { emoji: '🪨', name: 'rock', isLiving: false, fact: 'Rocks are not living. They do not grow or eat.' },
-            { emoji: '🌸', name: 'flower', isLiving: true, fact: 'Flowers are living! They grow and need water.' },
-            { emoji: '🚗', name: 'car', isLiving: false, fact: 'Cars are not living. They are made by people.' },
-            { emoji: '🐱', name: 'cat', isLiving: true, fact: 'Cats are living! They breathe and have babies.' },
-            { emoji: '📱', name: 'phone', isLiving: false, fact: 'Phones are not living. They do not eat or grow.' },
-            { emoji: '🌳', name: 'tree', isLiving: true, fact: 'Trees are living! They grow tall and make oxygen.' },
-            { emoji: '🪑', name: 'chair', isLiving: false, fact: 'Chairs are not living. They were made from trees.' }
-        ];
+<script>
+// ===== TAB SWITCHING =====
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelector('.nav-tab[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('section-' + tab).classList.add('active');
+}
 
-        var currentRound = 0;
-        var score = 0;
-        var totalRounds = 5;
-        var currentQuestion = null;
-        var shuffledQuestions = [];
+// ===== SORT ACTIVITY =====
+var sortItems = [
+  { name: 'Dog', emoji: '🐕', type: 'living' },
+  { name: 'Book', emoji: '📚', type: 'nonliving' },
+  { name: 'Fish', emoji: '🐟', type: 'living' },
+  { name: 'Car', emoji: '🚗', type: 'nonliving' },
+  { name: 'Tree', emoji: '🌳', type: 'living' },
+  { name: 'Ball', emoji: '⚽', type: 'nonliving' },
+  { name: 'Flower', emoji: '🌻', type: 'living' },
+  { name: 'Rock', emoji: '🪨', type: 'nonliving' },
+  { name: 'Bird', emoji: '🐦', type: 'living' },
+  { name: 'Cup', emoji: '🥤', type: 'nonliving' }
+];
 
-        function shuffleArray(array) {
-            var arr = array.slice();
-            for (var i = arr.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
-                var temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-            }
-            return arr;
-        }
+var sortCorrect = 0;
+var sortTotal = 0;
 
-        function startGame() {
-            document.getElementById('startScreen').classList.add('hidden');
-            shuffledQuestions = shuffleArray(questions).slice(0, totalRounds);
-            playAudio('welcome', function() {
-                playAudio('instruction', function() {
-                    startRound();
-                });
-            });
-        }
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+  }
+  return a;
+}
 
-        function startRound() {
-            currentQuestion = shuffledQuestions[currentRound];
-            document.getElementById('questionEmoji').textContent = currentQuestion.emoji;
-            document.getElementById('questionText').textContent = 'Is a ' + currentQuestion.name + ' living?';
-            document.getElementById('mascotText').textContent = 'Think about it!';
+function buildSortItems() {
+  var tray = document.getElementById('items-tray');
+  tray.textContent = '';
+  var h3 = document.createElement('h3');
+  h3.textContent = '🎒 Items';
+  tray.appendChild(h3);
 
-            // Re-enable buttons
-            var buttons = document.querySelectorAll('.choice-btn');
-            buttons.forEach(function(btn) {
-                btn.classList.remove('correct', 'wrong');
-                btn.disabled = false;
-            });
+  sortCorrect = 0; sortTotal = 0;
+  document.getElementById('sort-score').textContent = '';
+  var banner = document.getElementById('sort-result');
+  banner.className = 'result-banner';
+  banner.style.display = 'none';
 
-            document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
-        }
+  // Clear zones
+  document.querySelectorAll('.drop-zone .drag-item').forEach(function(el) { el.remove(); });
 
-        function checkAnswer(btn, answeredLiving) {
-            var buttons = document.querySelectorAll('.choice-btn');
-            buttons.forEach(function(b) { b.disabled = true; });
+  var shuffled = shuffle(sortItems);
+  shuffled.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'drag-item';
+    el.draggable = true;
+    el.id = 'sort-item-' + i;
+    el.dataset.type = item.type;
+    el.dataset.name = item.name;
 
-            var isCorrect = (answeredLiving === currentQuestion.isLiving);
+    var emojiSpan = document.createElement('span');
+    emojiSpan.className = 'item-emoji';
+    emojiSpan.textContent = item.emoji;
+    el.appendChild(emojiSpan);
+    el.appendChild(document.createTextNode(item.name));
 
-            if (isCorrect) {
-                btn.classList.add('correct');
-                score++;
-                document.getElementById('mascotText').textContent = currentQuestion.fact;
+    el.addEventListener('dragstart', function(e) {
+      e.dataTransfer.setData('text/plain', el.id);
+      el.style.opacity = '0.5';
+    });
+    el.addEventListener('dragend', function() { el.style.opacity = '1'; });
+    // Touch support
+    el.addEventListener('touchstart', handleTouchStart, { passive: false });
+    el.addEventListener('touchmove', handleTouchMove, { passive: false });
+    el.addEventListener('touchend', handleTouchEnd, { passive: false });
+    tray.appendChild(el);
+  });
+}
 
-                if (score >= 2) document.getElementById('star1').classList.add('earned');
-                if (score >= 4) document.getElementById('star2').classList.add('earned');
-                if (score >= 5) document.getElementById('star3').classList.add('earned');
+function handleDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+function handleDrop(e, zoneType) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  var id = e.dataTransfer.getData('text/plain');
+  var item = document.getElementById(id);
+  if (!item) return;
+  var correct = item.dataset.type === zoneType;
+  sortTotal++;
+  if (correct) {
+    sortCorrect++;
+    item.classList.add('correct');
+    item.draggable = false;
+    e.currentTarget.appendChild(item);
+    if (sortCorrect === sortItems.length) showSortResult();
+  } else {
+    item.classList.add('wrong');
+    setTimeout(function() { item.classList.remove('wrong'); }, 600);
+  }
+  updateSortScore();
+}
 
-                var correctAudios = ['correct1', 'correct2', 'correct3'];
-                var randomCorrect = correctAudios[Math.floor(Math.random() * correctAudios.length)];
+// Touch drag support
+var touchItem = null;
+var touchClone = null;
 
-                playAudio(randomCorrect, function() {
-                    setTimeout(function() {
-                        currentRound++;
-                        if (currentRound >= totalRounds) {
-                            showCelebration();
-                        } else {
-                            startRound();
-                        }
-                    }, 1500);
-                });
-            } else {
-                btn.classList.add('wrong');
-                document.getElementById('mascotText').textContent = 'Try again! ' + (currentQuestion.isLiving ? 'It is living!' : 'It is not living!');
+function handleTouchStart(e) {
+  e.preventDefault();
+  touchItem = e.currentTarget;
+  var touch = e.touches[0];
+  touchClone = touchItem.cloneNode(true);
+  touchClone.style.position = 'fixed';
+  touchClone.style.zIndex = '9999';
+  touchClone.style.pointerEvents = 'none';
+  touchClone.style.opacity = '0.85';
+  touchClone.style.transform = 'scale(1.08)';
+  touchClone.style.width = touchItem.offsetWidth + 'px';
+  document.body.appendChild(touchClone);
+  moveTouchClone(touch);
+  touchItem.style.opacity = '0.4';
+}
 
-                playAudio('wrong', function() {
-                    setTimeout(function() {
-                        btn.classList.remove('wrong');
-                        buttons.forEach(function(b) { b.disabled = false; });
-                    }, 800);
-                });
-            }
-        }
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (touchClone) moveTouchClone(e.touches[0]);
+}
 
-        function showCelebration() {
-            createConfetti();
-            document.getElementById('celebration').classList.add('show');
-            document.getElementById('progressBar').style.width = '100%';
-            playAudio('celebration');
-        }
+function moveTouchClone(touch) {
+  touchClone.style.left = (touch.clientX - touchClone.offsetWidth / 2) + 'px';
+  touchClone.style.top = (touch.clientY - touchClone.offsetHeight / 2) + 'px';
+}
 
-        function createConfetti() {
-            var colors = ['#f59e0b', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
-            for (var i = 0; i < 50; i++) {
-                (function(index) {
-                    setTimeout(function() {
-                        var confetti = document.createElement('div');
-                        confetti.className = 'confetti';
-                        confetti.style.left = Math.random() * 100 + 'vw';
-                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
-                        document.body.appendChild(confetti);
-                        setTimeout(function() { confetti.remove(); }, 4000);
-                    }, index * 50);
-                })(i);
-            }
-        }
+function handleTouchEnd(e) {
+  if (!touchItem || !touchClone) return;
+  var touch = e.changedTouches[0];
+  touchClone.remove();
+  touchClone = null;
+  touchItem.style.opacity = '1';
 
-        function restartGame() {
-            currentRound = 0;
-            score = 0;
-            shuffledQuestions = shuffleArray(questions).slice(0, totalRounds);
-            document.getElementById('celebration').classList.remove('show');
-            document.getElementById('progressBar').style.width = '0%';
-            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
-            document.getElementById('mascotText').textContent = "Let's learn about more things!";
-            startRound();
-        }
+  var dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+  var zone = dropTarget ? dropTarget.closest('.drop-zone') : null;
+  if (zone) {
+    var zoneType = zone.id === 'living-zone' ? 'living' : 'nonliving';
+    var correct = touchItem.dataset.type === zoneType;
+    sortTotal++;
+    if (correct) {
+      sortCorrect++;
+      touchItem.classList.add('correct');
+      touchItem.draggable = false;
+      zone.appendChild(touchItem);
+      if (sortCorrect === sortItems.length) showSortResult();
+    } else {
+      touchItem.classList.add('wrong');
+      setTimeout(function() { touchItem.classList.remove('wrong'); }, 600);
+    }
+    updateSortScore();
+  }
+  touchItem = null;
+}
 
-        document.getElementById('soundToggle').addEventListener('click', function() {
-            soundEnabled = !soundEnabled;
-            this.textContent = soundEnabled ? '🔊' : '🔇';
-            if (!soundEnabled && currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                document.getElementById('mascot').classList.remove('speaking');
-            }
-        });
-    </script>
+function updateSortScore() {
+  document.getElementById('sort-score').innerHTML =
+    'Score: <span class="score-num">' + sortCorrect + '</span> / ' + sortItems.length;
+}
+
+function showSortResult() {
+  var banner = document.getElementById('sort-result');
+  if (sortTotal === sortItems.length) {
+    banner.textContent = '🎉 Perfect! You sorted everything on the first try!';
+    banner.className = 'result-banner perfect show';
+    fireConfetti();
+  } else {
+    banner.textContent = '⭐ Great job! You sorted them all!';
+    banner.className = 'result-banner good show';
+    fireConfetti();
+  }
+}
+
+function resetSort() { buildSortItems(); }
+
+// ===== CIRCLE ACTIVITY =====
+var circleItems = [
+  { name: 'Sun', emoji: '☀️', living: false },
+  { name: 'Flower', emoji: '🌻', living: true },
+  { name: 'Car', emoji: '🚗', living: false },
+  { name: 'Butterfly', emoji: '🦋', living: true },
+  { name: 'Rock', emoji: '🪨', living: false },
+  { name: 'Bird', emoji: '🐦', living: true },
+  { name: 'Chair', emoji: '🪑', living: false },
+  { name: 'Cat', emoji: '🐱', living: true },
+  { name: 'Pencil', emoji: '✏️', living: false },
+  { name: 'Frog', emoji: '🐸', living: true },
+  { name: 'Shoe', emoji: '👟', living: false },
+  { name: 'Bee', emoji: '🐝', living: true }
+];
+
+function buildCircle() {
+  var grid = document.getElementById('circle-grid');
+  grid.textContent = '';
+  var banner = document.getElementById('circle-result');
+  banner.className = 'result-banner';
+  banner.style.display = 'none';
+
+  var shuffled = shuffle(circleItems);
+  shuffled.forEach(function(item, i) {
+    var card = document.createElement('div');
+    card.className = 'circle-card';
+    card.dataset.living = item.living;
+    card.dataset.index = i;
+
+    var emojiSpan = document.createElement('span');
+    emojiSpan.className = 'card-emoji';
+    emojiSpan.textContent = item.emoji;
+    card.appendChild(emojiSpan);
+
+    var labelSpan = document.createElement('span');
+    labelSpan.className = 'card-label';
+    labelSpan.textContent = item.name;
+    card.appendChild(labelSpan);
+
+    card.onclick = function() {
+      card.classList.toggle('selected');
+      card.classList.remove('wrong-select');
+    };
+    grid.appendChild(card);
+  });
+}
+
+function checkCircle() {
+  var cards = document.querySelectorAll('.circle-card');
+  var correct = 0;
+  var total = circleItems.filter(function(i) { return i.living; }).length;
+
+  cards.forEach(function(card) {
+    var isLiving = card.dataset.living === 'true';
+    var isSelected = card.classList.contains('selected');
+    card.classList.remove('wrong-select');
+
+    if (isLiving && isSelected) {
+      correct++;
+      card.classList.add('selected');
+    } else if (!isLiving && isSelected) {
+      card.classList.remove('selected');
+      card.classList.add('wrong-select');
+      setTimeout(function() { card.classList.remove('wrong-select'); }, 1200);
+    }
+  });
+
+  var banner = document.getElementById('circle-result');
+  var falsePositives = document.querySelectorAll('.circle-card.selected[data-living="false"]').length;
+
+  if (correct === total && falsePositives === 0) {
+    banner.textContent = '🎉 Perfect! You found all ' + total + ' living things!';
+    banner.className = 'result-banner perfect show';
+    fireConfetti();
+  } else if (correct > 0) {
+    banner.textContent = '⭐ You found ' + correct + ' out of ' + total + ' living things. Keep trying!';
+    banner.className = 'result-banner good show';
+  } else {
+    banner.textContent = '🤔 Tap on the things that are alive — they grow, breathe, and move!';
+    banner.className = 'result-banner try-again show';
+  }
+}
+
+function resetCircle() { buildCircle(); }
+
+// ===== QUIZ ACTIVITY =====
+var quizQuestions = [
+  { text: 'A dog can run and play.', answer: 'living' },
+  { text: 'A chair stays in one place.', answer: 'nonliving' },
+  { text: 'A tree needs water to grow.', answer: 'living' },
+  { text: 'A toy car does not eat food.', answer: 'nonliving' },
+  { text: 'A flower grows from a seed.', answer: 'living' },
+  { text: 'A pencil does not breathe.', answer: 'nonliving' },
+  { text: 'A fish swims in water.', answer: 'living' },
+  { text: 'A ball does not grow bigger.', answer: 'nonliving' },
+  { text: 'A bird builds a nest for babies.', answer: 'living' },
+  { text: 'A book does not need food.', answer: 'nonliving' }
+];
+
+var quizScore = 0;
+var quizAnswered = 0;
+
+function buildQuiz() {
+  var list = document.getElementById('quiz-list');
+  list.textContent = '';
+  quizScore = 0;
+  quizAnswered = 0;
+  var banner = document.getElementById('quiz-result');
+  banner.className = 'result-banner';
+  banner.style.display = 'none';
+
+  quizQuestions.forEach(function(q, i) {
+    var row = document.createElement('div');
+    row.className = 'quiz-row';
+    row.id = 'quiz-row-' + i;
+
+    var numSpan = document.createElement('span');
+    numSpan.className = 'quiz-num';
+    numSpan.style.background = i % 2 === 0 ? 'var(--green)' : 'var(--blue)';
+    numSpan.textContent = i + 1;
+    row.appendChild(numSpan);
+
+    var textSpan = document.createElement('span');
+    textSpan.className = 'quiz-text';
+    textSpan.textContent = q.text;
+    row.appendChild(textSpan);
+
+    var btnsDiv = document.createElement('div');
+    btnsDiv.className = 'quiz-btns';
+
+    var livingBtn = document.createElement('button');
+    livingBtn.className = 'quiz-btn living-btn';
+    livingBtn.textContent = '🌱 Living';
+    livingBtn.onclick = function() { answerQuiz(i, 'living', livingBtn); };
+    btnsDiv.appendChild(livingBtn);
+
+    var nonlivingBtn = document.createElement('button');
+    nonlivingBtn.className = 'quiz-btn nonliving-btn';
+    nonlivingBtn.textContent = '🪨 Non-Living';
+    nonlivingBtn.onclick = function() { answerQuiz(i, 'nonliving', nonlivingBtn); };
+    btnsDiv.appendChild(nonlivingBtn);
+
+    row.appendChild(btnsDiv);
+    list.appendChild(row);
+  });
+}
+
+function answerQuiz(index, choice, btn) {
+  var row = document.getElementById('quiz-row-' + index);
+  if (row.classList.contains('answered-correct') || row.classList.contains('answered-wrong')) return;
+
+  var correct = quizQuestions[index].answer === choice;
+  var btns = row.querySelectorAll('.quiz-btn');
+  quizAnswered++;
+
+  if (correct) {
+    quizScore++;
+    btn.classList.add('chosen-correct');
+    row.classList.add('answered-correct');
+    btns.forEach(function(b) { if (b !== btn) b.classList.add('disabled'); });
+  } else {
+    btn.classList.add('chosen-wrong');
+    row.classList.add('answered-wrong');
+    // Highlight correct answer
+    btns.forEach(function(b) {
+      if (b !== btn) {
+        b.classList.add('chosen-correct');
+      }
+    });
+  }
+
+  if (quizAnswered === quizQuestions.length) {
+    var banner = document.getElementById('quiz-result');
+    if (quizScore === quizQuestions.length) {
+      banner.textContent = '🎉 Perfect Score! ' + quizScore + '/' + quizQuestions.length + ' — You are a science star!';
+      banner.className = 'result-banner perfect show';
+      fireConfetti();
+    } else if (quizScore >= quizQuestions.length * 0.7) {
+      banner.textContent = '⭐ Great Job! ' + quizScore + '/' + quizQuestions.length + ' correct!';
+      banner.className = 'result-banner good show';
+    } else {
+      banner.textContent = '💪 Good try! ' + quizScore + '/' + quizQuestions.length + '. Let us review and try again!';
+      banner.className = 'result-banner try-again show';
+    }
+  }
+}
+
+function resetQuiz() { buildQuiz(); }
+
+// ===== CONFETTI =====
+function fireConfetti() {
+  var container = document.getElementById('confetti-container');
+  var colors = ['#2ECC71','#3498DB','#F39C12','#E74C8B','#9B59B6','#F1C40F','#E74C3C'];
+  for (var i = 0; i < 60; i++) {
+    var piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 0.8 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    container.appendChild(piece);
+    setTimeout(function(p) { return function() { p.remove(); }; }(piece), 4000);
+  }
+}
+
+// ===== INIT =====
+buildSortItems();
+buildCircle();
+buildQuiz();
+</script>
 </body>
 </html>
