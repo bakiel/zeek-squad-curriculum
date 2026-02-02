@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Letter U - Family World School</title>
+    <title>Living Things - Family World School</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
             min-height: 100vh;
             padding: 15px;
             overflow-x: hidden;
@@ -21,7 +21,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
             z-index: 2000;
             display: flex;
             justify-content: center;
@@ -38,7 +38,7 @@
             padding: 20px 50px;
             font-size: 1.5rem;
             background: white;
-            color: #ec4899;
+            color: #f59e0b;
             border: none;
             border-radius: 30px;
             cursor: pointer;
@@ -61,7 +61,7 @@
         }
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            background: linear-gradient(90deg, #22c55e, #16a34a);
             border-radius: 15px;
             width: 0%;
             transition: width 0.5s ease;
@@ -69,11 +69,15 @@
 
         .stars { text-align: center; font-size: 2.5rem; margin-bottom: 15px; }
         .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
-        .star.earned { color: #fbbf24; filter: drop-shadow(0 0 10px #fbbf24); animation: starPop 0.5s ease; }
+        .star.earned { color: #22c55e; filter: drop-shadow(0 0 10px #22c55e); animation: starPop 0.5s ease; }
         @keyframes starPop {
             0% { transform: scale(0) rotate(-180deg); }
             50% { transform: scale(1.4) rotate(20deg); }
             100% { transform: scale(1) rotate(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .mascot-area {
@@ -84,10 +88,6 @@
         }
         .mascot { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
         .mascot.speaking { animation: talk 0.3s ease-in-out infinite; }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
         @keyframes talk {
             0%, 100% { transform: scale(1) rotate(0); }
             25% { transform: scale(1.1) rotate(-5deg); }
@@ -110,7 +110,7 @@
             border: 12px solid transparent;
             border-right-color: white;
         }
-        .speech-bubble p { color: #ec4899; font-size: 1.1rem; font-weight: bold; }
+        .speech-bubble p { color: #f59e0b; font-size: 1.1rem; font-weight: bold; }
 
         .game-container {
             background: white;
@@ -123,36 +123,24 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        .big-letter {
-            font-size: 7rem;
-            color: #ec4899;
-            text-shadow: 4px 4px 8px rgba(0,0,0,0.1);
-            cursor: pointer;
-            display: inline-block;
-            animation: letterBounce 2s ease-in-out infinite;
+        .big-emoji {
+            font-size: 6rem;
+            margin-bottom: 15px;
+            animation: float 2s ease-in-out infinite;
         }
-        @keyframes letterBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .question-text {
+            font-size: 1.3rem;
+            color: #374151;
+            font-weight: bold;
         }
         .instruction {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #64748b;
             margin-top: 10px;
-        }
-
-        .sound-btn {
-            display: block;
-            margin: 15px auto;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, #8b5cf6, #a855f7);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
         }
 
         .choices {
@@ -162,11 +150,11 @@
             margin-top: 20px;
         }
         .choice-btn {
-            padding: 20px 15px;
+            padding: 25px 15px;
             font-size: 1.1rem;
-            border: 4px solid #fce7f3;
+            border: 4px solid #fef3c7;
             border-radius: 20px;
-            background: #fdf2f8;
+            background: #fffbeb;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
@@ -175,10 +163,10 @@
             gap: 8px;
         }
         .choice-btn .emoji { font-size: 3rem; }
-        .choice-btn .word { font-weight: bold; color: #be185d; }
+        .choice-btn .label { font-weight: bold; color: #92400e; }
         .choice-btn:hover {
             transform: scale(1.05);
-            border-color: #ec4899;
+            border-color: #f59e0b;
         }
         .choice-btn.correct {
             background: #dcfce7;
@@ -222,12 +210,12 @@
             0% { transform: scale(0); }
             100% { transform: scale(1); }
         }
-        .celebration-content h2 { color: #ec4899; font-size: 2rem; }
+        .celebration-content h2 { color: #f59e0b; font-size: 2rem; }
         .celebration-content .big-emoji { font-size: 5rem; margin: 20px 0; }
         .play-again-btn, .home-btn {
             padding: 15px 40px;
             font-size: 1.3rem;
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
             color: white;
             border: none;
             border-radius: 25px;
@@ -273,18 +261,18 @@
 </head>
 <body>
     <div class="start-screen" id="startScreen">
-        <h1>Letter U!</h1>
-        <div class="mascot-big">🦋</div>
-        <p>U says uh like in Umbrella!</p>
-        <button class="start-btn" onclick="startGame()">Let's Play!</button>
+        <h1>Living Things!</h1>
+        <div class="mascot-big">🌱</div>
+        <p>Learn about living and non-living things!</p>
+        <button class="start-btn" onclick="startGame()">Let's Learn!</button>
     </div>
 
     <button class="sound-toggle" id="soundToggle">🔊</button>
 
     <div class="container">
         <div class="header">
-            <h1>Letter U</h1>
-            <p>Find pictures that start with U!</p>
+            <h1>🌱 Living Things</h1>
+            <p>Is it living or non-living?</p>
         </div>
 
         <div class="progress-bar-container">
@@ -298,34 +286,42 @@
         </div>
 
         <div class="mascot-area">
-            <div class="mascot" id="mascot">🦋</div>
+            <div class="mascot" id="mascot">🌻</div>
             <div class="speech-bubble">
-                <p id="mascotText">Hi! Let's learn Letter U!</p>
+                <p id="mascotText">Living things grow and need food!</p>
             </div>
         </div>
 
         <div class="game-container">
             <div class="question-area">
-                <div class="big-letter" id="targetLetter" onclick="playLetterSound()">U</div>
-                <div class="instruction">Tap the picture that starts with U!</div>
+                <div class="big-emoji" id="questionEmoji">🐕</div>
+                <div class="question-text" id="questionText">Is a dog living?</div>
+                <div class="instruction">Tap your answer!</div>
             </div>
 
-            <button class="sound-btn" onclick="playLetterSound()">🔊 Hear the Sound</button>
-
-            <div class="choices" id="choices"></div>
+            <div class="choices" id="choices">
+                <button class="choice-btn" onclick="checkAnswer(this, true)">
+                    <span class="emoji">✅</span>
+                    <span class="label">Living</span>
+                </button>
+                <button class="choice-btn" onclick="checkAnswer(this, false)">
+                    <span class="emoji">❌</span>
+                    <span class="label">Non-Living</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <div class="celebration" id="celebration">
         <div class="celebration-content">
-            <h2>Fantastic!</h2>
-            <div class="big-emoji">🎉🦋🌟</div>
+            <h2>Super Scientist!</h2>
+            <div class="big-emoji">🎉🌱🔬</div>
             <div class="stars">
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
             </div>
-            <p>You know your letter U!</p>
+            <p>You know about living things!</p>
             <button class="play-again-btn" onclick="restartGame()">Play Again!</button>
             <button class="home-btn" onclick="window.location.href='index.html'">Back to Games</button>
         </div>
@@ -333,14 +329,13 @@
 
     <script>
         var audioFiles = {
-            welcome: 'audio/ela/welcome.mp3',
-            findLetter: 'audio/ela/find-letter.mp3',
-            letterU: 'audio/ela/letter-u.mp3',
-            correct1: 'audio/ela/correct1.mp3',
-            correct2: 'audio/ela/correct2.mp3',
-            correct3: 'audio/ela/correct3.mp3',
-            wrong: 'audio/ela/wrong.mp3',
-            celebration: 'audio/ela/celebration.mp3'
+            welcome: 'audio/science/welcome.mp3',
+            instruction: 'audio/science/living-things.mp3',
+            correct1: 'audio/science/correct1.mp3',
+            correct2: 'audio/science/correct2.mp3',
+            correct3: 'audio/science/correct3.mp3',
+            wrong: 'audio/science/wrong.mp3',
+            celebration: 'audio/science/celebration.mp3'
         };
 
         var audioCache = {};
@@ -379,43 +374,22 @@
             }
         }
 
-        var letterData = [
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '☂️', word: 'Umbrella' }, wrong: [
-                { emoji: '🌧️', word: 'Rain' }, { emoji: '☀️', word: 'Sun' }, { emoji: '🌈', word: 'Rainbow' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🦄', word: 'Unicorn' }, wrong: [
-                { emoji: '🐴', word: 'Horse' }, { emoji: '🐕', word: 'Dog' }, { emoji: '🐱', word: 'Cat' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '⬆️', word: 'Up' }, wrong: [
-                { emoji: '⬇️', word: 'Down' }, { emoji: '➡️', word: 'Right' }, { emoji: '⬅️', word: 'Left' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🔓', word: 'Unlock' }, wrong: [
-                { emoji: '🔒', word: 'Lock' }, { emoji: '🔑', word: 'Key' }, { emoji: '🚪', word: 'Door' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🎻', word: 'Ukulele' }, wrong: [
-                { emoji: '🎸', word: 'Guitar' }, { emoji: '🎹', word: 'Piano' }, { emoji: '🥁', word: 'Drum' }
-            ]}
+        var questions = [
+            { emoji: '🐕', name: 'dog', isLiving: true, fact: 'Dogs are living! They eat, grow, and breathe.' },
+            { emoji: '🪨', name: 'rock', isLiving: false, fact: 'Rocks are not living. They do not grow or eat.' },
+            { emoji: '🌸', name: 'flower', isLiving: true, fact: 'Flowers are living! They grow and need water.' },
+            { emoji: '🚗', name: 'car', isLiving: false, fact: 'Cars are not living. They are made by people.' },
+            { emoji: '🐱', name: 'cat', isLiving: true, fact: 'Cats are living! They breathe and have babies.' },
+            { emoji: '📱', name: 'phone', isLiving: false, fact: 'Phones are not living. They do not eat or grow.' },
+            { emoji: '🌳', name: 'tree', isLiving: true, fact: 'Trees are living! They grow tall and make oxygen.' },
+            { emoji: '🪑', name: 'chair', isLiving: false, fact: 'Chairs are not living. They were made from trees.' }
         ];
 
         var currentRound = 0;
         var score = 0;
         var totalRounds = 5;
-        var currentData = null;
-
-        function startGame() {
-            document.getElementById('startScreen').classList.add('hidden');
-            playAudio('welcome', function() {
-                playAudio('findLetter', function() {
-                    startRound();
-                });
-            });
-        }
-
-        function playLetterSound() {
-            if (currentData) {
-                playAudio(currentData.audioKey);
-            }
-        }
+        var currentQuestion = null;
+        var shuffledQuestions = [];
 
         function shuffleArray(array) {
             var arr = array.slice();
@@ -428,84 +402,69 @@
             return arr;
         }
 
-        function startRound() {
-            currentData = letterData[currentRound];
-            document.getElementById('targetLetter').textContent = currentData.letter;
-            document.getElementById('mascotText').textContent = 'What starts with "' + currentData.letter + '"?';
-
-            var choices = [currentData.correct].concat(currentData.wrong.slice(0, 3));
-            choices = shuffleArray(choices);
-
-            var choicesDiv = document.getElementById('choices');
-            choicesDiv.textContent = '';
-
-            choices.forEach(function(choice) {
-                var btn = document.createElement('button');
-                btn.className = 'choice-btn';
-
-                var emoji = document.createElement('span');
-                emoji.className = 'emoji';
-                emoji.textContent = choice.emoji;
-                btn.appendChild(emoji);
-
-                var word = document.createElement('span');
-                word.className = 'word';
-                word.textContent = choice.word;
-                btn.appendChild(word);
-
-                btn.onclick = function() { checkAnswer(btn, choice.word === currentData.correct.word); };
-                choicesDiv.appendChild(btn);
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            shuffledQuestions = shuffleArray(questions).slice(0, totalRounds);
+            playAudio('welcome', function() {
+                playAudio('instruction', function() {
+                    startRound();
+                });
             });
-
-            setTimeout(function() {
-                playAudio(currentData.audioKey);
-            }, 300);
         }
 
-        function checkAnswer(btn, isCorrect) {
+        function startRound() {
+            currentQuestion = shuffledQuestions[currentRound];
+            document.getElementById('questionEmoji').textContent = currentQuestion.emoji;
+            document.getElementById('questionText').textContent = 'Is a ' + currentQuestion.name + ' living?';
+            document.getElementById('mascotText').textContent = 'Think about it!';
+
+            // Re-enable buttons
             var buttons = document.querySelectorAll('.choice-btn');
-            buttons.forEach(function(b) { b.onclick = null; });
+            buttons.forEach(function(btn) {
+                btn.classList.remove('correct', 'wrong');
+                btn.disabled = false;
+            });
+
+            document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
+        }
+
+        function checkAnswer(btn, answeredLiving) {
+            var buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(function(b) { b.disabled = true; });
+
+            var isCorrect = (answeredLiving === currentQuestion.isLiving);
 
             if (isCorrect) {
                 btn.classList.add('correct');
                 score++;
-
-                var correctAudios = ['correct1', 'correct2', 'correct3'];
-                var randomCorrect = correctAudios[Math.floor(Math.random() * correctAudios.length)];
-
-                var messages = ["Great job!", "Wonderful!", "You're amazing!", "Perfect!"];
-                document.getElementById('mascotText').textContent = messages[Math.floor(Math.random() * messages.length)];
+                document.getElementById('mascotText').textContent = currentQuestion.fact;
 
                 if (score >= 2) document.getElementById('star1').classList.add('earned');
                 if (score >= 4) document.getElementById('star2').classList.add('earned');
                 if (score >= 5) document.getElementById('star3').classList.add('earned');
 
+                var correctAudios = ['correct1', 'correct2', 'correct3'];
+                var randomCorrect = correctAudios[Math.floor(Math.random() * correctAudios.length)];
+
                 playAudio(randomCorrect, function() {
                     setTimeout(function() {
                         currentRound++;
-                        document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
-
                         if (currentRound >= totalRounds) {
                             showCelebration();
                         } else {
                             startRound();
                         }
-                    }, 500);
+                    }, 1500);
                 });
             } else {
                 btn.classList.add('wrong');
-                document.getElementById('mascotText').textContent = "Try again! Listen to the sound.";
+                document.getElementById('mascotText').textContent = 'Try again! ' + (currentQuestion.isLiving ? 'It is living!' : 'It is not living!');
 
                 playAudio('wrong', function() {
                     setTimeout(function() {
                         btn.classList.remove('wrong');
-                        buttons.forEach(function(b) {
-                            if (!b.classList.contains('correct')) {
-                                var word = b.querySelector('.word').textContent;
-                                b.onclick = function() { checkAnswer(b, word === currentData.correct.word); };
-                            }
-                        });
-                    }, 300);
+                        buttons.forEach(function(b) { b.disabled = false; });
+                    }, 800);
                 });
             }
         }
@@ -513,11 +472,12 @@
         function showCelebration() {
             createConfetti();
             document.getElementById('celebration').classList.add('show');
+            document.getElementById('progressBar').style.width = '100%';
             playAudio('celebration');
         }
 
         function createConfetti() {
-            var colors = ['#ec4899', '#f472b6', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6'];
+            var colors = ['#f59e0b', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
             for (var i = 0; i < 50; i++) {
                 (function(index) {
                     setTimeout(function() {
@@ -537,10 +497,11 @@
         function restartGame() {
             currentRound = 0;
             score = 0;
+            shuffledQuestions = shuffleArray(questions).slice(0, totalRounds);
             document.getElementById('celebration').classList.remove('show');
             document.getElementById('progressBar').style.width = '0%';
             document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
-            document.getElementById('mascotText').textContent = "Let's learn more letters!";
+            document.getElementById('mascotText').textContent = "Let's learn about more things!";
             startRound();
         }
 

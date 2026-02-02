@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Letter U - Family World School</title>
+    <title>Take Apart Numbers - Family World School</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
             min-height: 100vh;
             padding: 15px;
             overflow-x: hidden;
@@ -21,7 +21,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
             z-index: 2000;
             display: flex;
             justify-content: center;
@@ -38,7 +38,7 @@
             padding: 20px 50px;
             font-size: 1.5rem;
             background: white;
-            color: #ec4899;
+            color: #10b981;
             border: none;
             border-radius: 30px;
             cursor: pointer;
@@ -75,6 +75,10 @@
             50% { transform: scale(1.4) rotate(20deg); }
             100% { transform: scale(1) rotate(0); }
         }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
 
         .mascot-area {
             display: flex;
@@ -84,10 +88,6 @@
         }
         .mascot { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
         .mascot.speaking { animation: talk 0.3s ease-in-out infinite; }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
         @keyframes talk {
             0%, 100% { transform: scale(1) rotate(0); }
             25% { transform: scale(1.1) rotate(-5deg); }
@@ -110,7 +110,7 @@
             border: 12px solid transparent;
             border-right-color: white;
         }
-        .speech-bubble p { color: #ec4899; font-size: 1.1rem; font-weight: bold; }
+        .speech-bubble p { color: #10b981; font-size: 1.1rem; font-weight: bold; }
 
         .game-container {
             background: white;
@@ -119,21 +119,14 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
 
-        .question-area {
+        .number-display {
             text-align: center;
             margin-bottom: 20px;
         }
-        .big-letter {
-            font-size: 7rem;
-            color: #ec4899;
+        .big-number {
+            font-size: 6rem;
+            color: #10b981;
             text-shadow: 4px 4px 8px rgba(0,0,0,0.1);
-            cursor: pointer;
-            display: inline-block;
-            animation: letterBounce 2s ease-in-out infinite;
-        }
-        @keyframes letterBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
         .instruction {
             font-size: 1.2rem;
@@ -141,18 +134,45 @@
             margin-top: 10px;
         }
 
-        .sound-btn {
-            display: block;
-            margin: 15px auto;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, #8b5cf6, #a855f7);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-family: inherit;
+        .visual-objects {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+        .visual-object {
+            font-size: 2.5rem;
+            animation: pop 0.3s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .take-apart-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            font-size: 2rem;
+            color: #374151;
+        }
+        .part-box {
+            background: #f0fdf4;
+            border: 3px solid #86efac;
+            border-radius: 15px;
+            padding: 15px 25px;
+            font-size: 2.5rem;
             font-weight: bold;
+            color: #10b981;
+        }
+        .plus-sign, .equals-sign {
+            font-size: 2rem;
+            color: #6b7280;
         }
 
         .choices {
@@ -162,23 +182,19 @@
             margin-top: 20px;
         }
         .choice-btn {
-            padding: 20px 15px;
-            font-size: 1.1rem;
-            border: 4px solid #fce7f3;
+            padding: 20px;
+            font-size: 1.5rem;
+            border: 4px solid #dcfce7;
             border-radius: 20px;
-            background: #fdf2f8;
+            background: #f0fdf4;
             cursor: pointer;
             transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            font-weight: bold;
+            color: #166534;
         }
-        .choice-btn .emoji { font-size: 3rem; }
-        .choice-btn .word { font-weight: bold; color: #be185d; }
         .choice-btn:hover {
             transform: scale(1.05);
-            border-color: #ec4899;
+            border-color: #10b981;
         }
         .choice-btn.correct {
             background: #dcfce7;
@@ -222,12 +238,12 @@
             0% { transform: scale(0); }
             100% { transform: scale(1); }
         }
-        .celebration-content h2 { color: #ec4899; font-size: 2rem; }
+        .celebration-content h2 { color: #10b981; font-size: 2rem; }
         .celebration-content .big-emoji { font-size: 5rem; margin: 20px 0; }
         .play-again-btn, .home-btn {
             padding: 15px 40px;
             font-size: 1.3rem;
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background: linear-gradient(135deg, #10b981, #34d399);
             color: white;
             border: none;
             border-radius: 25px;
@@ -273,9 +289,9 @@
 </head>
 <body>
     <div class="start-screen" id="startScreen">
-        <h1>Letter U!</h1>
-        <div class="mascot-big">🦋</div>
-        <p>U says uh like in Umbrella!</p>
+        <h1>Take Apart Numbers!</h1>
+        <div class="mascot-big">🔢</div>
+        <p>Learn how numbers can be broken into parts!</p>
         <button class="start-btn" onclick="startGame()">Let's Play!</button>
     </div>
 
@@ -283,8 +299,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>Letter U</h1>
-            <p>Find pictures that start with U!</p>
+            <h1>🔢 Take Apart Numbers</h1>
+            <p>Break numbers into two parts!</p>
         </div>
 
         <div class="progress-bar-container">
@@ -298,19 +314,27 @@
         </div>
 
         <div class="mascot-area">
-            <div class="mascot" id="mascot">🦋</div>
+            <div class="mascot" id="mascot">🦊</div>
             <div class="speech-bubble">
-                <p id="mascotText">Hi! Let's learn Letter U!</p>
+                <p id="mascotText">Hi! Let's take apart numbers!</p>
             </div>
         </div>
 
         <div class="game-container">
-            <div class="question-area">
-                <div class="big-letter" id="targetLetter" onclick="playLetterSound()">U</div>
-                <div class="instruction">Tap the picture that starts with U!</div>
+            <div class="number-display">
+                <div class="big-number" id="targetNumber">5</div>
+                <div class="instruction">How can we make this number?</div>
             </div>
 
-            <button class="sound-btn" onclick="playLetterSound()">🔊 Hear the Sound</button>
+            <div class="visual-objects" id="visualObjects"></div>
+
+            <div class="take-apart-display">
+                <div class="part-box" id="part1">?</div>
+                <span class="plus-sign">+</span>
+                <div class="part-box" id="part2">?</div>
+                <span class="equals-sign">=</span>
+                <div class="part-box" id="total">5</div>
+            </div>
 
             <div class="choices" id="choices"></div>
         </div>
@@ -318,14 +342,14 @@
 
     <div class="celebration" id="celebration">
         <div class="celebration-content">
-            <h2>Fantastic!</h2>
-            <div class="big-emoji">🎉🦋🌟</div>
+            <h2>Amazing Math!</h2>
+            <div class="big-emoji">🎉🔢🌟</div>
             <div class="stars">
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
             </div>
-            <p>You know your letter U!</p>
+            <p>You can take apart numbers!</p>
             <button class="play-again-btn" onclick="restartGame()">Play Again!</button>
             <button class="home-btn" onclick="window.location.href='index.html'">Back to Games</button>
         </div>
@@ -333,14 +357,13 @@
 
     <script>
         var audioFiles = {
-            welcome: 'audio/ela/welcome.mp3',
-            findLetter: 'audio/ela/find-letter.mp3',
-            letterU: 'audio/ela/letter-u.mp3',
-            correct1: 'audio/ela/correct1.mp3',
-            correct2: 'audio/ela/correct2.mp3',
-            correct3: 'audio/ela/correct3.mp3',
-            wrong: 'audio/ela/wrong.mp3',
-            celebration: 'audio/ela/celebration.mp3'
+            welcome: 'audio/maths/welcome.mp3',
+            instruction: 'audio/maths/take-apart.mp3',
+            correct1: 'audio/maths/correct1.mp3',
+            correct2: 'audio/maths/correct2.mp3',
+            correct3: 'audio/maths/correct3.mp3',
+            wrong: 'audio/maths/wrong.mp3',
+            celebration: 'audio/maths/celebration.mp3'
         };
 
         var audioCache = {};
@@ -379,42 +402,27 @@
             }
         }
 
-        var letterData = [
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '☂️', word: 'Umbrella' }, wrong: [
-                { emoji: '🌧️', word: 'Rain' }, { emoji: '☀️', word: 'Sun' }, { emoji: '🌈', word: 'Rainbow' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🦄', word: 'Unicorn' }, wrong: [
-                { emoji: '🐴', word: 'Horse' }, { emoji: '🐕', word: 'Dog' }, { emoji: '🐱', word: 'Cat' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '⬆️', word: 'Up' }, wrong: [
-                { emoji: '⬇️', word: 'Down' }, { emoji: '➡️', word: 'Right' }, { emoji: '⬅️', word: 'Left' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🔓', word: 'Unlock' }, wrong: [
-                { emoji: '🔒', word: 'Lock' }, { emoji: '🔑', word: 'Key' }, { emoji: '🚪', word: 'Door' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🎻', word: 'Ukulele' }, wrong: [
-                { emoji: '🎸', word: 'Guitar' }, { emoji: '🎹', word: 'Piano' }, { emoji: '🥁', word: 'Drum' }
-            ]}
+        // Take apart problems: number and its parts
+        var problems = [
+            { total: 5, part1: 2, part2: 3, emoji: '🍎' },
+            { total: 4, part1: 1, part2: 3, emoji: '🌟' },
+            { total: 6, part1: 4, part2: 2, emoji: '🔵' },
+            { total: 5, part1: 1, part2: 4, emoji: '🍊' },
+            { total: 3, part1: 1, part2: 2, emoji: '🟢' }
         ];
 
         var currentRound = 0;
         var score = 0;
         var totalRounds = 5;
-        var currentData = null;
+        var currentProblem = null;
 
         function startGame() {
             document.getElementById('startScreen').classList.add('hidden');
             playAudio('welcome', function() {
-                playAudio('findLetter', function() {
+                playAudio('instruction', function() {
                     startRound();
                 });
             });
-        }
-
-        function playLetterSound() {
-            if (currentData) {
-                playAudio(currentData.audioKey);
-            }
         }
 
         function shuffleArray(array) {
@@ -429,37 +437,47 @@
         }
 
         function startRound() {
-            currentData = letterData[currentRound];
-            document.getElementById('targetLetter').textContent = currentData.letter;
-            document.getElementById('mascotText').textContent = 'What starts with "' + currentData.letter + '"?';
+            currentProblem = problems[currentRound];
+            document.getElementById('targetNumber').textContent = currentProblem.total;
+            document.getElementById('total').textContent = currentProblem.total;
+            document.getElementById('part1').textContent = currentProblem.part1;
+            document.getElementById('part2').textContent = '?';
+            document.getElementById('mascotText').textContent = currentProblem.part1 + ' + ? = ' + currentProblem.total;
 
-            var choices = [currentData.correct].concat(currentData.wrong.slice(0, 3));
-            choices = shuffleArray(choices);
+            // Show visual objects
+            var visualDiv = document.getElementById('visualObjects');
+            visualDiv.textContent = '';
+            for (var i = 0; i < currentProblem.total; i++) {
+                var obj = document.createElement('span');
+                obj.className = 'visual-object';
+                obj.textContent = currentProblem.emoji;
+                obj.style.animationDelay = (i * 0.1) + 's';
+                visualDiv.appendChild(obj);
+            }
+
+            // Generate wrong answers
+            var correctAnswer = currentProblem.part2;
+            var wrongAnswers = [];
+            for (var n = 1; n <= 5; n++) {
+                if (n !== correctAnswer) {
+                    wrongAnswers.push(n);
+                }
+            }
+            wrongAnswers = shuffleArray(wrongAnswers).slice(0, 3);
+            var choices = shuffleArray([correctAnswer].concat(wrongAnswers));
 
             var choicesDiv = document.getElementById('choices');
             choicesDiv.textContent = '';
 
-            choices.forEach(function(choice) {
+            choices.forEach(function(num) {
                 var btn = document.createElement('button');
                 btn.className = 'choice-btn';
-
-                var emoji = document.createElement('span');
-                emoji.className = 'emoji';
-                emoji.textContent = choice.emoji;
-                btn.appendChild(emoji);
-
-                var word = document.createElement('span');
-                word.className = 'word';
-                word.textContent = choice.word;
-                btn.appendChild(word);
-
-                btn.onclick = function() { checkAnswer(btn, choice.word === currentData.correct.word); };
+                btn.textContent = num;
+                btn.onclick = function() { checkAnswer(btn, num === correctAnswer); };
                 choicesDiv.appendChild(btn);
             });
 
-            setTimeout(function() {
-                playAudio(currentData.audioKey);
-            }, 300);
+            document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
         }
 
         function checkAnswer(btn, isCorrect) {
@@ -469,43 +487,40 @@
             if (isCorrect) {
                 btn.classList.add('correct');
                 score++;
-
-                var correctAudios = ['correct1', 'correct2', 'correct3'];
-                var randomCorrect = correctAudios[Math.floor(Math.random() * correctAudios.length)];
-
-                var messages = ["Great job!", "Wonderful!", "You're amazing!", "Perfect!"];
-                document.getElementById('mascotText').textContent = messages[Math.floor(Math.random() * messages.length)];
+                document.getElementById('part2').textContent = currentProblem.part2;
+                document.getElementById('mascotText').textContent = 'Yes! ' + currentProblem.part1 + ' + ' + currentProblem.part2 + ' = ' + currentProblem.total + '!';
 
                 if (score >= 2) document.getElementById('star1').classList.add('earned');
                 if (score >= 4) document.getElementById('star2').classList.add('earned');
                 if (score >= 5) document.getElementById('star3').classList.add('earned');
 
+                var correctAudios = ['correct1', 'correct2', 'correct3'];
+                var randomCorrect = correctAudios[Math.floor(Math.random() * correctAudios.length)];
+
                 playAudio(randomCorrect, function() {
                     setTimeout(function() {
                         currentRound++;
-                        document.getElementById('progressBar').style.width = (currentRound / totalRounds * 100) + '%';
-
                         if (currentRound >= totalRounds) {
                             showCelebration();
                         } else {
                             startRound();
                         }
-                    }, 500);
+                    }, 800);
                 });
             } else {
                 btn.classList.add('wrong');
-                document.getElementById('mascotText').textContent = "Try again! Listen to the sound.";
+                document.getElementById('mascotText').textContent = 'Try again!';
 
                 playAudio('wrong', function() {
                     setTimeout(function() {
                         btn.classList.remove('wrong');
                         buttons.forEach(function(b) {
                             if (!b.classList.contains('correct')) {
-                                var word = b.querySelector('.word').textContent;
-                                b.onclick = function() { checkAnswer(b, word === currentData.correct.word); };
+                                var num = parseInt(b.textContent);
+                                b.onclick = function() { checkAnswer(b, num === currentProblem.part2); };
                             }
                         });
-                    }, 300);
+                    }, 500);
                 });
             }
         }
@@ -513,11 +528,12 @@
         function showCelebration() {
             createConfetti();
             document.getElementById('celebration').classList.add('show');
+            document.getElementById('progressBar').style.width = '100%';
             playAudio('celebration');
         }
 
         function createConfetti() {
-            var colors = ['#ec4899', '#f472b6', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6'];
+            var colors = ['#10b981', '#34d399', '#fbbf24', '#22c55e', '#3b82f6', '#8b5cf6'];
             for (var i = 0; i < 50; i++) {
                 (function(index) {
                     setTimeout(function() {
@@ -540,7 +556,7 @@
             document.getElementById('celebration').classList.remove('show');
             document.getElementById('progressBar').style.width = '0%';
             document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
-            document.getElementById('mascotText').textContent = "Let's learn more letters!";
+            document.getElementById('mascotText').textContent = "Let's take apart more numbers!";
             startRound();
         }
 

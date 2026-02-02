@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Story Time - Sitreyah</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 15px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .start-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        .start-screen.hidden { display: none; }
+        .start-screen h1 { color: white; font-size: 2.5rem; margin-bottom: 10px; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+        .start-screen h2 { color: #fbbf24; font-size: 1.5rem; margin-bottom: 20px; }
+        .start-screen .mascot-big { font-size: 8rem; margin: 20px 0; animation: bounce 1s ease-in-out infinite; }
+        .start-screen p { color: white; font-size: 1.3rem; margin-bottom: 30px; }
+        .start-btn {
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            background: white;
+            color: #8b5cf6;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+        .dot.active { background: white; transform: scale(1.2); }
+        .dot.completed { background: #fbbf24; }
+
+        .story-container {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .story-illustration {
+            text-align: center;
+            font-size: 6rem;
+            margin-bottom: 20px;
+            animation: storyPop 0.5s ease;
+        }
+        @keyframes storyPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .story-text {
+            font-size: 1.3rem;
+            color: #374151;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .mascot-speaking {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .mascot-mini { font-size: 2.5rem; }
+        .mascot-mini.speaking { animation: talk 0.3s ease-in-out infinite; }
+        @keyframes talk {
+            0%, 100% { transform: scale(1) rotate(0); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .read-aloud-btn {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        .question-area {
+            background: #f3e8ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: auto;
+            display: none;
+        }
+        .question-area.show { display: block; }
+        .question {
+            font-size: 1.1rem;
+            color: #6b21a8;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .answer-btn {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 3px solid #e9d5ff;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-family: inherit;
+        }
+        .answer-btn:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+        }
+        .answer-btn.correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+        .answer-btn.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .nav-btn.prev {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .nav-btn.next {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        .celebration-content h2 { color: #8b5cf6; font-size: 2rem; }
+        .celebration-content .big-emoji { font-size: 5rem; margin: 20px 0; }
+        .stars { text-align: center; font-size: 2.5rem; margin: 15px 0; }
+        .star { color: #fbbf24; }
+        .play-again-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .sound-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 1001;
+            animation: confettiFall 3s linear forwards;
+        }
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="startScreen">
+        <h1>Story Time!</h1>
+        <h2>The Little Star's Big Dream</h2>
+        <div class="mascot-big">⭐</div>
+        <p>Let's read together!</p>
+        <button class="start-btn" onclick="startGame()">Start Reading!</button>
+    </div>
+
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>📖 Story Time</h1>
+            <p>The Little Star's Big Dream</p>
+        </div>
+
+        <div class="progress-dots" id="progressDots"></div>
+
+        <div class="story-container">
+            <div class="story-illustration" id="illustration">⭐</div>
+            <div class="story-text" id="storyText"></div>
+
+            <div class="mascot-speaking">
+                <span class="mascot-mini" id="mascot">📖</span>
+                <button class="read-aloud-btn" onclick="readAloud()">🔊 Read to Me</button>
+            </div>
+
+            <div class="question-area" id="questionArea">
+                <div class="question" id="question"></div>
+                <div class="answers" id="answers"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevPage()">← Back</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextPage()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <h2>The End!</h2>
+            <div class="big-emoji">📖⭐🌙</div>
+            <div class="stars">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+            </div>
+            <p>Great job listening to the story!</p>
+            <button class="play-again-btn" onclick="restartStory()">Read Again!</button>
+        </div>
+    </div>
+
+    <script>
+        var audioFiles = {
+            welcome: 'audio/story/welcome.mp3',
+            page1: 'audio/story/page1.mp3',
+            page2: 'audio/story/page2.mp3',
+            page3: 'audio/story/page3.mp3',
+            page4: 'audio/story/page4.mp3',
+            page5: 'audio/story/page5.mp3',
+            page6: 'audio/story/page6.mp3',
+            page7: 'audio/story/page7.mp3',
+            page8: 'audio/story/page8.mp3',
+            correct1: 'audio/story/correct1.mp3',
+            correct2: 'audio/story/correct2.mp3',
+            wrong: 'audio/story/wrong.mp3',
+            celebration: 'audio/story/celebration.mp3'
+        };
+
+        var audioCache = {};
+        Object.keys(audioFiles).forEach(function(key) {
+            audioCache[key] = new Audio(audioFiles[key]);
+            audioCache[key].preload = 'auto';
+        });
+
+        var currentAudio = null;
+        var soundEnabled = true;
+
+        function playAudio(key, callback) {
+            if (!soundEnabled) {
+                if (callback) callback();
+                return;
+            }
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            var audio = audioCache[key];
+            if (audio) {
+                currentAudio = audio;
+                audio.currentTime = 0;
+                document.getElementById('mascot').classList.add('speaking');
+                audio.onended = function() {
+                    document.getElementById('mascot').classList.remove('speaking');
+                    if (callback) callback();
+                };
+                audio.play().catch(function() {
+                    document.getElementById('mascot').classList.remove('speaking');
+                    if (callback) callback();
+                });
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        var story = [
+            {
+                illustration: '⭐',
+                text: 'Once upon a time, there was a little star named Stella who lived high up in the night sky.',
+                audioKey: 'page1',
+                question: null
+            },
+            {
+                illustration: '🌙⭐',
+                text: 'Stella looked down at Earth every night. She saw children playing and laughing.',
+                audioKey: 'page2',
+                question: {
+                    text: 'What did Stella see children doing?',
+                    answers: ['Sleeping', 'Playing and laughing', 'Eating'],
+                    correct: 1
+                }
+            },
+            {
+                illustration: '⭐💭',
+                text: '"I wish I could play with the children," Stella said. "But I am too far away."',
+                audioKey: 'page3',
+                question: null
+            },
+            {
+                illustration: '🌙✨⭐',
+                text: 'The Moon heard Stella and smiled. "Little star, you help children every night!"',
+                audioKey: 'page4',
+                question: {
+                    text: 'Who talked to Stella?',
+                    answers: ['The Sun', 'The Moon', 'A cloud'],
+                    correct: 1
+                }
+            },
+            {
+                illustration: '👧😴⭐',
+                text: '"When children look up and see you twinkling, they feel happy and safe," said the Moon.',
+                audioKey: 'page5',
+                question: null
+            },
+            {
+                illustration: '⭐✨',
+                text: 'Stella began to twinkle her brightest! She was so happy to help.',
+                audioKey: 'page6',
+                question: {
+                    text: 'How did Stella feel?',
+                    answers: ['Sad', 'Angry', 'Happy'],
+                    correct: 2
+                }
+            },
+            {
+                illustration: '🌙⭐🌟✨',
+                text: 'From that night on, Stella twinkled with all her heart. And children everywhere smiled when they saw her.',
+                audioKey: 'page7',
+                question: null
+            },
+            {
+                illustration: '⭐💛',
+                text: 'The End! Remember: Even small things can make a big difference!',
+                audioKey: 'page8',
+                question: null
+            }
+        ];
+
+        var currentPage = 0;
+
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            initDots();
+            showPage();
+            playAudio('welcome', function() {
+                readAloud();
+            });
+        }
+
+        function readAloud() {
+            playAudio(story[currentPage].audioKey);
+        }
+
+        function initDots() {
+            var dotsContainer = document.getElementById('progressDots');
+            dotsContainer.textContent = '';
+            story.forEach(function(_, i) {
+                var dot = document.createElement('div');
+                dot.className = 'dot';
+                if (i === 0) dot.classList.add('active');
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function updateDots() {
+            var dots = document.querySelectorAll('.dot');
+            dots.forEach(function(dot, i) {
+                dot.classList.remove('active');
+                if (i < currentPage) dot.classList.add('completed');
+                if (i === currentPage) dot.classList.add('active');
+            });
+        }
+
+        function showPage() {
+            var page = story[currentPage];
+            document.getElementById('illustration').textContent = page.illustration;
+            document.getElementById('storyText').textContent = page.text;
+
+            var questionArea = document.getElementById('questionArea');
+            if (page.question) {
+                questionArea.classList.add('show');
+                document.getElementById('question').textContent = page.question.text;
+
+                var answersDiv = document.getElementById('answers');
+                answersDiv.textContent = '';
+
+                page.question.answers.forEach(function(answer, i) {
+                    var btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = answer;
+                    btn.onclick = function() { checkAnswer(btn, i === page.question.correct); };
+                    answersDiv.appendChild(btn);
+                });
+            } else {
+                questionArea.classList.remove('show');
+            }
+
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').textContent = currentPage === story.length - 1 ? 'Finish!' : 'Next →';
+
+            updateDots();
+        }
+
+        function checkAnswer(btn, isCorrect) {
+            var buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(function(b) { b.onclick = null; });
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                var correctAudios = ['correct1', 'correct2'];
+                playAudio(correctAudios[Math.floor(Math.random() * correctAudios.length)]);
+            } else {
+                btn.classList.add('wrong');
+                playAudio('wrong', function() {
+                    setTimeout(function() {
+                        buttons[story[currentPage].question.correct].classList.add('correct');
+                    }, 300);
+                });
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < story.length - 1) {
+                currentPage++;
+                showPage();
+                setTimeout(readAloud, 300);
+            } else {
+                showCelebration();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                showPage();
+                setTimeout(readAloud, 300);
+            }
+        }
+
+        function showCelebration() {
+            createConfetti();
+            document.getElementById('celebration').classList.add('show');
+            playAudio('celebration');
+        }
+
+        function createConfetti() {
+            var colors = ['#8b5cf6', '#a855f7', '#fbbf24', '#22c55e', '#3b82f6', '#ec4899'];
+            for (var i = 0; i < 50; i++) {
+                (function(index) {
+                    setTimeout(function() {
+                        var confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                        document.body.appendChild(confetti);
+                        setTimeout(function() { confetti.remove(); }, 4000);
+                    }, index * 50);
+                })(i);
+            }
+        }
+
+        function restartStory() {
+            currentPage = 0;
+            document.getElementById('celebration').classList.remove('show');
+            initDots();
+            showPage();
+            setTimeout(readAloud, 300);
+        }
+
+        document.getElementById('soundToggle').addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            this.textContent = soundEnabled ? '🔊' : '🔇';
+            if (!soundEnabled && currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                document.getElementById('mascot').classList.remove('speaking');
+            }
+        });
+    </script>
+</body>
+</html>

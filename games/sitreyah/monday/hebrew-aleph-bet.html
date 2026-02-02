@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aleph-Bet Adventure - Sitreyah</title>
+    <title>Aleph Adventure - Family World School</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -95,7 +95,7 @@
             margin-bottom: 20px;
         }
         .big-letter {
-            font-size: 8rem;
+            font-size: 10rem;
             color: #1e3a8a;
             text-shadow: 4px 4px 8px rgba(0,0,0,0.1);
             animation: letterPulse 2s ease-in-out infinite;
@@ -120,7 +120,7 @@
             50% { filter: drop-shadow(0 0 25px #3b82f6); }
         }
         .letter-name {
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: #64748b;
             margin-top: 10px;
         }
@@ -159,8 +159,8 @@
             margin-top: 20px;
         }
         .choice-btn {
-            padding: 20px;
-            font-size: 3rem;
+            padding: 25px;
+            font-size: 4rem;
             border: 4px solid #e2e8f0;
             border-radius: 20px;
             background: #f8fafc;
@@ -230,7 +230,7 @@
             100% { transform: rotateY(360deg); }
         }
         .celebration-content p { color: #666; margin-bottom: 20px; }
-        .play-again-btn {
+        .play-again-btn, .home-btn {
             padding: 15px 40px;
             font-size: 1.3rem;
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
@@ -240,7 +240,10 @@
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
-            margin-top: 20px;
+            margin: 10px;
+        }
+        .home-btn {
+            background: linear-gradient(135deg, #ec4899, #f472b6);
         }
 
         .sound-toggle {
@@ -302,9 +305,13 @@
             text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
         }
         .start-content .hebrew-title {
-            font-size: 2rem;
+            font-size: 4rem;
             font-family: 'Times New Roman', serif;
             margin-bottom: 30px;
+        }
+        .start-content p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
         }
         .start-btn {
             padding: 20px 50px;
@@ -324,9 +331,10 @@
     <div class="start-screen" id="startScreen">
         <div class="start-content">
             <div class="big-mascot">🦁</div>
-            <h1>Aleph-Bet Adventure!</h1>
-            <div class="hebrew-title">אָלֶף-בֵּית</div>
-            <button class="start-btn" id="startBtn">▶ Let's Learn!</button>
+            <h1>Learn Aleph!</h1>
+            <div class="hebrew-title">א</div>
+            <p>The first letter of the Hebrew alphabet!</p>
+            <button class="start-btn" id="startBtn">Let's Learn!</button>
         </div>
     </div>
 
@@ -334,8 +342,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>אָלֶף-בֵּית Aleph-Bet</h1>
-            <p>Learn Hebrew Letters!</p>
+            <h1>א Aleph</h1>
+            <p>Learn the Hebrew letter Aleph!</p>
         </div>
 
         <div class="progress-bar-container">
@@ -372,26 +380,22 @@
             <h2>כל הכבוד!</h2>
             <div class="hebrew-congrats">Kol Hakavod!</div>
             <div class="trophy">🏆</div>
-            <p>You learned the Hebrew letters!</p>
+            <p>You learned the letter Aleph!</p>
             <div class="stars" id="celebrationStars">
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
             </div>
             <button class="play-again-btn" onclick="restartGame()">Play Again!</button>
+            <button class="home-btn" onclick="window.location.href='index.html'">Back to Games</button>
         </div>
     </div>
 
     <script>
-        // Microsoft Edge TTS Audio Files (AnaNeural - cute kids voice)
         var audioFiles = {
             welcome: 'audio/welcome.mp3',
             findLetter: 'audio/find-letter.mp3',
             letterAleph: 'audio/letter-aleph.mp3',
-            letterBet: 'audio/letter-bet.mp3',
-            letterGimel: 'audio/letter-gimel.mp3',
-            letterDalet: 'audio/letter-dalet.mp3',
-            letterHey: 'audio/letter-hey.mp3',
             correct1: 'audio/correct1.mp3',
             correct2: 'audio/correct2.mp3',
             correct3: 'audio/correct3.mp3',
@@ -405,19 +409,13 @@
             audioCache[key].preload = 'auto';
         });
 
-        var letters = [
-            { hebrew: 'א', name: 'Aleph', audio: 'letterAleph' },
-            { hebrew: 'ב', name: 'Bet', audio: 'letterBet' },
-            { hebrew: 'ג', name: 'Gimel', audio: 'letterGimel' },
-            { hebrew: 'ד', name: 'Dalet', audio: 'letterDalet' },
-            { hebrew: 'ה', name: 'Hey', audio: 'letterHey' }
-        ];
+        // All letters for choices, but only Aleph will be correct
+        var allLetters = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח'];
 
         var currentRound = 0;
         var score = 0;
         var totalRounds = 5;
         var soundEnabled = true;
-        var currentLetter = null;
         var currentAudio = null;
 
         function playAudio(key, callback) {
@@ -454,12 +452,11 @@
         }
 
         function playLetterSound() {
-            if (!currentLetter) return;
             var btn = document.getElementById('hearBtn');
             var letter = document.getElementById('targetLetter');
             btn.classList.add('playing');
             letter.classList.add('playing');
-            playAudio(currentLetter.audio, function() {
+            playAudio('letterAleph', function() {
                 btn.classList.remove('playing');
                 letter.classList.remove('playing');
             });
@@ -481,15 +478,14 @@
         }
 
         function startRound() {
-            currentLetter = letters[currentRound];
-            document.getElementById('targetLetter').textContent = currentLetter.hebrew;
-            document.getElementById('letterName').textContent = currentLetter.name;
-            document.getElementById('mascotText').textContent = 'Find this letter below!';
+            document.getElementById('targetLetter').textContent = 'א';
+            document.getElementById('letterName').textContent = 'Aleph';
+            document.getElementById('mascotText').textContent = 'Find Aleph below!';
 
-            var choices = [currentLetter];
-            var otherLetters = letters.filter(function(l) { return l.hebrew !== currentLetter.hebrew; });
-            otherLetters = shuffleArray(otherLetters).slice(0, 3);
-            choices = shuffleArray(choices.concat(otherLetters));
+            // Pick 3 random wrong letters
+            var wrongLetters = allLetters.filter(function(l) { return l !== 'א'; });
+            wrongLetters = shuffleArray(wrongLetters).slice(0, 3);
+            var choices = shuffleArray(['א'].concat(wrongLetters));
 
             var choicesDiv = document.getElementById('choices');
             choicesDiv.textContent = '';
@@ -497,12 +493,12 @@
             choices.forEach(function(letter) {
                 var btn = document.createElement('button');
                 btn.className = 'choice-btn';
-                btn.textContent = letter.hebrew;
-                btn.onclick = function() { checkAnswer(btn, letter.hebrew === currentLetter.hebrew); };
+                btn.textContent = letter;
+                btn.onclick = function() { checkAnswer(btn, letter === 'א'); };
                 choicesDiv.appendChild(btn);
             });
 
-            playAudio(currentLetter.audio, function() {
+            playAudio('letterAleph', function() {
                 setTimeout(function() {
                     playAudio('findLetter');
                 }, 500);
@@ -541,7 +537,7 @@
                         buttons.forEach(function(b) {
                             if (!b.classList.contains('correct')) {
                                 b.onclick = function() {
-                                    checkAnswer(b, b.textContent === currentLetter.hebrew);
+                                    checkAnswer(b, b.textContent === 'א');
                                 };
                             }
                         });
@@ -580,7 +576,7 @@
             document.getElementById('celebration').classList.remove('show');
             document.getElementById('progressBar').style.width = '0%';
             document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
-            document.getElementById('mascotText').textContent = "Let's learn Hebrew letters!";
+            document.getElementById('mascotText').textContent = "Let's find Aleph again!";
             startRound();
         }
 

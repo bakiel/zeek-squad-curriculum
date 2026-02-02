@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Friendly Rainbow - Family World School</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container { max-width: 500px; width: 100%; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { opacity: 0.9; margin-top: 5px; }
+        .back-btn {
+            position: absolute; top: 20px; left: 20px;
+            background: white; border: none; width: 50px; height: 50px;
+            border-radius: 50%; font-size: 1.5rem; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.3); border-radius: 20px;
+            height: 20px; margin-bottom: 20px; overflow: hidden;
+        }
+        .progress-fill {
+            background: white; height: 100%; border-radius: 20px;
+            transition: width 0.5s; width: 0%;
+        }
+        .game-area {
+            background: white; border-radius: 30px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .story-page { text-align: center; }
+        .story-image { font-size: 6rem; margin-bottom: 20px; }
+        .story-text {
+            font-size: 1.3rem; color: #374151; line-height: 1.6;
+            margin-bottom: 20px; min-height: 100px;
+        }
+        .page-indicator { color: #9ca3af; margin-bottom: 20px; }
+        .nav-buttons { display: flex; gap: 15px; justify-content: center; }
+        .nav-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white; border: none; padding: 12px 30px;
+            font-size: 1.1rem; border-radius: 25px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139,92,246,0.3);
+        }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .question-area { margin-top: 20px; }
+        .question-text {
+            font-size: 1.2rem; color: #374151; margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .answer-choices { display: flex; flex-direction: column; gap: 10px; }
+        .answer-btn {
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+            border: 3px solid #c4b5fd; border-radius: 15px;
+            padding: 15px; font-size: 1.1rem; cursor: pointer;
+            transition: all 0.3s; text-align: left;
+        }
+        .answer-btn:hover { transform: scale(1.02); }
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #bbf7d0, #86efac);
+            border-color: #4ade80;
+        }
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            border-color: #f87171;
+        }
+        .mascot {
+            position: fixed; bottom: 20px; right: 20px;
+            font-size: 4rem; animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .start-screen, .celebration { text-align: center; padding: 40px 20px; }
+        .start-screen h2 { font-size: 2rem; color: #8b5cf6; margin-bottom: 20px; }
+        .start-screen .story-preview { font-size: 5rem; margin: 20px 0; }
+        .start-btn, .next-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white; border: none; padding: 15px 40px;
+            font-size: 1.3rem; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139,92,246,0.4); margin-top: 20px;
+        }
+        .celebration h2 { font-size: 2rem; color: #8b5cf6; margin-bottom: 10px; }
+        .celebration .trophy { font-size: 5rem; margin: 20px 0; }
+        .confetti {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 100;
+        }
+        .confetti-piece {
+            position: absolute; width: 10px; height: 10px;
+            animation: fall 3s linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">🏠</a>
+    <div class="container">
+        <div class="header">
+            <h1>Story Time</h1>
+            <p>The Friendly Rainbow</p>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+        <div class="game-area">
+            <div id="startScreen" class="start-screen">
+                <h2>The Friendly Rainbow</h2>
+                <div class="story-preview">🌈</div>
+                <p>A story about colors and friendship</p>
+                <button class="start-btn" onclick="startStory()">Start Reading</button>
+            </div>
+            <div id="storyContent" class="story-page hidden">
+                <div class="story-image" id="storyImage">🌈</div>
+                <div class="story-text" id="storyText"></div>
+                <div class="page-indicator" id="pageIndicator">Page 1 of 8</div>
+                <div class="nav-buttons" id="navButtons">
+                    <button class="nav-btn" id="prevBtn" onclick="prevPage()" disabled>Back</button>
+                    <button class="nav-btn" id="nextBtn" onclick="nextPage()">Next</button>
+                </div>
+                <div class="question-area hidden" id="questionArea">
+                    <div class="question-text" id="questionText"></div>
+                    <div class="answer-choices" id="answerChoices"></div>
+                </div>
+            </div>
+            <div id="celebration" class="celebration hidden">
+                <h2>Great Job</h2>
+                <div class="trophy">🏆</div>
+                <p>You finished the story</p>
+                <button class="next-btn" onclick="window.location.href='index.html'">Back to Games</button>
+            </div>
+        </div>
+    </div>
+    <div class="mascot">📖</div>
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        var audioCache = {};
+        var audioFiles = ['welcome', 'page1', 'page2', 'page3', 'page4', 'page5', 'page6', 'page7', 'page8', 'correct1', 'correct2', 'wrong', 'celebration'];
+        audioFiles.forEach(function(name) {
+            audioCache[name] = new Audio('audio/story/' + name + '.mp3');
+        });
+
+        var storyPages = [
+            { image: '🌈', text: 'Once upon a time there was a beautiful rainbow in the sky.' },
+            { image: '🌧️', text: 'The rainbow only came out after it rained.' },
+            { image: '🐰', text: 'A little bunny saw the rainbow and wanted to touch it.' },
+            { image: '🏃', text: 'The bunny hopped and hopped trying to reach the rainbow.' },
+            { image: '🦋', text: 'A butterfly said the rainbow lives in our hearts.' },
+            { image: '❤️', text: 'The bunny learned that beauty is all around us.' },
+            { image: '🌸', text: 'Now the bunny sees rainbows in flowers and butterflies.' },
+            { image: '😊', text: 'The end. Remember to look for rainbows everywhere.',
+              question: 'What did the bunny learn',
+              correct: 'Beauty is all around us',
+              wrong: ['Rainbows taste good', 'Bunnies can fly']
+            }
+        ];
+
+        var currentPage = 0;
+
+        function playAudio(key) {
+            if (audioCache[key]) {
+                audioCache[key].currentTime = 0;
+                audioCache[key].play().catch(function() {});
+            }
+        }
+
+        function startStory() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('storyContent').classList.remove('hidden');
+            playAudio('welcome');
+            setTimeout(function() { showPage(); }, 2000);
+        }
+
+        function showPage() {
+            var page = storyPages[currentPage];
+            document.getElementById('storyImage').textContent = page.image;
+            document.getElementById('storyText').textContent = page.text;
+            document.getElementById('pageIndicator').textContent = 'Page ' + (currentPage + 1) + ' of ' + storyPages.length;
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+
+            playAudio('page' + (currentPage + 1));
+
+            document.getElementById('progress').style.width = ((currentPage + 1) / storyPages.length * 100) + '%';
+
+            if (page.question) {
+                document.getElementById('navButtons').classList.add('hidden');
+                document.getElementById('questionArea').classList.remove('hidden');
+                document.getElementById('questionText').textContent = page.question;
+
+                var choices = [page.correct].concat(page.wrong);
+                choices = shuffleArray(choices);
+
+                var choicesDiv = document.getElementById('answerChoices');
+                choicesDiv.textContent = '';
+                choices.forEach(function(choice) {
+                    var btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = choice;
+                    btn.onclick = function() { checkStoryAnswer(btn, choice === page.correct); };
+                    choicesDiv.appendChild(btn);
+                });
+            } else {
+                document.getElementById('navButtons').classList.remove('hidden');
+                document.getElementById('questionArea').classList.add('hidden');
+                document.getElementById('nextBtn').textContent = currentPage === storyPages.length - 1 ? 'Finish' : 'Next';
+            }
+        }
+
+        function shuffleArray(array) {
+            var newArray = array.slice();
+            for (var i = newArray.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = newArray[i];
+                newArray[i] = newArray[j];
+                newArray[j] = temp;
+            }
+            return newArray;
+        }
+
+        function checkStoryAnswer(btn, isCorrect) {
+            var buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(function(b) { b.disabled = true; });
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                playAudio('correct1');
+                setTimeout(function() { showCelebration(); }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                playAudio('wrong');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    buttons.forEach(function(b) { b.disabled = false; });
+                }, 1000);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < storyPages.length - 1) {
+                currentPage++;
+                showPage();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                showPage();
+            }
+        }
+
+        function showCelebration() {
+            document.getElementById('storyContent').classList.add('hidden');
+            document.getElementById('celebration').classList.remove('hidden');
+            playAudio('celebration');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            var container = document.getElementById('confetti');
+            var colors = ['#8b5cf6', '#a855f7', '#fbbf24', '#34d399', '#ec4899'];
+            for (var i = 0; i < 50; i++) {
+                var piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(piece);
+            }
+        }
+    </script>
+</body>
+</html>

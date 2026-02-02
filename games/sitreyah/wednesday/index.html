@@ -3,154 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Monday Games - Family World School</title>
+    <title>Wednesday Games - Family World School</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
             min-height: 100vh;
             padding: 20px;
         }
         .container { max-width: 500px; margin: 0 auto; }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 25px;
-        }
-        .header .logo {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            animation: bounce 1s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .header h1 {
-            font-size: 1.8rem;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-            margin-bottom: 5px;
-        }
-        .header .hebrew {
-            font-size: 1.5rem;
-            font-family: 'Times New Roman', serif;
-        }
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-        .header .date {
-            background: rgba(255,255,255,0.2);
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 20px;
-            margin-top: 10px;
-        }
-
-        .games-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .game-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
-        }
+        .header { text-align: center; color: white; margin-bottom: 25px; }
+        .header .logo { font-size: 4rem; margin-bottom: 10px; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); margin-bottom: 5px; }
+        .header .hebrew { font-size: 1.5rem; font-family: 'Times New Roman', serif; }
+        .header p { font-size: 1.1rem; opacity: 0.9; margin-top: 5px; }
+        .header .date { background: rgba(255,255,255,0.2); display: inline-block; padding: 8px 20px; border-radius: 20px; margin-top: 10px; }
+        .games-grid { display: flex; flex-direction: column; gap: 15px; }
+        .game-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.2); transition: transform 0.3s; }
         .game-card:hover { transform: translateY(-5px); }
-
-        .game-link {
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            text-decoration: none;
-            gap: 15px;
-        }
-
-        .game-icon {
-            font-size: 3rem;
-            width: 70px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            flex-shrink: 0;
-        }
+        .game-link { display: flex; align-items: center; padding: 20px; text-decoration: none; gap: 15px; }
+        .game-icon { font-size: 3rem; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 15px; flex-shrink: 0; }
         .game-icon.hebrew { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .game-icon.ela { background: linear-gradient(135deg, #ec4899, #f472b6); }
         .game-icon.maths { background: linear-gradient(135deg, #10b981, #34d399); }
         .game-icon.science { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
         .game-icon.story { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
-
         .game-info { flex: 1; }
-        .game-info h3 {
-            font-size: 1.2rem;
-            color: #1f2937;
-            margin-bottom: 5px;
-        }
-        .game-info .subject {
-            font-size: 0.85rem;
-            color: #6b7280;
-            display: inline-block;
-            background: #f3f4f6;
-            padding: 3px 10px;
-            border-radius: 10px;
-        }
-
-        .play-arrow {
-            font-size: 1.5rem;
-            color: #9ca3af;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
-        }
+        .game-info h3 { font-size: 1.2rem; color: #1f2937; margin-bottom: 5px; }
+        .game-info .subject { font-size: 0.85rem; color: #6b7280; display: inline-block; background: #f3f4f6; padding: 3px 10px; border-radius: 10px; }
+        .play-arrow { font-size: 1.5rem; color: #9ca3af; }
+        .footer { text-align: center; margin-top: 30px; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
         .footer .hearts { font-size: 1.2rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🦁</div>
+            <div class="logo">🦉</div>
             <h1>Family World School</h1>
             <div class="hebrew">סיטרייה</div>
             <p>Sitreyah Nursery</p>
-            <div class="date">📅 Monday, February 2</div>
+            <div class="date">📅 Wednesday, February 4</div>
         </div>
-
         <div class="games-grid">
             <div class="game-card">
                 <a href="hebrew-aleph-bet.html" class="game-link">
                     <div class="game-icon hebrew">🔤</div>
                     <div class="game-info">
-                        <h3>Learn Aleph</h3>
+                        <h3>Learn Vet</h3>
                         <span class="subject">Hebrew</span>
                     </div>
                     <span class="play-arrow">▶</span>
                 </a>
             </div>
-
             <div class="game-card">
                 <a href="ela-letter-sounds.html" class="game-link">
                     <div class="game-icon ela">🦋</div>
                     <div class="game-info">
-                        <h3>Letter U</h3>
+                        <h3>Letter V</h3>
                         <span class="subject">ELA</span>
                     </div>
                     <span class="play-arrow">▶</span>
                 </a>
             </div>
-
             <div class="game-card">
                 <a href="maths-take-apart.html" class="game-link">
                     <div class="game-icon maths">🔢</div>
@@ -161,18 +78,16 @@
                     <span class="play-arrow">▶</span>
                 </a>
             </div>
-
             <div class="game-card">
                 <a href="science-living-things.html" class="game-link">
                     <div class="game-icon science">🌱</div>
                     <div class="game-info">
-                        <h3>Living Things</h3>
+                        <h3>Living Things - Plants</h3>
                         <span class="subject">Science</span>
                     </div>
                     <span class="play-arrow">▶</span>
                 </a>
             </div>
-
             <div class="game-card">
                 <a href="story-time.html" class="game-link">
                     <div class="game-icon story">📖</div>
@@ -184,9 +99,8 @@
                 </a>
             </div>
         </div>
-
         <div class="footer">
-            <div class="hearts">💙 🤍 💙</div>
+            <div class="hearts">💜 🤍 💜</div>
             <p>Made with love for Yahkim, Yahwon, Milah & KenanYahu</p>
         </div>
     </div>

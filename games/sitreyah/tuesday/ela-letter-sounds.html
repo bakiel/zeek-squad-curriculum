@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Letter T - Family World School</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container { max-width: 500px; width: 100%; }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { opacity: 0.9; margin-top: 5px; }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            height: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s;
+            width: 0%;
+        }
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .star {
+            font-size: 2rem;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        .star.earned {
+            opacity: 1;
+            animation: starPop 0.5s;
+        }
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .game-area {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .letter-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .big-letter {
+            font-size: 8rem;
+            color: #ec4899;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .letter-sound {
+            font-size: 1.5rem;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+        .instruction {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #374151;
+            margin-bottom: 20px;
+        }
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .choice-btn {
+            background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+            border: 4px solid #f9a8d4;
+            border-radius: 20px;
+            padding: 20px;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .choice-btn:hover { transform: scale(1.05); }
+        .choice-btn:active { transform: scale(0.95); }
+        .choice-btn .word {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+        .choice-btn.correct {
+            background: linear-gradient(135deg, #bbf7d0, #86efac);
+            border-color: #4ade80;
+            animation: bounce 0.5s;
+        }
+        .choice-btn.wrong {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            border-color: #f87171;
+            animation: shake 0.5s;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .mascot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .start-screen, .celebration {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .start-screen h2 {
+            font-size: 2rem;
+            color: #ec4899;
+            margin-bottom: 20px;
+        }
+        .start-screen .preview-letter {
+            font-size: 6rem;
+            margin: 20px 0;
+        }
+        .start-btn, .next-btn {
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(236,72,153,0.4);
+            margin-top: 20px;
+        }
+        .celebration h2 {
+            font-size: 2rem;
+            color: #ec4899;
+            margin-bottom: 10px;
+        }
+        .celebration .trophy {
+            font-size: 5rem;
+            margin: 20px 0;
+        }
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 100;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: fall 3s linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">🏠</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>Letter Sounds</h1>
+            <p>Find pictures that start with the letter</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">⭐</span>
+            <span class="star" id="star2">⭐</span>
+            <span class="star" id="star3">⭐</span>
+            <span class="star" id="star4">⭐</span>
+            <span class="star" id="star5">⭐</span>
+        </div>
+
+        <div class="game-area">
+            <div id="startScreen" class="start-screen">
+                <h2>Letter T</h2>
+                <div class="preview-letter">T</div>
+                <p>T says tuh like in Tiger</p>
+                <button class="start-btn" onclick="startGame()">Start Game</button>
+            </div>
+
+            <div id="gameContent" class="hidden">
+                <div class="letter-display">
+                    <div class="big-letter" id="currentLetter">T</div>
+                    <div class="letter-sound" id="letterSound">T says tuh</div>
+                </div>
+                <div class="instruction">Tap the picture that starts with T</div>
+                <div class="choices" id="choices"></div>
+            </div>
+
+            <div id="celebration" class="celebration hidden">
+                <h2>Amazing Job</h2>
+                <div class="trophy">🏆</div>
+                <p>You learned the letter T</p>
+                <p>You are a superstar</p>
+                <button class="next-btn" onclick="window.location.href='index.html'">Back to Games</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mascot">🦋</div>
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        var audioCache = {};
+        var audioFiles = ['welcome', 'find-letter', 'letter-t', 'correct1', 'correct2', 'correct3', 'wrong', 'celebration'];
+
+        audioFiles.forEach(function(name) {
+            audioCache[name] = new Audio('audio/ela/' + name + '.mp3');
+        });
+
+        var letterData = [
+            { letter: 'T', audioKey: 'letter-t', correct: { emoji: '🐯', word: 'Tiger' }, wrong: [
+                { emoji: '🦁', word: 'Lion' }, { emoji: '🐻', word: 'Bear' }, { emoji: '🐼', word: 'Panda' }
+            ]},
+            { letter: 'T', audioKey: 'letter-t', correct: { emoji: '🌳', word: 'Tree' }, wrong: [
+                { emoji: '🌸', word: 'Flower' }, { emoji: '🌵', word: 'Cactus' }, { emoji: '🍀', word: 'Clover' }
+            ]},
+            { letter: 'T', audioKey: 'letter-t', correct: { emoji: '🍅', word: 'Tomato' }, wrong: [
+                { emoji: '🥕', word: 'Carrot' }, { emoji: '🥒', word: 'Cucumber' }, { emoji: '🌽', word: 'Corn' }
+            ]},
+            { letter: 'T', audioKey: 'letter-t', correct: { emoji: '🐢', word: 'Turtle' }, wrong: [
+                { emoji: '🐸', word: 'Frog' }, { emoji: '🐍', word: 'Snake' }, { emoji: '🦎', word: 'Lizard' }
+            ]},
+            { letter: 'T', audioKey: 'letter-t', correct: { emoji: '🚂', word: 'Train' }, wrong: [
+                { emoji: '🚗', word: 'Car' }, { emoji: '✈️', word: 'Plane' }, { emoji: '🚀', word: 'Rocket' }
+            ]}
+        ];
+
+        var currentRound = 0;
+        var score = 0;
+        var isPlaying = false;
+
+        function playAudio(key) {
+            if (audioCache[key]) {
+                audioCache[key].currentTime = 0;
+                audioCache[key].play().catch(function() {});
+            }
+        }
+
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameContent').classList.remove('hidden');
+            playAudio('welcome');
+            setTimeout(function() { loadRound(); }, 2000);
+        }
+
+        function shuffleArray(array) {
+            var newArray = array.slice();
+            for (var i = newArray.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = newArray[i];
+                newArray[i] = newArray[j];
+                newArray[j] = temp;
+            }
+            return newArray;
+        }
+
+        function loadRound() {
+            if (currentRound >= letterData.length) {
+                showCelebration();
+                return;
+            }
+
+            isPlaying = true;
+            var data = letterData[currentRound];
+            document.getElementById('currentLetter').textContent = data.letter;
+            document.getElementById('letterSound').textContent = data.letter + ' says tuh';
+
+            var allChoices = [data.correct].concat(data.wrong);
+            allChoices = shuffleArray(allChoices);
+
+            var choicesDiv = document.getElementById('choices');
+            choicesDiv.textContent = '';
+
+            allChoices.forEach(function(choice) {
+                var btn = document.createElement('button');
+                btn.className = 'choice-btn';
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.textContent = choice.emoji;
+                btn.appendChild(emojiSpan);
+
+                var wordSpan = document.createElement('span');
+                wordSpan.className = 'word';
+                wordSpan.textContent = choice.word;
+                btn.appendChild(wordSpan);
+
+                btn.onclick = function() { checkAnswer(btn, choice.word === data.correct.word); };
+                choicesDiv.appendChild(btn);
+            });
+
+            playAudio('find-letter');
+            setTimeout(function() { playAudio(data.audioKey); }, 1500);
+
+            document.getElementById('progress').style.width = ((currentRound / letterData.length) * 100) + '%';
+        }
+
+        function checkAnswer(btn, isCorrect) {
+            if (!isPlaying) return;
+            isPlaying = false;
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                score++;
+                document.getElementById('star' + score).classList.add('earned');
+                var correctAudios = ['correct1', 'correct2', 'correct3'];
+                playAudio(correctAudios[Math.floor(Math.random() * correctAudios.length)]);
+                currentRound++;
+                setTimeout(function() { loadRound(); }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                playAudio('wrong');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    isPlaying = true;
+                }, 1000);
+            }
+        }
+
+        function showCelebration() {
+            document.getElementById('gameContent').classList.add('hidden');
+            document.getElementById('celebration').classList.remove('hidden');
+            document.getElementById('progress').style.width = '100%';
+            playAudio('celebration');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            var container = document.getElementById('confetti');
+            var colors = ['#ec4899', '#f472b6', '#fbbf24', '#34d399', '#60a5fa'];
+            for (var i = 0; i < 50; i++) {
+                var piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(piece);
+            }
+        }
+    </script>
+</body>
+</html>

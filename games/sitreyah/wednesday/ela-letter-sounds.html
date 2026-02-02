@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Letter U - Family World School</title>
+    <title>Letter V - Family World School</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -273,9 +273,9 @@
 </head>
 <body>
     <div class="start-screen" id="startScreen">
-        <h1>Letter U!</h1>
+        <h1>Letter V!</h1>
         <div class="mascot-big">🦋</div>
-        <p>U says uh like in Umbrella!</p>
+        <p>V says vuh like in Violin!</p>
         <button class="start-btn" onclick="startGame()">Let's Play!</button>
     </div>
 
@@ -283,8 +283,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>Letter U</h1>
-            <p>Find pictures that start with U!</p>
+            <h1>Letter V</h1>
+            <p>Find pictures that start with V!</p>
         </div>
 
         <div class="progress-bar-container">
@@ -300,14 +300,14 @@
         <div class="mascot-area">
             <div class="mascot" id="mascot">🦋</div>
             <div class="speech-bubble">
-                <p id="mascotText">Hi! Let's learn Letter U!</p>
+                <p id="mascotText">Hi! Let's learn Letter V!</p>
             </div>
         </div>
 
         <div class="game-container">
             <div class="question-area">
-                <div class="big-letter" id="targetLetter" onclick="playLetterSound()">U</div>
-                <div class="instruction">Tap the picture that starts with U!</div>
+                <div class="big-letter" id="targetLetter" onclick="playLetterSound()">V</div>
+                <div class="instruction">Tap the picture that starts with V!</div>
             </div>
 
             <button class="sound-btn" onclick="playLetterSound()">🔊 Hear the Sound</button>
@@ -325,7 +325,7 @@
                 <span class="star earned">⭐</span>
                 <span class="star earned">⭐</span>
             </div>
-            <p>You know your letter U!</p>
+            <p>You know your letter V!</p>
             <button class="play-again-btn" onclick="restartGame()">Play Again!</button>
             <button class="home-btn" onclick="window.location.href='index.html'">Back to Games</button>
         </div>
@@ -335,7 +335,7 @@
         var audioFiles = {
             welcome: 'audio/ela/welcome.mp3',
             findLetter: 'audio/ela/find-letter.mp3',
-            letterU: 'audio/ela/letter-u.mp3',
+            letterV: 'audio/ela/letter-v.mp3',
             correct1: 'audio/ela/correct1.mp3',
             correct2: 'audio/ela/correct2.mp3',
             correct3: 'audio/ela/correct3.mp3',
@@ -380,20 +380,20 @@
         }
 
         var letterData = [
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '☂️', word: 'Umbrella' }, wrong: [
-                { emoji: '🌧️', word: 'Rain' }, { emoji: '☀️', word: 'Sun' }, { emoji: '🌈', word: 'Rainbow' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🦄', word: 'Unicorn' }, wrong: [
-                { emoji: '🐴', word: 'Horse' }, { emoji: '🐕', word: 'Dog' }, { emoji: '🐱', word: 'Cat' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '⬆️', word: 'Up' }, wrong: [
-                { emoji: '⬇️', word: 'Down' }, { emoji: '➡️', word: 'Right' }, { emoji: '⬅️', word: 'Left' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🔓', word: 'Unlock' }, wrong: [
-                { emoji: '🔒', word: 'Lock' }, { emoji: '🔑', word: 'Key' }, { emoji: '🚪', word: 'Door' }
-            ]},
-            { letter: 'U', audioKey: 'letterU', correct: { emoji: '🎻', word: 'Ukulele' }, wrong: [
+            { letter: 'V', audioKey: 'letterV', correct: { emoji: '🎻', word: 'Violin' }, wrong: [
                 { emoji: '🎸', word: 'Guitar' }, { emoji: '🎹', word: 'Piano' }, { emoji: '🥁', word: 'Drum' }
+            ]},
+            { letter: 'V', audioKey: 'letterV', correct: { emoji: '🌋', word: 'Volcano' }, wrong: [
+                { emoji: '🏔️', word: 'Mountain' }, { emoji: '🏝️', word: 'Island' }, { emoji: '🌊', word: 'Wave' }
+            ]},
+            { letter: 'V', audioKey: 'letterV', correct: { emoji: '🥕', word: 'Vegetable' }, wrong: [
+                { emoji: '🍎', word: 'Apple' }, { emoji: '🍌', word: 'Banana' }, { emoji: '🍇', word: 'Grapes' }
+            ]},
+            { letter: 'V', audioKey: 'letterV', correct: { emoji: '🚐', word: 'Van' }, wrong: [
+                { emoji: '🚗', word: 'Car' }, { emoji: '🚌', word: 'Bus' }, { emoji: '🚕', word: 'Taxi' }
+            ]},
+            { letter: 'V', audioKey: 'letterV', correct: { emoji: '💜', word: 'Violet' }, wrong: [
+                { emoji: '❤️', word: 'Red' }, { emoji: '💙', word: 'Blue' }, { emoji: '💚', word: 'Green' }
             ]}
         ];
 
