@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicka Chicka Boom Boom - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 15px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; filter: drop-shadow(0 0 10px #FFD700); animation: starEarn 0.6s ease; }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 50% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0); } }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: treeSway 2s ease-in-out infinite; }
+        @keyframes treeSway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            flex: 1;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 { color: #e67e22; margin-bottom: 15px; font-size: 1.3rem; text-align: center; }
+
+        .tree-container {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #90EE90 60%, #228B22 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .coconut-tree {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8rem;
+            z-index: 1;
+        }
+        .letter-on-tree {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8B4513;
+            background: #FFE4B5;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            animation: letterBounce 0.5s ease forwards;
+        }
+        @keyframes letterBounce {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+        .fallen-letters {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+        }
+        .fallen-letter {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8B4513;
+            animation: fallDown 0.5s ease forwards;
+        }
+        @keyframes fallDown {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .chant-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .chant-btn:hover { transform: scale(1.02); }
+        .chant-btn:active { transform: scale(0.98); }
+
+        .letter-select {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .letter-option {
+            padding: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: 4px solid #ffe0b2;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #ffffff, #fff8f0);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .letter-option:hover { transform: scale(1.08); border-color: #e67e22; }
+        .letter-option.selected { border-color: #27ae60; background: #d4edda; }
+        .letter-option.wrong { border-color: #e74c3c; background: #f8d7da; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        .story-element {
+            background: #fff3cd;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .story-element h3 { color: #856404; margin-bottom: 10px; }
+        .story-element .options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .story-option {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border: 3px solid #ffc107;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .story-option:hover { background: #fff3cd; }
+        .story-option.correct { border-color: #27ae60; background: #d4edda; }
+        .story-option.wrong { border-color: #e74c3c; background: #f8d7da; animation: shake 0.4s; }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: feedbackPop 0.4s ease;
+        }
+        @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+
+        .hidden { display: none !important; }
+
+        .celebration {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { color: #e67e22; font-size: 2rem; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; margin-bottom: 15px; }
+        .celebration .stars-final { font-size: 3rem; color: #FFD700; margin-bottom: 20px; }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1001;
+        }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover { transform: scale(1.05); }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .next-btn.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>📚 Chicka Chicka Boom Boom!</h1>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">★</span>
+            <span class="star" id="star2">★</span>
+            <span class="star" id="star3">★</span>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🌴</div>
+            <div class="speech-bubble" id="speechBubble">
+                Welcome! Let's read about the alphabet climbing up the coconut tree! Chicka Chicka Boom Boom!
+            </div>
+        </div>
+
+        <!-- Game 1: Build the Tree -->
+        <div class="game-card" id="game1">
+            <h2>🌴 Help Letters Climb the Tree!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap letters in ABC order to climb the tree!</p>
+
+            <div class="tree-container" id="treeContainer">
+                <div class="coconut-tree">🌴</div>
+                <div class="fallen-letters" id="fallenLetters"></div>
+            </div>
+
+            <div class="letter-select" id="letterSelect"></div>
+
+            <button class="chant-btn" onclick="playChant()">🎵 Chicka Chicka Boom Boom!</button>
+
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Game 2: Story Elements -->
+        <div class="game-card hidden" id="game2">
+            <h2>📖 Story Elements!</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">Let's find the parts of the story!</p>
+
+            <div class="story-element">
+                <h3>👥 Who are the CHARACTERS?</h3>
+                <div class="options" id="characterOptions">
+                    <button class="story-option" onclick="checkStory(this, 'character', true)">The Letters A-Z</button>
+                    <button class="story-option" onclick="checkStory(this, 'character', false)">Dogs and Cats</button>
+                    <button class="story-option" onclick="checkStory(this, 'character', false)">Numbers 1-10</button>
+                </div>
+            </div>
+
+            <div class="story-element">
+                <h3>📍 Where is the SETTING?</h3>
+                <div class="options" id="settingOptions">
+                    <button class="story-option" onclick="checkStory(this, 'setting', false)">A house</button>
+                    <button class="story-option" onclick="checkStory(this, 'setting', true)">A coconut tree</button>
+                    <button class="story-option" onclick="checkStory(this, 'setting', false)">A school</button>
+                </div>
+            </div>
+
+            <div class="story-element">
+                <h3>💥 What HAPPENED?</h3>
+                <div class="options" id="eventOptions">
+                    <button class="story-option" onclick="checkStory(this, 'event', false)">Letters had a party</button>
+                    <button class="story-option" onclick="checkStory(this, 'event', true)">Letters fell down - BOOM!</button>
+                    <button class="story-option" onclick="checkStory(this, 'event', false)">Letters went swimming</button>
+                </div>
+            </div>
+
+            <div class="feedback" id="feedback2"></div>
+            <button class="next-btn" id="finishBtn" onclick="finishGame()">I'm a Story Star! ⭐</button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🏆</div>
+            <h2>STORY STAR!</h2>
+            <div class="stars-final" id="starsFinal">★★★</div>
+            <p>You know the story of Chicka Chicka Boom Boom!</p>
+            <p>Characters + Setting + Events = STORY!</p>
+            <a href="index.html" class="submit-btn">Play More Games!</a>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'star') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'boom') {
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        const targetLetters = ['M', 'N', 'O', 'P'];
+        const allLetters = ['M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+        let currentLetterIndex = 0;
+        let starsEarned = 0;
+        let storyCorrect = 0;
+
+        function updateSpeech(text) {
+            document.getElementById('speechBubble').textContent = text;
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function earnStar(num) {
+            const star = document.getElementById('star' + num);
+            star.classList.add('earned');
+            starsEarned++;
+            playSound('star');
+        }
+
+        // Shuffle letters
+        function shuffle(array) {
+            const arr = array.slice();
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Setup letter selection
+        function setupLetters() {
+            const select = document.getElementById('letterSelect');
+            const shuffled = shuffle(allLetters);
+
+            shuffled.forEach(function(letter) {
+                const btn = document.createElement('button');
+                btn.className = 'letter-option';
+                btn.textContent = letter;
+                btn.onclick = function() { selectLetter(btn, letter); };
+                select.appendChild(btn);
+            });
+        }
+
+        function selectLetter(btn, letter) {
+            if (btn.classList.contains('selected')) return;
+
+            if (letter === targetLetters[currentLetterIndex]) {
+                playSound('correct');
+                btn.classList.add('selected');
+                addLetterToTree(letter);
+                currentLetterIndex++;
+                updateProgress(currentLetterIndex * 12);
+
+                const messages = [
+                    "M is climbing! Keep going!",
+                    "N follows M! Chicka chicka!",
+                    "O joins in! Almost there!",
+                    "P makes it! But wait..."
+                ];
+                updateSpeech(messages[currentLetterIndex - 1]);
+
+                if (currentLetterIndex >= targetLetters.length) {
+                    setTimeout(boomTime, 1000);
+                }
+            } else {
+                playSound('wrong');
+                btn.classList.add('wrong');
+                updateSpeech("Oops! We need " + targetLetters[currentLetterIndex] + " next!");
+                setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+            }
+        }
+
+        function addLetterToTree(letter) {
+            const container = document.getElementById('treeContainer');
+            const letterDiv = document.createElement('div');
+            letterDiv.className = 'letter-on-tree';
+            letterDiv.textContent = letter;
+
+            const positions = [
+                { left: '42%', bottom: '180px' },
+                { left: '55%', bottom: '200px' },
+                { left: '38%', bottom: '220px' },
+                { left: '52%', bottom: '240px' }
+            ];
+
+            const pos = positions[currentLetterIndex];
+            letterDiv.style.left = pos.left;
+            letterDiv.style.bottom = pos.bottom;
+            container.appendChild(letterDiv);
+        }
+
+        function boomTime() {
+            playSound('boom');
+            updateSpeech("Too many letters! CHICKA CHICKA BOOM BOOM! They all fall down!");
+
+            // Make letters fall
+            const lettersOnTree = document.querySelectorAll('.letter-on-tree');
+            const fallen = document.getElementById('fallenLetters');
+
+            lettersOnTree.forEach(function(el, i) {
+                setTimeout(function() {
+                    el.style.transition = 'all 0.5s ease-in';
+                    el.style.bottom = '30px';
+                    el.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+
+                    setTimeout(function() {
+                        const fallenLetter = document.createElement('span');
+                        fallenLetter.className = 'fallen-letter';
+                        fallenLetter.textContent = el.textContent;
+                        fallen.appendChild(fallenLetter);
+                        el.remove();
+                    }, 500);
+                }, i * 200);
+            });
+
+            setTimeout(function() {
+                earnStar(1);
+                showFeedback('feedback1', '💥 BOOM! The letters fell! Now let\'s learn about the story!');
+                setTimeout(function() {
+                    document.getElementById('game1').classList.add('hidden');
+                    document.getElementById('game2').classList.remove('hidden');
+                    updateSpeech("Let's find the story elements!");
+                }, 2000);
+            }, 1500);
+        }
+
+        function playChant() {
+            updateSpeech("🎵 Chicka chicka boom boom! Will there be enough room?");
+            const utterance = new SpeechSynthesisUtterance('Chicka chicka boom boom! Will there be enough room?');
+            utterance.rate = 0.9;
+            utterance.pitch = 1.3;
+            speechSynthesis.speak(utterance);
+        }
+
+        function checkStory(btn, type, correct) {
+            if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+
+            const parent = btn.parentElement;
+            const allBtns = parent.querySelectorAll('.story-option');
+
+            if (correct) {
+                playSound('correct');
+                btn.classList.add('correct');
+                allBtns.forEach(function(b) { b.disabled = true; });
+                storyCorrect++;
+                updateProgress(50 + storyCorrect * 16);
+
+                if (storyCorrect === 1) updateSpeech("Yes! A-Z are the characters!");
+                if (storyCorrect === 2) {
+                    updateSpeech("Right! The coconut tree is the setting!");
+                    earnStar(2);
+                }
+                if (storyCorrect === 3) {
+                    updateSpeech("Correct! The letters fell down - BOOM!");
+                    earnStar(3);
+                    document.getElementById('finishBtn').classList.add('show');
+                }
+            } else {
+                playSound('wrong');
+                btn.classList.add('wrong');
+                updateSpeech("Hmm, think about the story again!");
+                setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+            }
+        }
+
+        function showFeedback(id, message) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'feedback show success';
+        }
+
+        function finishGame() {
+            showCelebration();
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            document.getElementById('starsFinal').textContent = '★'.repeat(starsEarned) + '☆'.repeat(3 - starsEarned);
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const colors = ['#e67e22', '#FFD700', '#27ae60', '#3498db', '#e74c3c'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(function() {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(function() { confetti.remove(); }, 3000);
+                }, i * 50);
+            }
+        }
+
+        // Initialize
+        setupLetters();
+    </script>
+</body>
+</html>

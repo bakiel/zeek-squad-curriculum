@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feelings & Emotions - Zeek Squad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: #e91e63;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .mascot-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mascot {
+            font-size: 80px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 280px;
+            position: relative;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent white transparent transparent;
+        }
+
+        .progress-container {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e91e63, #ff5722);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .star {
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .star.earned {
+            opacity: 1;
+            animation: starPop 0.5s ease;
+        }
+
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 1.5em;
+            color: #e91e63;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .emotions-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .emotion-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%);
+            border-radius: 20px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .emotion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.2);
+        }
+
+        .emotion-card.selected {
+            border-color: #e91e63;
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+        }
+
+        .emotion-card .emoji {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .emotion-card .label {
+            font-size: 1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .scenario-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .scenario-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .scenario-text {
+            font-size: 1.3em;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .answer-btn {
+            padding: 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .answer-btn.happy { background: #ffeb3b; }
+        .answer-btn.sad { background: #90caf9; }
+        .answer-btn.angry { background: #ef5350; color: white; }
+        .answer-btn.scared { background: #ce93d8; }
+        .answer-btn.surprised { background: #ffcc80; }
+        .answer-btn.excited { background: #81c784; }
+        .answer-btn.worried { background: #b0bec5; }
+        .answer-btn.calm { background: #80deea; }
+        .answer-btn.proud { background: #fff59d; }
+        .answer-btn.shy { background: #f8bbd0; }
+
+        .answer-btn.correct {
+            animation: correctPulse 0.5s ease;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .answer-btn.wrong {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .mirror-container {
+            text-align: center;
+        }
+
+        .mirror-frame {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .mirror {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8em;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        .emotion-prompt {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .emotion-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .emotion-btn {
+            padding: 15px 25px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .emotion-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .emotion-btn.active {
+            background: linear-gradient(135deg, #e91e63, #ff5722);
+            color: white;
+        }
+
+        .breathing-container {
+            text-align: center;
+        }
+
+        .breath-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #81d4fa 0%, #4fc3f7 100%);
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+            transition: all 4s ease-in-out;
+        }
+
+        .breath-circle.expand {
+            transform: scale(1.5);
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+        }
+
+        .breath-instruction {
+            font-size: 1.8em;
+            color: #0277bd;
+            margin-bottom: 20px;
+        }
+
+        .breath-btn {
+            padding: 15px 40px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #0288d1, #0277bd);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .breath-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .strategy-card {
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .strategy-card.selected {
+            border-color: #0288d1;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+        }
+
+        .strategy-card .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .strategy-card .text {
+            font-size: 1em;
+            color: #333;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto 0;
+            padding: 15px 30px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #e91e63, #ff5722);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .celebration.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .celebration.show .celebration-content {
+            transform: scale(1);
+        }
+
+        .celebration h2 {
+            font-size: 2em;
+            color: #e91e63;
+            margin-bottom: 20px;
+        }
+
+        .celebration .trophy {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #e91e63;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .feedback.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .feedback.try-again {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .mascot {
+                font-size: 60px;
+            }
+
+            .speech-bubble {
+                font-size: 0.95em;
+                padding: 12px 15px;
+            }
+
+            .emotions-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .emotion-card .emoji {
+                font-size: 2.5em;
+            }
+
+            .mirror {
+                width: 150px;
+                height: 150px;
+                font-size: 5em;
+            }
+
+            .answer-options {
+                grid-template-columns: 1fr;
+            }
+
+            .strategies-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Feelings & Emotions</h1>
+    </div>
+
+    <div class="mascot-container">
+        <div class="mascot">🦋</div>
+        <div class="speech-bubble" id="mascotSpeech">
+            Hi friend! I'm Bella Butterfly! Let's explore our feelings together. Feelings are messages from our heart!
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+    </div>
+
+    <div class="game-container" id="activity1">
+        <div class="activity-title">Meet the Feelings</div>
+        <p style="text-align: center; margin-bottom: 20px; color: #666;">Tap each feeling to learn about it!</p>
+
+        <div class="emotions-grid" id="emotionsGrid"></div>
+
+        <div id="emotionInfo" style="text-align: center; padding: 15px; background: #fff3e0; border-radius: 15px; margin-top: 15px; display: none;">
+            <p id="emotionDescription" style="font-size: 1.1em; color: #333;"></p>
+        </div>
+
+        <button class="next-btn" id="next1" disabled>Learn All Feelings First!</button>
+    </div>
+
+    <div class="game-container hidden" id="activity2">
+        <div class="activity-title">How Would You Feel?</div>
+
+        <div class="scenario-box">
+            <div class="scenario-icon" id="scenarioIcon">🎁</div>
+            <div class="scenario-text" id="scenarioText">You get a surprise birthday present!</div>
+        </div>
+
+        <div class="answer-options" id="answerOptions"></div>
+
+        <div id="feedback2" class="feedback hidden"></div>
+    </div>
+
+    <div class="game-container hidden" id="activity3">
+        <div class="activity-title">Feelings Mirror</div>
+
+        <div class="mirror-container">
+            <p class="emotion-prompt" id="mirrorPrompt">Show me a HAPPY face!</p>
+
+            <div class="mirror-frame">
+                <div class="mirror" id="mirrorFace">😊</div>
+            </div>
+
+            <p style="color: #666; margin-bottom: 15px;">Can you make this face? Practice in a real mirror!</p>
+
+            <div class="emotion-buttons" id="mirrorButtons"></div>
+        </div>
+
+        <button class="next-btn" id="next3" style="display: none;">Continue</button>
+    </div>
+
+    <div class="game-container hidden" id="activity4">
+        <div class="activity-title">Calm Down Breathing</div>
+
+        <div class="breathing-container">
+            <p style="color: #666; margin-bottom: 10px;">When we feel upset, breathing helps us feel better!</p>
+
+            <p class="breath-instruction" id="breathInstruction">Press the button to start</p>
+
+            <div class="breath-circle" id="breathCircle">Breathe</div>
+
+            <button class="breath-btn" id="breathBtn">Start Breathing</button>
+        </div>
+
+        <button class="next-btn hidden" id="next4">Continue</button>
+    </div>
+
+    <div class="game-container hidden" id="activity5">
+        <div class="activity-title">When I Feel Sad, I Can...</div>
+        <p style="text-align: center; margin-bottom: 20px; color: #666;">Pick the things that help you feel better!</p>
+
+        <div class="strategies-grid" id="strategiesGrid"></div>
+
+        <button class="next-btn" id="next5" disabled>Pick at least 2!</button>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🦋</div>
+            <h2>Feelings Champion!</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;">You learned so much about feelings!</p>
+            <p style="font-size: 1.1em; color: #666;">Remember: All feelings are OK! What matters is how we handle them.</p>
+            <button class="next-btn" onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let currentActivity = 1;
+        let starsEarned = 0;
+        let emotionsLearned = [];
+        let currentScenario = 0;
+        let mirrorRound = 0;
+        let breathCount = 0;
+        let strategiesSelected = 0;
+
+        const emotions = [
+            { emoji: '😊', name: 'Happy', description: 'We feel happy when something good happens! Like playing with friends or getting a hug.' },
+            { emoji: '😢', name: 'Sad', description: 'We feel sad when something makes us upset. It is OK to cry - it helps us feel better!' },
+            { emoji: '😠', name: 'Angry', description: 'We feel angry when things seem unfair. Take deep breaths to calm down.' },
+            { emoji: '😨', name: 'Scared', description: 'We feel scared when something seems dangerous. Tell a grown-up if you are afraid!' },
+            { emoji: '😲', name: 'Surprised', description: 'We feel surprised when something unexpected happens!' },
+            { emoji: '🤩', name: 'Excited', description: 'We feel excited when we can not wait for something fun!' },
+            { emoji: '😟', name: 'Worried', description: 'We feel worried when we think something bad might happen. Talk to someone you trust!' },
+            { emoji: '😌', name: 'Calm', description: 'We feel calm when we are peaceful and relaxed. Deep breathing helps us feel calm!' },
+            { emoji: '😊', name: 'Proud', description: 'We feel proud when we do something good or try our best!' },
+            { emoji: '😳', name: 'Shy', description: 'We feel shy when we meet new people or are in new places. It is OK to take your time!' }
+        ];
+
+        const scenarios = [
+            { icon: '🎁', text: 'You get a surprise birthday present!', answer: 'Happy' },
+            { icon: '🧸', text: 'Your favorite toy breaks.', answer: 'Sad' },
+            { icon: '👻', text: 'You hear a spooky noise at night.', answer: 'Scared' },
+            { icon: '🎢', text: 'You are going to a theme park tomorrow!', answer: 'Excited' },
+            { icon: '🍪', text: 'Someone takes your cookie without asking.', answer: 'Angry' },
+            { icon: '🎈', text: 'A big balloon pops right next to you!', answer: 'Surprised' },
+            { icon: '📝', text: 'You have a big test at school tomorrow.', answer: 'Worried' },
+            { icon: '🌳', text: 'You are sitting under a tree on a nice day.', answer: 'Calm' },
+            { icon: '🏆', text: 'You learned to tie your shoes all by yourself!', answer: 'Proud' },
+            { icon: '👋', text: 'A new kid in class wants to be your friend.', answer: 'Shy' }
+        ];
+
+        const mirrorFaces = [
+            { prompt: 'Show me a HAPPY face!', emoji: '😊', emotion: 'Happy' },
+            { prompt: 'Show me a SAD face!', emoji: '😢', emotion: 'Sad' },
+            { prompt: 'Show me a SURPRISED face!', emoji: '😲', emotion: 'Surprised' },
+            { prompt: 'Show me an ANGRY face!', emoji: '😠', emotion: 'Angry' },
+            { prompt: 'Show me a SCARED face!', emoji: '😨', emotion: 'Scared' },
+            { prompt: 'Show me an EXCITED face!', emoji: '🤩', emotion: 'Excited' },
+            { prompt: 'Show me a WORRIED face!', emoji: '😟', emotion: 'Worried' },
+            { prompt: 'Show me a CALM face!', emoji: '😌', emotion: 'Calm' }
+        ];
+
+        const copingStrategies = [
+            { icon: '🫂', text: 'Ask for a hug' },
+            { icon: '🎨', text: 'Draw a picture' },
+            { icon: '🧘', text: 'Take deep breaths' },
+            { icon: '🗣️', text: 'Talk to someone' },
+            { icon: '🎵', text: 'Listen to music' },
+            { icon: '📚', text: 'Read a book' },
+            { icon: '🏃', text: 'Go for a walk' },
+            { icon: '🧸', text: 'Hug a stuffed animal' },
+            { icon: '🌈', text: 'Think happy thoughts' },
+            { icon: '🤗', text: 'Talk to a friend' },
+            { icon: '🎮', text: 'Play a game' },
+            { icon: '😴', text: 'Take a rest' }
+        ];
+
+        function clearElement(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'tap') {
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } else if (type === 'success') {
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'star') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1760, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'breathe') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 1);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (starsEarned / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function earnStar() {
+            if (starsEarned < 5) {
+                const stars = document.querySelectorAll('.star');
+                stars[starsEarned].classList.add('earned');
+                starsEarned++;
+                playSound('star');
+                updateProgress();
+            }
+        }
+
+        function updateMascot(message) {
+            document.getElementById('mascotSpeech').textContent = message;
+        }
+
+        function createConfetti() {
+            const colors = ['#e91e63', '#ff5722', '#ffeb3b', '#4caf50', '#2196f3', '#9c27b0'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        function initActivity1() {
+            const grid = document.getElementById('emotionsGrid');
+            clearElement(grid);
+
+            emotions.forEach((emotion, index) => {
+                const card = document.createElement('div');
+                card.className = 'emotion-card';
+                card.dataset.index = index;
+
+                const emoji = document.createElement('span');
+                emoji.className = 'emoji';
+                emoji.textContent = emotion.emoji;
+
+                const label = document.createElement('span');
+                label.className = 'label';
+                label.textContent = emotion.name;
+
+                card.appendChild(emoji);
+                card.appendChild(label);
+
+                card.addEventListener('click', () => learnEmotion(index, card));
+                grid.appendChild(card);
+            });
+        }
+
+        function learnEmotion(index, card) {
+            playSound('tap');
+
+            const emotion = emotions[index];
+            const infoBox = document.getElementById('emotionInfo');
+            const description = document.getElementById('emotionDescription');
+
+            description.textContent = emotion.emoji + ' ' + emotion.description;
+            infoBox.style.display = 'block';
+
+            if (!emotionsLearned.includes(index)) {
+                emotionsLearned.push(index);
+                card.classList.add('selected');
+            }
+
+            const nextBtn = document.getElementById('next1');
+            if (emotionsLearned.length === emotions.length) {
+                nextBtn.textContent = 'Next Activity!';
+                nextBtn.disabled = false;
+                updateMascot('Amazing! You learned all the feelings! Let us practice recognizing them!');
+            } else {
+                nextBtn.textContent = 'Learn All Feelings (' + emotionsLearned.length + '/' + emotions.length + ')';
+            }
+        }
+
+        function initActivity2() {
+            currentScenario = 0;
+            showScenario();
+        }
+
+        function showScenario() {
+            const scenario = scenarios[currentScenario];
+            document.getElementById('scenarioIcon').textContent = scenario.icon;
+            document.getElementById('scenarioText').textContent = scenario.text;
+            document.getElementById('feedback2').classList.add('hidden');
+
+            const options = document.getElementById('answerOptions');
+            clearElement(options);
+
+            const answers = ['Happy', 'Sad', 'Angry', 'Scared', 'Surprised', 'Excited', 'Worried', 'Calm', 'Proud', 'Shy'];
+            const shuffled = answers.sort(() => Math.random() - 0.5).slice(0, 4);
+            if (!shuffled.includes(scenario.answer)) {
+                shuffled[0] = scenario.answer;
+                shuffled.sort(() => Math.random() - 0.5);
+            }
+
+            shuffled.forEach(answer => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn ' + answer.toLowerCase();
+
+                const emoji = emotions.find(e => e.name === answer).emoji;
+                btn.textContent = emoji + ' ' + answer;
+                btn.addEventListener('click', () => checkScenarioAnswer(answer, btn));
+                options.appendChild(btn);
+            });
+        }
+
+        function checkScenarioAnswer(answer, btn) {
+            const correct = scenarios[currentScenario].answer;
+            const feedback = document.getElementById('feedback2');
+
+            if (answer === correct) {
+                playSound('success');
+                btn.classList.add('correct');
+                feedback.textContent = 'Yes! That is right!';
+                feedback.className = 'feedback success';
+                feedback.classList.remove('hidden');
+
+                currentScenario++;
+                if (currentScenario >= scenarios.length) {
+                    earnStar();
+                    updateMascot('Wonderful! You understand feelings so well!');
+                    setTimeout(() => showActivity(3), 1500);
+                } else {
+                    setTimeout(showScenario, 1500);
+                }
+            } else {
+                playSound('wrong');
+                btn.classList.add('wrong');
+                feedback.textContent = 'Hmm, try again!';
+                feedback.className = 'feedback try-again';
+                feedback.classList.remove('hidden');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        function initActivity3() {
+            mirrorRound = 0;
+            showMirrorFace();
+        }
+
+        function showMirrorFace() {
+            const face = mirrorFaces[mirrorRound];
+            document.getElementById('mirrorPrompt').textContent = face.prompt;
+            document.getElementById('mirrorFace').textContent = face.emoji;
+            document.getElementById('next3').style.display = 'none';
+
+            const btns = document.getElementById('mirrorButtons');
+            clearElement(btns);
+
+            const options = ['😊', '😢', '😲', '😠', '😨', '🤩', '😟', '😌'];
+            options.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.className = 'emotion-btn';
+                btn.textContent = emoji;
+                btn.addEventListener('click', () => selectMirrorEmotion(emoji, btn));
+                btns.appendChild(btn);
+            });
+
+            updateMascot('Look in the mirror and make the face! Then tap the matching emoji!');
+        }
+
+        function selectMirrorEmotion(emoji, btn) {
+            playSound('tap');
+
+            document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const correctEmoji = mirrorFaces[mirrorRound].emoji;
+
+            if (emoji === correctEmoji) {
+                playSound('success');
+                updateMascot('Perfect! You made a great ' + mirrorFaces[mirrorRound].emotion + ' face!');
+
+                mirrorRound++;
+                if (mirrorRound >= mirrorFaces.length) {
+                    earnStar();
+                    document.getElementById('next3').style.display = 'block';
+                    document.getElementById('next3').onclick = () => showActivity(4);
+                } else {
+                    setTimeout(showMirrorFace, 1500);
+                }
+            } else {
+                playSound('wrong');
+                updateMascot('Try again! Look at the face in the mirror!');
+            }
+        }
+
+        function initActivity4() {
+            breathCount = 0;
+            const btn = document.getElementById('breathBtn');
+            btn.textContent = 'Start Breathing';
+            btn.onclick = startBreathing;
+            document.getElementById('next4').classList.add('hidden');
+        }
+
+        function startBreathing() {
+            const btn = document.getElementById('breathBtn');
+            btn.style.display = 'none';
+            doBreathe();
+        }
+
+        function doBreathe() {
+            const circle = document.getElementById('breathCircle');
+            const instruction = document.getElementById('breathInstruction');
+
+            instruction.textContent = 'Breathe IN...';
+            circle.textContent = 'In...';
+            circle.classList.add('expand');
+            playSound('breathe');
+
+            setTimeout(() => {
+                instruction.textContent = 'Hold it...';
+                circle.textContent = 'Hold';
+            }, 4000);
+
+            setTimeout(() => {
+                instruction.textContent = 'Breathe OUT...';
+                circle.textContent = 'Out...';
+                circle.classList.remove('expand');
+                playSound('breathe');
+            }, 6000);
+
+            setTimeout(() => {
+                breathCount++;
+                if (breathCount < 5) {
+                    instruction.textContent = 'Great! Let us do it again...';
+                    circle.textContent = 'Breathe';
+                    setTimeout(doBreathe, 1000);
+                } else {
+                    instruction.textContent = 'Wonderful! Do you feel calmer?';
+                    circle.textContent = '😌';
+                    earnStar();
+                    updateMascot('Beautiful breathing! Use this whenever you feel upset!');
+                    document.getElementById('next4').classList.remove('hidden');
+                    document.getElementById('next4').onclick = () => showActivity(5);
+                }
+            }, 10000);
+        }
+
+        function initActivity5() {
+            strategiesSelected = 0;
+            const grid = document.getElementById('strategiesGrid');
+            clearElement(grid);
+
+            copingStrategies.forEach((strategy, index) => {
+                const card = document.createElement('div');
+                card.className = 'strategy-card';
+
+                const icon = document.createElement('div');
+                icon.className = 'icon';
+                icon.textContent = strategy.icon;
+
+                const text = document.createElement('div');
+                text.className = 'text';
+                text.textContent = strategy.text;
+
+                card.appendChild(icon);
+                card.appendChild(text);
+
+                card.addEventListener('click', () => toggleStrategy(card));
+                grid.appendChild(card);
+            });
+
+            updateMascot('When you feel sad or upset, what helps YOU feel better? Pick your favorites!');
+        }
+
+        function toggleStrategy(card) {
+            playSound('tap');
+
+            if (card.classList.contains('selected')) {
+                card.classList.remove('selected');
+                strategiesSelected--;
+            } else {
+                card.classList.add('selected');
+                strategiesSelected++;
+            }
+
+            const btn = document.getElementById('next5');
+            if (strategiesSelected >= 2) {
+                btn.textContent = 'Finish!';
+                btn.disabled = false;
+                btn.onclick = finishGame;
+            } else {
+                btn.textContent = 'Pick at least 2! (' + strategiesSelected + '/2)';
+                btn.disabled = true;
+            }
+        }
+
+        function finishGame() {
+            earnStar();
+            earnStar();
+            createConfetti();
+            document.getElementById('celebration').classList.add('show');
+            playSound('success');
+        }
+
+        function showActivity(num) {
+            document.querySelectorAll('.game-container').forEach(container => {
+                container.classList.add('hidden');
+            });
+            document.getElementById('activity' + num).classList.remove('hidden');
+            currentActivity = num;
+
+            if (num === 1) initActivity1();
+            if (num === 2) initActivity2();
+            if (num === 3) initActivity3();
+            if (num === 4) initActivity4();
+            if (num === 5) initActivity5();
+        }
+
+        document.getElementById('next1').addEventListener('click', () => {
+            earnStar();
+            showActivity(2);
+        });
+
+        initActivity1();
+    </script>
+</body>
+</html>

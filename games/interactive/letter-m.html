@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter M - Zeek Squad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #2e7d32;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .mascot-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mascot {
+            font-size: 80px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 280px;
+            position: relative;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent white transparent transparent;
+        }
+
+        .progress-container {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .star {
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .star.earned {
+            opacity: 1;
+            animation: starPop 0.5s ease;
+        }
+
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 1.5em;
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .big-letter {
+            font-size: 10em;
+            text-align: center;
+            color: #2e7d32;
+            font-weight: bold;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.1);
+            line-height: 1;
+            margin: 20px 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        .letter-forms {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+
+        .letter-box {
+            text-align: center;
+        }
+
+        .letter-box .letter {
+            font-size: 5em;
+            font-weight: bold;
+            color: #388e3c;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        .letter-box .label {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .trace-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .trace-canvas {
+            border: 4px dashed #81c784;
+            border-radius: 20px;
+            background: #f1f8e9;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .trace-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .trace-btn {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .done-btn {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .trace-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .letter-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        .letter-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .letter-cell.selected {
+            border-color: #4caf50;
+            background: #a5d6a7;
+        }
+
+        .letter-cell.correct {
+            background: #66bb6a;
+            color: white;
+            animation: correctPop 0.5s ease;
+        }
+
+        .letter-cell.wrong {
+            animation: shake 0.5s ease;
+            background: #ffcdd2;
+        }
+
+        @keyframes correctPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .word-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .word-card {
+            background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
+        }
+
+        .word-card.correct {
+            border-color: #4caf50;
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+        }
+
+        .word-card.wrong {
+            animation: shake 0.5s ease;
+            background: #ffcdd2;
+        }
+
+        .word-card .image {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+
+        .word-card .word {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .word-card .highlight {
+            color: #2e7d32;
+            font-size: 1.2em;
+        }
+
+        .sound-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sound-btn:hover {
+            transform: scale(1.1);
+            background: #388e3c;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto 0;
+            padding: 15px 30px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .celebration.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .celebration.show .celebration-content {
+            transform: scale(1);
+        }
+
+        .celebration h2 {
+            font-size: 2em;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .celebration .trophy {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.3em;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .feedback.wrong {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .m-counter {
+            font-size: 1.3em;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .mascot {
+                font-size: 60px;
+            }
+
+            .speech-bubble {
+                font-size: 0.95em;
+                padding: 12px 15px;
+            }
+
+            .big-letter {
+                font-size: 6em;
+            }
+
+            .letter-forms {
+                gap: 20px;
+            }
+
+            .letter-box .letter {
+                font-size: 3em;
+            }
+
+            .letter-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .letter-cell {
+                font-size: 1.8em;
+            }
+
+            .word-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .word-card .image {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Letter Mm</h1>
+    </div>
+
+    <div class="mascot-container">
+        <div class="mascot">🐵</div>
+        <div class="speech-bubble" id="mascotSpeech">
+            Hi! I'm Milo Monkey! Let's learn the letter M together! M makes the "mmm" sound, like when you eat yummy food!
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+    </div>
+
+    <div class="game-container" id="activity1">
+        <div class="activity-title">Meet the Letter M!</div>
+
+        <div class="big-letter">Mm</div>
+
+        <div class="letter-forms">
+            <div class="letter-box">
+                <div class="letter">M</div>
+                <div class="label">Uppercase</div>
+            </div>
+            <div class="letter-box">
+                <div class="letter">m</div>
+                <div class="label">Lowercase</div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="sound-btn" onclick="playLetterSound()">
+                🔊 Hear the M Sound
+            </button>
+        </div>
+
+        <p style="text-align: center; margin: 20px 0; font-size: 1.2em; color: #666;">
+            M says "mmm" like in <strong>monkey</strong>, <strong>moon</strong>, and <strong>milk</strong>!
+        </p>
+
+        <button class="next-btn" id="next1">Let's Trace M!</button>
+    </div>
+
+    <div class="game-container hidden" id="activity2">
+        <div class="activity-title">Trace the Letter M</div>
+
+        <p style="text-align: center; margin-bottom: 15px; color: #666;">
+            Use your finger to trace over the letter M!
+        </p>
+
+        <div class="trace-container">
+            <canvas id="traceCanvas" class="trace-canvas" width="300" height="300"></canvas>
+            <div class="trace-buttons">
+                <button class="trace-btn clear-btn" onclick="clearCanvas()">Clear</button>
+                <button class="trace-btn done-btn" onclick="finishTracing()">Done!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container hidden" id="activity3">
+        <div class="activity-title">Find All the M's!</div>
+
+        <p style="text-align: center; margin-bottom: 10px; color: #666;">
+            Tap on every letter M you see!
+        </p>
+
+        <div class="m-counter" id="mCounter">Found: 0 / 10</div>
+
+        <div class="letter-grid" id="letterGrid"></div>
+
+        <div id="feedback3" class="feedback hidden"></div>
+    </div>
+
+    <div class="game-container hidden" id="activity4">
+        <div class="activity-title">Words That Start With M</div>
+
+        <p style="text-align: center; margin-bottom: 20px; color: #666;">
+            Tap the pictures that start with the M sound!
+        </p>
+
+        <div class="word-cards" id="wordCards"></div>
+
+        <div id="feedback4" class="feedback hidden"></div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🐵</div>
+            <h2>M-azing Work!</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;">You are a Letter M superstar!</p>
+            <p style="font-size: 1.1em; color: #666;">Remember: M says "mmm"!</p>
+            <button class="next-btn" onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let currentActivity = 1;
+        let starsEarned = 0;
+        let mFound = 0;
+        let totalMs = 10;
+        let currentWordRound = 0;
+
+        const wordRounds = [
+            [
+                { image: '🌙', word: 'Moon', startsWithM: true },
+                { image: '☀️', word: 'Sun', startsWithM: false },
+                { image: '🐭', word: 'Mouse', startsWithM: true },
+                { image: '🐱', word: 'Cat', startsWithM: false }
+            ],
+            [
+                { image: '🥛', word: 'Milk', startsWithM: true },
+                { image: '🍎', word: 'Apple', startsWithM: false },
+                { image: '🍄', word: 'Mushroom', startsWithM: true },
+                { image: '🍕', word: 'Pizza', startsWithM: false }
+            ],
+            [
+                { image: '📫', word: 'Mailbox', startsWithM: true },
+                { image: '🏠', word: 'House', startsWithM: false },
+                { image: '🎵', word: 'Music', startsWithM: true },
+                { image: '📚', word: 'Book', startsWithM: false }
+            ],
+            [
+                { image: '🐵', word: 'Monkey', startsWithM: true },
+                { image: '🐕', word: 'Dog', startsWithM: false },
+                { image: '🪞', word: 'Mirror', startsWithM: true },
+                { image: '🪑', word: 'Chair', startsWithM: false }
+            ],
+            [
+                { image: '⛰️', word: 'Mountain', startsWithM: true },
+                { image: '🌊', word: 'Ocean', startsWithM: false },
+                { image: '🧲', word: 'Magnet', startsWithM: true },
+                { image: '🔔', word: 'Bell', startsWithM: false }
+            ]
+        ];
+
+        function clearElement(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'tap') {
+                oscillator.frequency.setValueAtTime(500, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(700, audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } else if (type === 'success') {
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'star') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1760, audioContext.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+        }
+
+        function playLetterSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.8);
+
+            if ('speechSynthesis' in window) {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance('mmm');
+                    utterance.rate = 0.7;
+                    speechSynthesis.speak(utterance);
+                }, 100);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (starsEarned / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function earnStar() {
+            if (starsEarned < 5) {
+                const stars = document.querySelectorAll('.star');
+                stars[starsEarned].classList.add('earned');
+                starsEarned++;
+                playSound('star');
+                updateProgress();
+            }
+        }
+
+        function updateMascot(message) {
+            document.getElementById('mascotSpeech').textContent = message;
+        }
+
+        function createConfetti() {
+            const colors = ['#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ff9800', '#e91e63'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        function showActivity(num) {
+            document.querySelectorAll('.game-container').forEach(container => {
+                container.classList.add('hidden');
+            });
+            document.getElementById('activity' + num).classList.remove('hidden');
+            currentActivity = num;
+
+            if (num === 2) initTracing();
+            if (num === 3) initFindMs();
+            if (num === 4) initWordCards();
+        }
+
+        // Activity 2: Tracing
+        let canvas, ctx;
+        let drawing = false;
+        let hasDrawn = false;
+
+        function initTracing() {
+            canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#f1f8e9';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#c8e6c9';
+            ctx.lineWidth = 40;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Draw M guide
+            ctx.beginPath();
+            ctx.moveTo(60, 250);
+            ctx.lineTo(60, 50);
+            ctx.lineTo(150, 180);
+            ctx.lineTo(240, 50);
+            ctx.lineTo(240, 250);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 8;
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDraw);
+
+            updateMascot('Trace over the green M! Start at the bottom left, go up, down to the middle, up again, then down!');
+        }
+
+        function startDraw(e) {
+            drawing = true;
+            hasDrawn = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            drawing = true;
+            hasDrawn = true;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!drawing) return;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function stopDraw() {
+            drawing = false;
+        }
+
+        function clearCanvas() {
+            ctx.fillStyle = '#f1f8e9';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#c8e6c9';
+            ctx.lineWidth = 40;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(60, 250);
+            ctx.lineTo(60, 50);
+            ctx.lineTo(150, 180);
+            ctx.lineTo(240, 50);
+            ctx.lineTo(240, 250);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 8;
+            hasDrawn = false;
+        }
+
+        function finishTracing() {
+            if (hasDrawn) {
+                playSound('success');
+                earnStar();
+                updateMascot('Beautiful M! You traced it perfectly! Now let us find more M letters!');
+                setTimeout(() => showActivity(3), 1500);
+            } else {
+                updateMascot('Try tracing the M first! Use your finger to draw!');
+            }
+        }
+
+        // Activity 3: Find Ms
+        function initFindMs() {
+            const grid = document.getElementById('letterGrid');
+            clearElement(grid);
+            mFound = 0;
+            document.getElementById('mCounter').textContent = 'Found: 0 / ' + totalMs;
+
+            const letters = ['A', 'B', 'M', 'D', 'E', 'M', 'G', 'H', 'I', 'M', 'K', 'L', 'M', 'N', 'O', 'M', 'Q', 'R', 'S', 'M', 'T', 'M', 'V', 'W', 'M'];
+            const shuffled = letters.sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((letter) => {
+                const cell = document.createElement('div');
+                cell.className = 'letter-cell';
+                cell.textContent = letter;
+                cell.addEventListener('click', () => checkLetter(letter, cell));
+                grid.appendChild(cell);
+            });
+
+            updateMascot('Can you find all 10 letter M\'s? Tap each M you see!');
+        }
+
+        function checkLetter(letter, cell) {
+            if (cell.classList.contains('correct') || cell.classList.contains('wrong')) return;
+
+            if (letter === 'M') {
+                playSound('success');
+                cell.classList.add('correct');
+                mFound++;
+                document.getElementById('mCounter').textContent = 'Found: ' + mFound + ' / ' + totalMs;
+
+                if (mFound >= totalMs) {
+                    earnStar();
+                    updateMascot('You found all the M\'s! M-arvelous work!');
+                    setTimeout(() => showActivity(4), 1500);
+                }
+            } else {
+                playSound('wrong');
+                cell.classList.add('wrong');
+                setTimeout(() => cell.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Activity 4: Word Cards
+        function initWordCards() {
+            currentWordRound = 0;
+            showWordRound();
+        }
+
+        function showWordRound() {
+            const container = document.getElementById('wordCards');
+            clearElement(container);
+            document.getElementById('feedback4').classList.add('hidden');
+
+            const words = wordRounds[currentWordRound];
+
+            words.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'image';
+                imageDiv.textContent = item.image;
+
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'word';
+
+                if (item.startsWithM) {
+                    const highlight = document.createElement('span');
+                    highlight.className = 'highlight';
+                    highlight.textContent = item.word.charAt(0);
+                    wordSpan.appendChild(highlight);
+                    wordSpan.appendChild(document.createTextNode(item.word.slice(1)));
+                } else {
+                    wordSpan.textContent = item.word;
+                }
+
+                card.appendChild(imageDiv);
+                card.appendChild(wordSpan);
+
+                card.addEventListener('click', () => checkWord(item.startsWithM, card));
+                container.appendChild(card);
+            });
+
+            const mWords = words.filter(w => w.startsWithM).map(w => w.word).join(' and ');
+            updateMascot('Tap the pictures that start with the M sound! Look for ' + mWords + '!');
+        }
+
+        function checkWord(startsWithM, card) {
+            if (card.classList.contains('correct')) return;
+
+            const feedback = document.getElementById('feedback4');
+
+            if (startsWithM) {
+                playSound('success');
+                card.classList.add('correct');
+
+                const allMWords = document.querySelectorAll('.word-card');
+                let allFound = true;
+                allMWords.forEach(c => {
+                    const word = c.querySelector('.word').textContent;
+                    const item = wordRounds[currentWordRound].find(w => w.word === word);
+                    if (item && item.startsWithM && !c.classList.contains('correct')) {
+                        allFound = false;
+                    }
+                });
+
+                if (allFound) {
+                    currentWordRound++;
+                    if (currentWordRound >= wordRounds.length) {
+                        earnStar();
+                        earnStar();
+                        createConfetti();
+                        document.getElementById('celebration').classList.add('show');
+                        playSound('success');
+                    } else {
+                        feedback.textContent = 'Great job! Here are more words!';
+                        feedback.className = 'feedback correct';
+                        feedback.classList.remove('hidden');
+                        setTimeout(showWordRound, 1500);
+                    }
+                }
+            } else {
+                playSound('wrong');
+                card.classList.add('wrong');
+                feedback.textContent = 'That word does not start with M. Try another!';
+                feedback.className = 'feedback wrong';
+                feedback.classList.remove('hidden');
+                setTimeout(() => card.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('next1').addEventListener('click', () => {
+            earnStar();
+            showActivity(2);
+        });
+
+        // Start
+        updateMascot('Hi! I am Milo Monkey! Let us learn the letter M together! M makes the "mmm" sound, like when you eat yummy food!');
+    </script>
+</body>
+</html>

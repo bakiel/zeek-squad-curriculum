@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparing Numbers - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 550px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .tab:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+        .tab.active { background: white; color: #27ae60; transform: scale(1.05); }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 15px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; filter: drop-shadow(0 0 10px #FFD700); animation: starEarn 0.6s ease; }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 50% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0); } }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: scaleBounce 1.5s ease-in-out infinite; }
+        @keyframes scaleBounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            flex: 1;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 { color: #27ae60; margin-bottom: 15px; font-size: 1.3rem; text-align: center; }
+
+        .compare-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .group-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 4px solid #dee2e6;
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .group-box:hover { transform: scale(1.05); border-color: #27ae60; }
+        .group-box.selected { border-color: #FFD700; background: #fff9e6; transform: scale(1.1); }
+        .group-box.correct { border-color: #27ae60; background: #d4edda; animation: correctPulse 0.5s ease; }
+        .group-box.wrong { border-color: #e74c3c; animation: shake 0.5s ease; }
+        @keyframes correctPulse { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.2); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+        .items { font-size: 2rem; margin-bottom: 10px; line-height: 1.2; word-break: break-word; }
+        .count { font-size: 2.5rem; font-weight: bold; color: #27ae60; }
+        .number-display { font-size: 3.5rem; font-weight: bold; color: #27ae60; }
+
+        .vs-text { font-size: 2rem; font-weight: bold; color: #27ae60; }
+
+        .choice-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .choice-btn.more { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; }
+        .choice-btn.fewer { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+        .choice-btn.equal { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; }
+        .choice-btn.bigger { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); color: white; }
+        .choice-btn.smaller { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; }
+        .choice-btn:hover { transform: scale(1.1); }
+        .choice-btn:active { transform: scale(0.95); }
+        .choice-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: feedbackPop 0.4s ease;
+        }
+        @keyframes feedbackPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.wrong { background: #f8d7da; color: #721c24; }
+
+        .next-btn {
+            display: none;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .next-btn.show { display: block; }
+        .next-btn:hover { transform: scale(1.02); }
+
+        .hidden { display: none !important; }
+
+        .celebration {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { color: #27ae60; font-size: 2rem; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; margin-bottom: 15px; }
+        .celebration .stars-final { font-size: 3rem; color: #FFD700; margin-bottom: 20px; }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s linear forwards;
+            z-index: 1001;
+        }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .submit-btn:hover { transform: scale(1.05); }
+
+        .question-counter {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* Size comparison images */
+        .size-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 4px solid #dee2e6;
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 100px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .size-box:hover { transform: scale(1.05); border-color: #27ae60; }
+        .size-box.selected { border-color: #FFD700; background: #fff9e6; }
+        .size-box.correct { border-color: #27ae60; background: #d4edda; }
+        .size-box.wrong { border-color: #e74c3c; animation: shake 0.5s ease; }
+
+        .size-item { transition: all 0.3s; }
+        .size-label { font-weight: bold; margin-top: 10px; color: #27ae60; }
+
+        /* Option buttons for size/number */
+        .option-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .option-btn {
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 3px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+        }
+        .option-btn:hover { transform: scale(1.1); border-color: #27ae60; }
+        .option-btn.selected { border-color: #FFD700; background: #fff9e6; }
+        .option-btn.correct { border-color: #27ae60; background: #d4edda; }
+        .option-btn.wrong { border-color: #e74c3c; animation: shake 0.5s ease; }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Tab content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>⚖️ Comparing Fun!</h1>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="groups">🍎 Groups</button>
+            <button class="tab" data-tab="numbers">🔢 Numbers</button>
+            <button class="tab" data-tab="sizes">📏 Sizes</button>
+            <button class="tab" data-tab="equal">⚖️ Equal</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">★</span>
+            <span class="star" id="star2">★</span>
+            <span class="star" id="star3">★</span>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🐻</div>
+            <div class="speech-bubble" id="speechBubble">
+                Hi! I'm Balanced Bear! Let's compare things together!
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <span class="question-counter" id="questionCounter">Question 1 of 8</span>
+        </div>
+
+        <div class="game-card" id="gameCard">
+            <!-- Game content loaded by JavaScript -->
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="trophy">🏆</div>
+            <h2>COMPARING CHAMPION!</h2>
+            <div class="stars-final" id="starsFinal">★★★</div>
+            <p id="celebrationMsg">You're a comparing expert!</p>
+            <a href="index.html" class="submit-btn">Play More Games!</a>
+        </div>
+    </div>
+
+    <script>
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'star') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'click') {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            }
+        }
+
+        // Game data for each tab
+        var groupQuestions = [
+            { type: 'more', a: 3, b: 5, emoji: '🍎' },
+            { type: 'fewer', a: 6, b: 2, emoji: '🍊' },
+            { type: 'more', a: 4, b: 7, emoji: '⭐' },
+            { type: 'fewer', a: 8, b: 3, emoji: '🌸' },
+            { type: 'more', a: 2, b: 9, emoji: '💎' },
+            { type: 'fewer', a: 7, b: 4, emoji: '🎈' },
+            { type: 'more', a: 5, b: 8, emoji: '🦋' },
+            { type: 'fewer', a: 9, b: 1, emoji: '🌟' }
+        ];
+
+        var numberQuestions = [
+            { a: 3, b: 7, type: 'bigger', hint: '3 or 7 - which is bigger?' },
+            { a: 9, b: 4, type: 'smaller', hint: '9 or 4 - which is smaller?' },
+            { a: 2, b: 8, type: 'bigger', hint: 'Find the bigger number!' },
+            { a: 6, b: 1, type: 'smaller', hint: 'Find the smaller number!' },
+            { a: 5, b: 10, type: 'bigger', hint: 'Which number is bigger?' },
+            { a: 7, b: 3, type: 'smaller', hint: 'Which is the smaller one?' },
+            { a: 4, b: 9, type: 'bigger', hint: 'Look for the bigger number!' },
+            { a: 8, b: 2, type: 'smaller', hint: 'Which number is smaller?' }
+        ];
+
+        var sizeQuestions = [
+            { type: 'taller', a: { emoji: '🌲', height: 80 }, b: { emoji: '🌱', height: 40 }, label: 'TALLER' },
+            { type: 'shorter', a: { emoji: '🏠', height: 60 }, b: { emoji: '🏰', height: 100 }, label: 'SHORTER' },
+            { type: 'bigger', a: { emoji: '🐘', size: 70 }, b: { emoji: '🐭', size: 30 }, label: 'BIGGER' },
+            { type: 'smaller', a: { emoji: '🚗', size: 40 }, b: { emoji: '🚌', size: 70 }, label: 'SMALLER' },
+            { type: 'taller', a: { emoji: '🦒', height: 100 }, b: { emoji: '🐕', height: 50 }, label: 'TALLER' },
+            { type: 'shorter', a: { emoji: '🌻', height: 70 }, b: { emoji: '🌷', height: 50 }, label: 'SHORTER' },
+            { type: 'bigger', a: { emoji: '🍉', size: 60 }, b: { emoji: '🍓', size: 30 }, label: 'BIGGER' },
+            { type: 'smaller', a: { emoji: '🐋', size: 80 }, b: { emoji: '🐟', size: 35 }, label: 'SMALLER' }
+        ];
+
+        var equalQuestions = [
+            { groups: [{ count: 3, emoji: '🍎' }, { count: 3, emoji: '🍊' }, { count: 5, emoji: '🍋' }], answer: [0, 1] },
+            { groups: [{ count: 4, emoji: '⭐' }, { count: 2, emoji: '🌟' }, { count: 4, emoji: '💫' }], answer: [0, 2] },
+            { groups: [{ count: 5, emoji: '🐶' }, { count: 5, emoji: '🐱' }, { count: 3, emoji: '🐰' }], answer: [0, 1] },
+            { groups: [{ count: 2, emoji: '🎈' }, { count: 6, emoji: '🎁' }, { count: 2, emoji: '🎀' }], answer: [0, 2] },
+            { groups: [{ count: 7, emoji: '🌸' }, { count: 4, emoji: '🌺' }, { count: 7, emoji: '🌼' }], answer: [0, 2] },
+            { groups: [{ count: 1, emoji: '🦋' }, { count: 1, emoji: '🐝' }, { count: 4, emoji: '🐞' }], answer: [0, 1] },
+            { groups: [{ count: 6, emoji: '🍪' }, { count: 6, emoji: '🧁' }, { count: 2, emoji: '🍩' }], answer: [0, 1] },
+            { groups: [{ count: 8, emoji: '💎' }, { count: 3, emoji: '💍' }, { count: 8, emoji: '👑' }], answer: [0, 2] }
+        ];
+
+        var currentTab = 'groups';
+        var currentQuestion = 0;
+        var starsEarned = 0;
+        var correctAnswers = 0;
+        var selectedGroup = null;
+        var selectedGroups = [];
+
+        function updateSpeech(text) {
+            document.getElementById('speechBubble').textContent = text;
+        }
+
+        function updateProgress() {
+            var questions = getQuestions();
+            var percent = (currentQuestion / questions.length) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function getQuestions() {
+            if (currentTab === 'groups') return groupQuestions;
+            if (currentTab === 'numbers') return numberQuestions;
+            if (currentTab === 'sizes') return sizeQuestions;
+            if (currentTab === 'equal') return equalQuestions;
+            return groupQuestions;
+        }
+
+        function earnStar(num) {
+            var star = document.getElementById('star' + num);
+            if (!star.classList.contains('earned')) {
+                star.classList.add('earned');
+                starsEarned++;
+                playSound('star');
+            }
+        }
+
+        function resetStars() {
+            for (var i = 1; i <= 3; i++) {
+                document.getElementById('star' + i).classList.remove('earned');
+            }
+            starsEarned = 0;
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                playSound('click');
+                document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                currentTab = tab.getAttribute('data-tab');
+                currentQuestion = 0;
+                correctAnswers = 0;
+                resetStars();
+                document.getElementById('progressBar').style.width = '0%';
+                loadQuestion();
+
+                var msgs = {
+                    'groups': "Let's compare groups! Which has MORE or FEWER?",
+                    'numbers': "Let's compare numbers! Which is BIGGER or SMALLER?",
+                    'sizes': "Let's compare sizes! Which is TALLER, SHORTER, BIGGER, or SMALLER?",
+                    'equal': "Find the groups with the SAME amount!"
+                };
+                updateSpeech(msgs[currentTab]);
+            });
+        });
+
+        function loadQuestion() {
+            var questions = getQuestions();
+            var gameCard = document.getElementById('gameCard');
+            gameCard.textContent = '';
+            selectedGroup = null;
+            selectedGroups = [];
+
+            document.getElementById('questionCounter').textContent = 'Question ' + (currentQuestion + 1) + ' of ' + questions.length;
+
+            if (currentTab === 'groups') {
+                loadGroupQuestion(questions[currentQuestion]);
+            } else if (currentTab === 'numbers') {
+                loadNumberQuestion(questions[currentQuestion]);
+            } else if (currentTab === 'sizes') {
+                loadSizeQuestion(questions[currentQuestion]);
+            } else if (currentTab === 'equal') {
+                loadEqualQuestion(questions[currentQuestion]);
+            }
+        }
+
+        function loadGroupQuestion(q) {
+            var gameCard = document.getElementById('gameCard');
+
+            var title = document.createElement('h2');
+            title.textContent = q.type === 'more' ? 'Which group has MORE?' : 'Which group has FEWER?';
+            gameCard.appendChild(title);
+
+            var compareArea = document.createElement('div');
+            compareArea.className = 'compare-area';
+
+            // Group A
+            var groupA = document.createElement('div');
+            groupA.className = 'group-box';
+            groupA.id = 'groupA';
+            var itemsA = document.createElement('div');
+            itemsA.className = 'items';
+            itemsA.textContent = q.emoji.repeat(q.a);
+            var countA = document.createElement('div');
+            countA.className = 'count';
+            countA.textContent = q.a;
+            groupA.appendChild(itemsA);
+            groupA.appendChild(countA);
+            groupA.addEventListener('click', function() { selectGroupBox('A'); });
+
+            // VS
+            var vs = document.createElement('div');
+            vs.className = 'vs-text';
+            vs.textContent = 'VS';
+
+            // Group B
+            var groupB = document.createElement('div');
+            groupB.className = 'group-box';
+            groupB.id = 'groupB';
+            var itemsB = document.createElement('div');
+            itemsB.className = 'items';
+            itemsB.textContent = q.emoji.repeat(q.b);
+            var countB = document.createElement('div');
+            countB.className = 'count';
+            countB.textContent = q.b;
+            groupB.appendChild(itemsB);
+            groupB.appendChild(countB);
+            groupB.addEventListener('click', function() { selectGroupBox('B'); });
+
+            compareArea.appendChild(groupA);
+            compareArea.appendChild(vs);
+            compareArea.appendChild(groupB);
+            gameCard.appendChild(compareArea);
+
+            // Choice buttons
+            var choiceBtns = document.createElement('div');
+            choiceBtns.className = 'choice-btns';
+            var moreBtn = document.createElement('button');
+            moreBtn.className = 'choice-btn more';
+            moreBtn.textContent = '👆 MORE';
+            moreBtn.addEventListener('click', function() { checkGroupAnswer('more'); });
+            var fewerBtn = document.createElement('button');
+            fewerBtn.className = 'choice-btn fewer';
+            fewerBtn.textContent = '👇 FEWER';
+            fewerBtn.addEventListener('click', function() { checkGroupAnswer('fewer'); });
+            choiceBtns.appendChild(moreBtn);
+            choiceBtns.appendChild(fewerBtn);
+            gameCard.appendChild(choiceBtns);
+
+            // Feedback
+            var feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            feedback.id = 'feedback';
+            gameCard.appendChild(feedback);
+
+            // Next button
+            var nextBtn = document.createElement('button');
+            nextBtn.className = 'next-btn';
+            nextBtn.id = 'nextBtn';
+            nextBtn.textContent = 'Next Question →';
+            nextBtn.addEventListener('click', nextQuestion);
+            gameCard.appendChild(nextBtn);
+        }
+
+        function selectGroupBox(group) {
+            playSound('click');
+            var groupA = document.getElementById('groupA');
+            var groupB = document.getElementById('groupB');
+            groupA.classList.remove('selected');
+            groupB.classList.remove('selected');
+            if (group === 'A') {
+                groupA.classList.add('selected');
+            } else {
+                groupB.classList.add('selected');
+            }
+            selectedGroup = group;
+        }
+
+        function checkGroupAnswer(answer) {
+            if (!selectedGroup) {
+                updateSpeech("Tap a group first!");
+                return;
+            }
+
+            var q = groupQuestions[currentQuestion];
+            var correct = false;
+
+            if (answer === 'more') {
+                if (q.type === 'more') {
+                    correct = (selectedGroup === 'A' && q.a > q.b) || (selectedGroup === 'B' && q.b > q.a);
+                }
+            } else {
+                if (q.type === 'fewer') {
+                    correct = (selectedGroup === 'A' && q.a < q.b) || (selectedGroup === 'B' && q.b < q.a);
+                }
+            }
+
+            showFeedback(correct, q.type === 'more' ? 'That group has MORE!' : 'That group has FEWER!');
+
+            var selectedBox = document.getElementById('group' + selectedGroup);
+            if (correct) {
+                selectedBox.classList.add('correct');
+            } else {
+                selectedBox.classList.add('wrong');
+            }
+
+            document.querySelectorAll('.choice-btn').forEach(function(btn) { btn.disabled = true; });
+        }
+
+        function loadNumberQuestion(q) {
+            var gameCard = document.getElementById('gameCard');
+
+            var title = document.createElement('h2');
+            title.textContent = q.type === 'bigger' ? 'Which number is BIGGER?' : 'Which number is SMALLER?';
+            gameCard.appendChild(title);
+
+            var compareArea = document.createElement('div');
+            compareArea.className = 'compare-area';
+
+            // Number A
+            var numA = document.createElement('div');
+            numA.className = 'group-box';
+            numA.id = 'numA';
+            var displayA = document.createElement('div');
+            displayA.className = 'number-display';
+            displayA.textContent = q.a;
+            numA.appendChild(displayA);
+            numA.addEventListener('click', function() { selectNumber('A'); });
+
+            // VS
+            var vs = document.createElement('div');
+            vs.className = 'vs-text';
+            vs.textContent = 'VS';
+
+            // Number B
+            var numB = document.createElement('div');
+            numB.className = 'group-box';
+            numB.id = 'numB';
+            var displayB = document.createElement('div');
+            displayB.className = 'number-display';
+            displayB.textContent = q.b;
+            numB.appendChild(displayB);
+            numB.addEventListener('click', function() { selectNumber('B'); });
+
+            compareArea.appendChild(numA);
+            compareArea.appendChild(vs);
+            compareArea.appendChild(numB);
+            gameCard.appendChild(compareArea);
+
+            // Submit button
+            var submitBtn = document.createElement('button');
+            submitBtn.className = 'choice-btn bigger';
+            submitBtn.id = 'submitBtn';
+            submitBtn.textContent = q.type === 'bigger' ? '✓ This is BIGGER!' : '✓ This is SMALLER!';
+            submitBtn.style.display = 'block';
+            submitBtn.style.margin = '0 auto';
+            submitBtn.addEventListener('click', function() { checkNumberAnswer(); });
+            gameCard.appendChild(submitBtn);
+
+            // Feedback
+            var feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            feedback.id = 'feedback';
+            gameCard.appendChild(feedback);
+
+            // Next button
+            var nextBtn = document.createElement('button');
+            nextBtn.className = 'next-btn';
+            nextBtn.id = 'nextBtn';
+            nextBtn.textContent = 'Next Question →';
+            nextBtn.addEventListener('click', nextQuestion);
+            gameCard.appendChild(nextBtn);
+
+            updateSpeech(q.hint);
+        }
+
+        function selectNumber(num) {
+            playSound('click');
+            var numA = document.getElementById('numA');
+            var numB = document.getElementById('numB');
+            numA.classList.remove('selected');
+            numB.classList.remove('selected');
+            if (num === 'A') {
+                numA.classList.add('selected');
+            } else {
+                numB.classList.add('selected');
+            }
+            selectedGroup = num;
+        }
+
+        function checkNumberAnswer() {
+            if (!selectedGroup) {
+                updateSpeech("Tap a number first!");
+                return;
+            }
+
+            var q = numberQuestions[currentQuestion];
+            var correct = false;
+
+            if (q.type === 'bigger') {
+                correct = (selectedGroup === 'A' && q.a > q.b) || (selectedGroup === 'B' && q.b > q.a);
+            } else {
+                correct = (selectedGroup === 'A' && q.a < q.b) || (selectedGroup === 'B' && q.b < q.a);
+            }
+
+            showFeedback(correct, q.type === 'bigger' ? 'That number is BIGGER!' : 'That number is SMALLER!');
+
+            var selectedBox = document.getElementById('num' + selectedGroup);
+            if (correct) {
+                selectedBox.classList.add('correct');
+            } else {
+                selectedBox.classList.add('wrong');
+            }
+
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function loadSizeQuestion(q) {
+            var gameCard = document.getElementById('gameCard');
+
+            var title = document.createElement('h2');
+            title.textContent = 'Which is ' + q.label + '?';
+            gameCard.appendChild(title);
+
+            var compareArea = document.createElement('div');
+            compareArea.className = 'compare-area';
+
+            // Size A
+            var sizeA = document.createElement('div');
+            sizeA.className = 'size-box';
+            sizeA.id = 'sizeA';
+            sizeA.style.height = '150px';
+            var itemA = document.createElement('div');
+            itemA.className = 'size-item';
+            if (q.type === 'taller' || q.type === 'shorter') {
+                itemA.style.fontSize = (q.a.height * 0.8) + 'px';
+            } else {
+                itemA.style.fontSize = q.a.size + 'px';
+            }
+            itemA.textContent = q.a.emoji;
+            var labelA = document.createElement('div');
+            labelA.className = 'size-label';
+            labelA.textContent = 'A';
+            sizeA.appendChild(itemA);
+            sizeA.appendChild(labelA);
+            sizeA.addEventListener('click', function() { selectSize('A'); });
+
+            // VS
+            var vs = document.createElement('div');
+            vs.className = 'vs-text';
+            vs.textContent = 'VS';
+
+            // Size B
+            var sizeB = document.createElement('div');
+            sizeB.className = 'size-box';
+            sizeB.id = 'sizeB';
+            sizeB.style.height = '150px';
+            var itemB = document.createElement('div');
+            itemB.className = 'size-item';
+            if (q.type === 'taller' || q.type === 'shorter') {
+                itemB.style.fontSize = (q.b.height * 0.8) + 'px';
+            } else {
+                itemB.style.fontSize = q.b.size + 'px';
+            }
+            itemB.textContent = q.b.emoji;
+            var labelB = document.createElement('div');
+            labelB.className = 'size-label';
+            labelB.textContent = 'B';
+            sizeB.appendChild(itemB);
+            sizeB.appendChild(labelB);
+            sizeB.addEventListener('click', function() { selectSize('B'); });
+
+            compareArea.appendChild(sizeA);
+            compareArea.appendChild(vs);
+            compareArea.appendChild(sizeB);
+            gameCard.appendChild(compareArea);
+
+            // Submit button
+            var submitBtn = document.createElement('button');
+            submitBtn.className = 'choice-btn bigger';
+            submitBtn.id = 'submitBtn';
+            submitBtn.textContent = '✓ This is ' + q.label + '!';
+            submitBtn.style.display = 'block';
+            submitBtn.style.margin = '0 auto';
+            submitBtn.addEventListener('click', function() { checkSizeAnswer(); });
+            gameCard.appendChild(submitBtn);
+
+            // Feedback
+            var feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            feedback.id = 'feedback';
+            gameCard.appendChild(feedback);
+
+            // Next button
+            var nextBtn = document.createElement('button');
+            nextBtn.className = 'next-btn';
+            nextBtn.id = 'nextBtn';
+            nextBtn.textContent = 'Next Question →';
+            nextBtn.addEventListener('click', nextQuestion);
+            gameCard.appendChild(nextBtn);
+
+            updateSpeech("Look carefully! Which one is " + q.label.toLowerCase() + "?");
+        }
+
+        function selectSize(size) {
+            playSound('click');
+            var sizeA = document.getElementById('sizeA');
+            var sizeB = document.getElementById('sizeB');
+            sizeA.classList.remove('selected');
+            sizeB.classList.remove('selected');
+            if (size === 'A') {
+                sizeA.classList.add('selected');
+            } else {
+                sizeB.classList.add('selected');
+            }
+            selectedGroup = size;
+        }
+
+        function checkSizeAnswer() {
+            if (!selectedGroup) {
+                updateSpeech("Tap one to choose!");
+                return;
+            }
+
+            var q = sizeQuestions[currentQuestion];
+            var correct = false;
+
+            // Determine which is correct based on type
+            var aValue, bValue;
+            if (q.type === 'taller' || q.type === 'shorter') {
+                aValue = q.a.height;
+                bValue = q.b.height;
+            } else {
+                aValue = q.a.size;
+                bValue = q.b.size;
+            }
+
+            if (q.type === 'taller' || q.type === 'bigger') {
+                correct = (selectedGroup === 'A' && aValue > bValue) || (selectedGroup === 'B' && bValue > aValue);
+            } else {
+                correct = (selectedGroup === 'A' && aValue < bValue) || (selectedGroup === 'B' && bValue < aValue);
+            }
+
+            showFeedback(correct, 'That one is ' + q.label + '!');
+
+            var selectedBox = document.getElementById('size' + selectedGroup);
+            if (correct) {
+                selectedBox.classList.add('correct');
+            } else {
+                selectedBox.classList.add('wrong');
+            }
+
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function loadEqualQuestion(q) {
+            var gameCard = document.getElementById('gameCard');
+
+            var title = document.createElement('h2');
+            title.textContent = 'Find TWO groups with the SAME amount!';
+            gameCard.appendChild(title);
+
+            var compareArea = document.createElement('div');
+            compareArea.className = 'compare-area';
+            compareArea.style.flexWrap = 'wrap';
+            compareArea.style.gap = '15px';
+
+            q.groups.forEach(function(group, index) {
+                var box = document.createElement('div');
+                box.className = 'group-box equal-box';
+                box.id = 'equal' + index;
+                box.setAttribute('data-index', index);
+                var items = document.createElement('div');
+                items.className = 'items';
+                items.textContent = group.emoji.repeat(group.count);
+                var count = document.createElement('div');
+                count.className = 'count';
+                count.textContent = group.count;
+                box.appendChild(items);
+                box.appendChild(count);
+                box.addEventListener('click', function() { selectEqual(index); });
+                compareArea.appendChild(box);
+            });
+
+            gameCard.appendChild(compareArea);
+
+            // Submit button
+            var submitBtn = document.createElement('button');
+            submitBtn.className = 'choice-btn equal';
+            submitBtn.id = 'submitBtn';
+            submitBtn.textContent = '⚖️ These are EQUAL!';
+            submitBtn.style.display = 'block';
+            submitBtn.style.margin = '15px auto 0';
+            submitBtn.addEventListener('click', function() { checkEqualAnswer(); });
+            gameCard.appendChild(submitBtn);
+
+            // Feedback
+            var feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            feedback.id = 'feedback';
+            gameCard.appendChild(feedback);
+
+            // Next button
+            var nextBtn = document.createElement('button');
+            nextBtn.className = 'next-btn';
+            nextBtn.id = 'nextBtn';
+            nextBtn.textContent = 'Next Question →';
+            nextBtn.addEventListener('click', nextQuestion);
+            gameCard.appendChild(nextBtn);
+
+            updateSpeech("Count each group! Find two with the SAME number!");
+        }
+
+        function selectEqual(index) {
+            playSound('click');
+            var box = document.getElementById('equal' + index);
+
+            if (box.classList.contains('selected')) {
+                box.classList.remove('selected');
+                selectedGroups = selectedGroups.filter(function(i) { return i !== index; });
+            } else {
+                if (selectedGroups.length < 2) {
+                    box.classList.add('selected');
+                    selectedGroups.push(index);
+                } else {
+                    // Deselect first, select new
+                    document.getElementById('equal' + selectedGroups[0]).classList.remove('selected');
+                    selectedGroups.shift();
+                    box.classList.add('selected');
+                    selectedGroups.push(index);
+                }
+            }
+        }
+
+        function checkEqualAnswer() {
+            if (selectedGroups.length !== 2) {
+                updateSpeech("Pick TWO groups that are equal!");
+                return;
+            }
+
+            var q = equalQuestions[currentQuestion];
+            var sorted = selectedGroups.slice().sort();
+            var answerSorted = q.answer.slice().sort();
+            var correct = sorted[0] === answerSorted[0] && sorted[1] === answerSorted[1];
+
+            showFeedback(correct, 'Those groups have the SAME amount!');
+
+            selectedGroups.forEach(function(idx) {
+                var box = document.getElementById('equal' + idx);
+                if (correct) {
+                    box.classList.add('correct');
+                } else {
+                    box.classList.add('wrong');
+                }
+            });
+
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function showFeedback(correct, successMsg) {
+            var feedback = document.getElementById('feedback');
+
+            if (correct) {
+                playSound('correct');
+                feedback.textContent = '🎉 Correct! ' + successMsg;
+                feedback.className = 'feedback show success';
+                correctAnswers++;
+                updateSpeech("Amazing! You got it right!");
+
+                var questions = getQuestions();
+                var threshold = Math.ceil(questions.length / 3);
+                if (correctAnswers === threshold) earnStar(1);
+                if (correctAnswers === threshold * 2) earnStar(2);
+                if (correctAnswers === questions.length) earnStar(3);
+            } else {
+                playSound('wrong');
+                feedback.textContent = '❌ Not quite! Try again next time!';
+                feedback.className = 'feedback show wrong';
+                updateSpeech("Oops! Keep practicing!");
+            }
+
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            updateProgress();
+
+            var questions = getQuestions();
+            if (currentQuestion >= questions.length) {
+                showCelebration();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+
+            var earnedStars = '';
+            var emptyStars = '';
+            for (var i = 0; i < starsEarned; i++) earnedStars += '★';
+            for (var j = 0; j < 3 - starsEarned; j++) emptyStars += '☆';
+            document.getElementById('starsFinal').textContent = earnedStars + emptyStars;
+
+            var msgs = {
+                'groups': "You know MORE and FEWER!",
+                'numbers': "You're a number comparing expert!",
+                'sizes': "You can compare sizes perfectly!",
+                'equal': "You found all the equal groups!"
+            };
+            document.getElementById('celebrationMsg').textContent = msgs[currentTab];
+
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            var colors = ['#27ae60', '#FFD700', '#3498db', '#e74c3c', '#9b59b6'];
+            for (var i = 0; i < 50; i++) {
+                setTimeout(function() {
+                    var confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(function() { confetti.remove(); }, 3000);
+                }, i * 50);
+            }
+        }
+
+        // Start game
+        loadQuestion();
+        updateSpeech("Hi! I'm Balanced Bear! Let's compare groups - which has MORE? Which has FEWER?");
+    </script>
+</body>
+</html>

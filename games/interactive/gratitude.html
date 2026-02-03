@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratitude - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+        .mascot-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .mascot {
+            font-size: 4rem;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            max-width: 250px;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+        .speech-bubble p {
+            color: #6366f1;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .star {
+            font-size: 1.8rem;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        .star.earned {
+            opacity: 1;
+            animation: starPop 0.5s ease;
+        }
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.2);
+            padding: 5px;
+            border-radius: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .tab-btn.active {
+            background: white;
+            color: #6366f1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .game-card h2 {
+            color: #6366f1;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        /* Round Indicators */
+        .round-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .round-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            transition: all 0.3s;
+        }
+        .round-dot.active {
+            background: #a855f7;
+            transform: scale(1.2);
+        }
+        .round-dot.completed {
+            background: #22c55e;
+        }
+
+        .thankful-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .thankful-btn:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+            transform: scale(1.02);
+        }
+        .thankful-btn.selected {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+        .thankful-btn .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .affirmation-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .affirmation-card:hover {
+            transform: scale(1.05);
+        }
+        .affirmation-card.active {
+            animation: pulse 0.5s ease;
+            background: linear-gradient(135deg, #bbf7d0, #86efac);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .affirmation-card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #92400e;
+        }
+        .heart-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .heart {
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0.5;
+        }
+        .heart:hover {
+            transform: scale(1.2);
+        }
+        .heart.sent {
+            opacity: 1;
+            animation: heartFly 1s ease forwards;
+        }
+        @keyframes heartFly {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5) translateY(-30px); }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-family: inherit;
+        }
+        .next-btn:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .hidden { display: none !important; }
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            z-index: 100;
+        }
+        .celebration h1 {
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+        .trophy {
+            font-size: 6rem;
+            animation: bounce 1s infinite;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .drawing-area {
+            background: #fffbeb;
+            border: 3px dashed #fbbf24;
+            border-radius: 15px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 20px;
+        }
+        .drawing-prompt {
+            font-size: 1.2rem;
+            color: #92400e;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .drawing-icons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .drawing-icon {
+            font-size: 2.5rem;
+            padding: 10px;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .drawing-icon:hover {
+            transform: scale(1.1);
+        }
+        .drawing-icon.selected {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+        .thank-you-note {
+            background: white;
+            border: 3px solid #fbbf24;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .thank-you-note p {
+            font-size: 1.3rem;
+            color: #6366f1;
+        }
+        .person-card {
+            background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .person-card:hover {
+            transform: scale(1.02);
+            border-color: #ec4899;
+        }
+        .person-card.selected {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        }
+        .person-card .person-emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .person-card .person-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #6366f1;
+        }
+        .category-label {
+            background: #6366f1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .match-item {
+            background: #f3e8ff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .match-item:hover {
+            transform: scale(1.02);
+            border-color: #a855f7;
+        }
+        .match-item.selected {
+            border-color: #6366f1;
+            background: #ddd6fe;
+        }
+        .match-item.correct {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+        .match-item .match-emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .match-item .match-text {
+            font-size: 0.9rem;
+            color: #6366f1;
+        }
+        .feeling-prompt {
+            background: #fef3c7;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .feeling-prompt p {
+            font-size: 1.2rem;
+            color: #92400e;
+        }
+        .response-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .response-btn {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .response-btn:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+        }
+        .response-btn.correct {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+        .response-btn.wrong {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌻 Gratitude 🌻</h1>
+        </div>
+
+        <div class="mascot-container">
+            <span class="mascot">🌻</span>
+            <div class="speech-bubble">
+                <p id="mascot-text">Hi friend! Let's learn about being THANKFUL!</p>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">⭐</span>
+            <span class="star" id="star2">⭐</span>
+            <span class="star" id="star3">⭐</span>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="thankful">Thankful</button>
+            <button class="tab-btn" data-tab="affirm">Affirm</button>
+            <button class="tab-btn" data-tab="love">Love</button>
+            <button class="tab-btn" data-tab="express">Express</button>
+        </div>
+
+        <!-- Tab 1: Thankful -->
+        <div class="tab-content active" id="thankful-tab">
+            <div class="game-card">
+                <h2>What Makes You Thankful?</h2>
+                <div class="round-indicator" id="thankful-rounds"></div>
+                <p class="question-counter" id="thankful-counter">Round 1 of 4</p>
+                <div id="thankful-category"></div>
+                <div id="thankful-options"></div>
+                <button class="next-btn" id="thankful-next" onclick="nextThankfulRound()" disabled>Next Round</button>
+            </div>
+        </div>
+
+        <!-- Tab 2: Affirmations -->
+        <div class="tab-content" id="affirm-tab">
+            <div class="game-card">
+                <h2>Say It Loud!</h2>
+                <div class="round-indicator" id="affirm-rounds"></div>
+                <p class="question-counter" id="affirm-counter">Round 1 of 3</p>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap each card and say it OUT LOUD!</p>
+                <div id="affirm-cards"></div>
+                <button class="next-btn" id="affirm-next" onclick="nextAffirmRound()" disabled>Next Round</button>
+            </div>
+        </div>
+
+        <!-- Tab 3: Send Love -->
+        <div class="tab-content" id="love-tab">
+            <div class="game-card">
+                <h2>Send Love to Someone!</h2>
+                <div class="round-indicator" id="love-rounds"></div>
+                <p class="question-counter" id="love-counter">Round 1 of 3</p>
+                <div id="love-content"></div>
+                <button class="next-btn" id="love-next" onclick="nextLoveRound()" disabled>Next Round</button>
+            </div>
+        </div>
+
+        <!-- Tab 4: Express -->
+        <div class="tab-content" id="express-tab">
+            <div class="game-card">
+                <h2>Express Your Gratitude!</h2>
+                <div class="round-indicator" id="express-rounds"></div>
+                <p class="question-counter" id="express-counter">Activity 1 of 3</p>
+                <div id="express-content"></div>
+                <button class="next-btn" id="express-next" onclick="nextExpressRound()">Next Activity</button>
+            </div>
+        </div>
+
+        <!-- Celebration -->
+        <div class="celebration hidden" id="celebration">
+            <span class="trophy">🏆</span>
+            <h1>You're a Gratitude Star!</h1>
+            <div class="stars" style="margin: 20px 0;">
+                <span class="star earned">⭐</span>
+                <span class="star earned">⭐</span>
+                <span class="star earned">⭐</span>
+            </div>
+            <p style="color: white; font-size: 1.2rem;">Thank you for being YOU!</p>
+            <button class="next-btn" style="max-width: 250px; margin-top: 30px;" onclick="window.location.href='index.html#thursday'">Back to Games</button>
+        </div>
+    </div>
+
+    <script>
+        // Helper function for safe DOM manipulation
+        function clearChildren(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        // Game state
+        var thankfulRound = 0;
+        var thankfulSelected = 0;
+        var thankfulTotalCorrect = 0;
+
+        var affirmRound = 0;
+        var affirmSaid = 0;
+        var affirmTotalSaid = 0;
+
+        var loveRound = 0;
+        var heartsSent = 0;
+        var loveTotalSent = 0;
+
+        var expressRound = 0;
+        var expressTotalDone = 0;
+
+        var totalScore = 0;
+        var maxScore = 0;
+
+        // Thankful categories
+        var thankfulData = [
+            {
+                category: "People",
+                items: [
+                    { emoji: "👨‍👩‍👧‍👦", text: "My Family" },
+                    { emoji: "👵", text: "Grandparents" },
+                    { emoji: "👫", text: "My Friends" },
+                    { emoji: "👩‍🏫", text: "My Teachers" },
+                    { emoji: "🧑‍⚕️", text: "Doctors & Nurses" },
+                    { emoji: "👨‍🍳", text: "People who cook" }
+                ]
+            },
+            {
+                category: "Places",
+                items: [
+                    { emoji: "🏠", text: "My Home" },
+                    { emoji: "🏫", text: "My School" },
+                    { emoji: "🏞️", text: "Parks" },
+                    { emoji: "📚", text: "Library" },
+                    { emoji: "🏪", text: "Stores" },
+                    { emoji: "⛪", text: "Synagogue" }
+                ]
+            },
+            {
+                category: "Nature",
+                items: [
+                    { emoji: "🌞", text: "Sunny Days" },
+                    { emoji: "🌳", text: "Trees" },
+                    { emoji: "🌸", text: "Flowers" },
+                    { emoji: "🐦", text: "Birds" },
+                    { emoji: "🌈", text: "Rainbows" },
+                    { emoji: "⭐", text: "Stars at Night" }
+                ]
+            },
+            {
+                category: "Things",
+                items: [
+                    { emoji: "🍎", text: "Yummy Food" },
+                    { emoji: "📚", text: "Books" },
+                    { emoji: "🎮", text: "Fun Toys" },
+                    { emoji: "🎨", text: "Art Supplies" },
+                    { emoji: "🛏️", text: "My Bed" },
+                    { emoji: "👕", text: "Clothes" }
+                ]
+            }
+        ];
+
+        // Affirmation rounds
+        var affirmData = [
+            [
+                "I CAN DO HARD THINGS!",
+                "I AM BRAVE!",
+                "I AM KIND!",
+                "I AM LOVED!"
+            ],
+            [
+                "I AM SMART!",
+                "I AM A GOOD FRIEND!",
+                "I BELIEVE IN MYSELF!",
+                "I CAN LEARN NEW THINGS!"
+            ],
+            [
+                "I AM SPECIAL!",
+                "I AM HELPFUL!",
+                "I MAKE GOOD CHOICES!",
+                "I AM IMPORTANT!"
+            ]
+        ];
+
+        // Love rounds data
+        var loveData = [
+            {
+                prompt: "Send love to your FAMILY!",
+                hint: "Mom, Dad, siblings, grandparents...",
+                hearts: 6
+            },
+            {
+                prompt: "Send love to your FRIENDS!",
+                hint: "Your best friends, classmates...",
+                hearts: 6
+            },
+            {
+                prompt: "Send love to your TEACHERS!",
+                hint: "Teachers help you learn and grow!",
+                hearts: 6
+            }
+        ];
+
+        // Express activities
+        var expressData = [
+            {
+                type: "draw",
+                title: "Draw Something You're Thankful For!",
+                icons: [
+                    { emoji: "👨‍👩‍👧", label: "family" },
+                    { emoji: "🐕", label: "pet" },
+                    { emoji: "🍕", label: "food" },
+                    { emoji: "🌳", label: "nature" },
+                    { emoji: "🧸", label: "toy" },
+                    { emoji: "👫", label: "friend" }
+                ]
+            },
+            {
+                type: "match",
+                title: "Match the Kind Word!",
+                pairs: [
+                    { emoji: "🎁", word: "Thank you", match: "gift" },
+                    { emoji: "🤗", word: "Please", match: "hug" },
+                    { emoji: "😊", word: "You're welcome", match: "smile" },
+                    { emoji: "💝", word: "I love you", match: "heart" }
+                ]
+            },
+            {
+                type: "scenario",
+                title: "What Would You Say?",
+                scenarios: [
+                    {
+                        situation: "Someone gives you a present",
+                        correct: "Thank you so much!",
+                        options: ["Whatever", "Thank you so much!", "I wanted something else"]
+                    },
+                    {
+                        situation: "Your friend shares their snack",
+                        correct: "Thank you for sharing!",
+                        options: ["Give me more", "Thank you for sharing!", "I don't like that"]
+                    },
+                    {
+                        situation: "Mom makes you breakfast",
+                        correct: "Thank you, Mom!",
+                        options: ["Finally!", "Thank you, Mom!", "I'm not hungry"]
+                    }
+                ]
+            }
+        ];
+
+        // Sound effects
+        function playSound(type) {
+            try {
+                var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                var oscillator = audioContext.createOscillator();
+                var gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                if (type === 'click') {
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } else if (type === 'correct') {
+                    oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } else if (type === 'star') {
+                    oscillator.frequency.setValueAtTime(784, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(988, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(1175, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.4);
+                } else if (type === 'complete') {
+                    oscillator.frequency.setValueAtTime(523, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.15);
+                    oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.3);
+                    oscillator.frequency.setValueAtTime(1047, audioContext.currentTime + 0.45);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.6);
+                } else if (type === 'heart') {
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.15);
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                playSound('click');
+                var tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                this.classList.add('active');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+
+        // Initialize round indicators
+        function initRoundIndicators(containerId, count) {
+            var container = document.getElementById(containerId);
+            clearChildren(container);
+            for (var i = 0; i < count; i++) {
+                var dot = document.createElement('div');
+                dot.className = 'round-dot';
+                if (i === 0) dot.classList.add('active');
+                container.appendChild(dot);
+            }
+        }
+
+        function updateRoundIndicator(containerId, currentRound, totalRounds) {
+            var dots = document.getElementById(containerId).querySelectorAll('.round-dot');
+            for (var i = 0; i < dots.length; i++) {
+                dots[i].classList.remove('active');
+                if (i < currentRound) {
+                    dots[i].classList.add('completed');
+                } else if (i === currentRound) {
+                    dots[i].classList.add('active');
+                }
+            }
+        }
+
+        // ==================== THANKFUL TAB ====================
+        function loadThankfulRound() {
+            var data = thankfulData[thankfulRound];
+            thankfulSelected = 0;
+
+            document.getElementById('thankful-counter').textContent = 'Round ' + (thankfulRound + 1) + ' of ' + thankfulData.length;
+            updateRoundIndicator('thankful-rounds', thankfulRound, thankfulData.length);
+
+            var categoryDiv = document.getElementById('thankful-category');
+            clearChildren(categoryDiv);
+            var label = document.createElement('span');
+            label.className = 'category-label';
+            label.textContent = 'Category: ' + data.category;
+            categoryDiv.appendChild(label);
+
+            var optionsDiv = document.getElementById('thankful-options');
+            clearChildren(optionsDiv);
+
+            var instruction = document.createElement('p');
+            instruction.style.cssText = 'text-align: center; color: #666; margin-bottom: 15px;';
+            instruction.textContent = 'Tap 3 things you are thankful for!';
+            optionsDiv.appendChild(instruction);
+
+            data.items.forEach(function(item) {
+                var btn = document.createElement('button');
+                btn.className = 'thankful-btn';
+
+                var emoji = document.createElement('span');
+                emoji.className = 'emoji';
+                emoji.textContent = item.emoji;
+                btn.appendChild(emoji);
+
+                var text = document.createTextNode(item.text);
+                btn.appendChild(text);
+
+                btn.onclick = function() {
+                    if (!btn.classList.contains('selected')) {
+                        btn.classList.add('selected');
+                        thankfulSelected++;
+                        thankfulTotalCorrect++;
+                        playSound('correct');
+
+                        if (thankfulSelected >= 3) {
+                            document.getElementById('thankful-next').disabled = false;
+                        }
+                    }
+                };
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('thankful-next').disabled = true;
+
+            if (thankfulRound === thankfulData.length - 1) {
+                document.getElementById('thankful-next').textContent = 'Complete!';
+            } else {
+                document.getElementById('thankful-next').textContent = 'Next Round';
+            }
+        }
+
+        function nextThankfulRound() {
+            thankfulRound++;
+            if (thankfulRound >= thankfulData.length) {
+                completeThankfulTab();
+            } else {
+                loadThankfulRound();
+            }
+        }
+
+        function completeThankfulTab() {
+            playSound('star');
+            document.getElementById('star1').classList.add('earned');
+            updateProgress();
+            document.getElementById('mascot-text').textContent = "Great job being thankful! Now let's say positive words!";
+
+            // Switch to next tab
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('affirm-tab').classList.add('active');
+        }
+
+        // ==================== AFFIRM TAB ====================
+        function loadAffirmRound() {
+            var data = affirmData[affirmRound];
+            affirmSaid = 0;
+
+            document.getElementById('affirm-counter').textContent = 'Round ' + (affirmRound + 1) + ' of ' + affirmData.length;
+            updateRoundIndicator('affirm-rounds', affirmRound, affirmData.length);
+
+            var cardsDiv = document.getElementById('affirm-cards');
+            clearChildren(cardsDiv);
+
+            data.forEach(function(text) {
+                var card = document.createElement('div');
+                card.className = 'affirmation-card';
+
+                var p = document.createElement('p');
+                p.textContent = text;
+                card.appendChild(p);
+
+                card.onclick = function() {
+                    if (!card.classList.contains('active')) {
+                        card.classList.add('active');
+                        affirmSaid++;
+                        affirmTotalSaid++;
+                        playSound('correct');
+
+                        // Speak the affirmation
+                        if ('speechSynthesis' in window) {
+                            var utterance = new SpeechSynthesisUtterance(text);
+                            utterance.rate = 0.8;
+                            speechSynthesis.speak(utterance);
+                        }
+
+                        if (affirmSaid >= data.length) {
+                            document.getElementById('affirm-next').disabled = false;
+                        }
+                    }
+                };
+                cardsDiv.appendChild(card);
+            });
+
+            document.getElementById('affirm-next').disabled = true;
+
+            if (affirmRound === affirmData.length - 1) {
+                document.getElementById('affirm-next').textContent = 'Complete!';
+            } else {
+                document.getElementById('affirm-next').textContent = 'Next Round';
+            }
+        }
+
+        function nextAffirmRound() {
+            affirmRound++;
+            if (affirmRound >= affirmData.length) {
+                completeAffirmTab();
+            } else {
+                loadAffirmRound();
+            }
+        }
+
+        function completeAffirmTab() {
+            playSound('star');
+            document.getElementById('star2').classList.add('earned');
+            updateProgress();
+            document.getElementById('mascot-text').textContent = "You're amazing! Now let's send some love!";
+
+            // Switch to next tab
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            document.getElementById('love-tab').classList.add('active');
+        }
+
+        // ==================== LOVE TAB ====================
+        function loadLoveRound() {
+            var data = loveData[loveRound];
+            heartsSent = 0;
+
+            document.getElementById('love-counter').textContent = 'Round ' + (loveRound + 1) + ' of ' + loveData.length;
+            updateRoundIndicator('love-rounds', loveRound, loveData.length);
+
+            var contentDiv = document.getElementById('love-content');
+            clearChildren(contentDiv);
+
+            var noteDiv = document.createElement('div');
+            noteDiv.className = 'thank-you-note';
+
+            var promptP = document.createElement('p');
+            promptP.textContent = data.prompt;
+            noteDiv.appendChild(promptP);
+
+            var hintP = document.createElement('p');
+            hintP.style.cssText = 'font-size: 1rem; color: #888; margin-top: 10px;';
+            hintP.textContent = data.hint;
+            noteDiv.appendChild(hintP);
+
+            contentDiv.appendChild(noteDiv);
+
+            var instruction = document.createElement('p');
+            instruction.style.cssText = 'text-align: center; color: #666; margin: 15px 0;';
+            instruction.textContent = 'Tap the hearts to send love!';
+            contentDiv.appendChild(instruction);
+
+            var heartContainer = document.createElement('div');
+            heartContainer.className = 'heart-container';
+
+            for (var i = 0; i < data.hearts; i++) {
+                var heart = document.createElement('span');
+                heart.className = 'heart';
+                heart.textContent = '💖';
+                heart.onclick = function() {
+                    if (!this.classList.contains('sent')) {
+                        this.classList.add('sent');
+                        heartsSent++;
+                        loveTotalSent++;
+                        playSound('heart');
+
+                        if (heartsSent >= data.hearts) {
+                            document.getElementById('love-next').disabled = false;
+                        }
+                    }
+                };
+                heartContainer.appendChild(heart);
+            }
+            contentDiv.appendChild(heartContainer);
+
+            document.getElementById('love-next').disabled = true;
+
+            if (loveRound === loveData.length - 1) {
+                document.getElementById('love-next').textContent = 'Complete!';
+            } else {
+                document.getElementById('love-next').textContent = 'Next Round';
+            }
+        }
+
+        function nextLoveRound() {
+            loveRound++;
+            if (loveRound >= loveData.length) {
+                completeLoveTab();
+            } else {
+                loadLoveRound();
+            }
+        }
+
+        function completeLoveTab() {
+            playSound('star');
+            document.getElementById('star3').classList.add('earned');
+            updateProgress();
+            document.getElementById('mascot-text').textContent = "So much love! Now let's express gratitude!";
+
+            // Switch to next tab
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn')[3].classList.add('active');
+            document.getElementById('express-tab').classList.add('active');
+        }
+
+        // ==================== EXPRESS TAB ====================
+        var expressScenarioIndex = 0;
+        var matchSelected = null;
+
+        function loadExpressRound() {
+            var data = expressData[expressRound];
+
+            document.getElementById('express-counter').textContent = 'Activity ' + (expressRound + 1) + ' of ' + expressData.length;
+            updateRoundIndicator('express-rounds', expressRound, expressData.length);
+
+            var contentDiv = document.getElementById('express-content');
+            clearChildren(contentDiv);
+
+            if (data.type === 'draw') {
+                loadDrawActivity(contentDiv, data);
+            } else if (data.type === 'match') {
+                loadMatchActivity(contentDiv, data);
+            } else if (data.type === 'scenario') {
+                expressScenarioIndex = 0;
+                loadScenarioActivity(contentDiv, data);
+            }
+
+            if (expressRound === expressData.length - 1) {
+                document.getElementById('express-next').textContent = 'Finish!';
+            } else {
+                document.getElementById('express-next').textContent = 'Next Activity';
+            }
+        }
+
+        function loadDrawActivity(container, data) {
+            var title = document.createElement('p');
+            title.style.cssText = 'text-align: center; color: #666; margin-bottom: 15px;';
+            title.textContent = 'Pick what you want to draw!';
+            container.appendChild(title);
+
+            var drawingArea = document.createElement('div');
+            drawingArea.className = 'drawing-area';
+
+            var prompt = document.createElement('p');
+            prompt.className = 'drawing-prompt';
+            prompt.id = 'draw-prompt';
+            prompt.textContent = 'What are you thankful for today?';
+            drawingArea.appendChild(prompt);
+
+            var iconsDiv = document.createElement('div');
+            iconsDiv.className = 'drawing-icons';
+
+            data.icons.forEach(function(icon) {
+                var iconSpan = document.createElement('span');
+                iconSpan.className = 'drawing-icon';
+                iconSpan.textContent = icon.emoji;
+                iconSpan.onclick = function() {
+                    document.querySelectorAll('.drawing-icon').forEach(function(i) { i.classList.remove('selected'); });
+                    iconSpan.classList.add('selected');
+                    playSound('click');
+                    document.getElementById('draw-prompt').textContent = 'Draw your ' + icon.label + '! Use paper and crayons!';
+                };
+                iconsDiv.appendChild(iconSpan);
+            });
+            drawingArea.appendChild(iconsDiv);
+            container.appendChild(drawingArea);
+
+            var instruction = document.createElement('p');
+            instruction.style.cssText = 'text-align: center; color: #666; font-style: italic; margin-top: 15px;';
+            instruction.textContent = 'Now draw it on paper!';
+            container.appendChild(instruction);
+        }
+
+        function loadMatchActivity(container, data) {
+            var title = document.createElement('p');
+            title.style.cssText = 'text-align: center; color: #666; margin-bottom: 15px;';
+            title.textContent = 'Match the kind words with their meaning!';
+            container.appendChild(title);
+
+            var grid = document.createElement('div');
+            grid.className = 'match-grid';
+
+            // Shuffle the pairs
+            var shuffledPairs = data.pairs.slice().sort(function() { return Math.random() - 0.5; });
+
+            shuffledPairs.forEach(function(pair) {
+                var item = document.createElement('div');
+                item.className = 'match-item';
+                item.setAttribute('data-word', pair.word);
+
+                var emoji = document.createElement('span');
+                emoji.className = 'match-emoji';
+                emoji.textContent = pair.emoji;
+                item.appendChild(emoji);
+
+                var text = document.createElement('span');
+                text.className = 'match-text';
+                text.textContent = pair.word;
+                item.appendChild(text);
+
+                item.onclick = function() {
+                    if (!item.classList.contains('correct')) {
+                        item.classList.add('correct');
+                        playSound('correct');
+
+                        var allCorrect = true;
+                        grid.querySelectorAll('.match-item').forEach(function(m) {
+                            if (!m.classList.contains('correct')) allCorrect = false;
+                        });
+                    }
+                };
+                grid.appendChild(item);
+            });
+
+            container.appendChild(grid);
+
+            var note = document.createElement('p');
+            note.style.cssText = 'text-align: center; color: #666; margin-top: 15px;';
+            note.textContent = 'Tap each card to learn kind words!';
+            container.appendChild(note);
+        }
+
+        function loadScenarioActivity(container, data) {
+            var scenario = data.scenarios[expressScenarioIndex];
+
+            var title = document.createElement('p');
+            title.style.cssText = 'text-align: center; color: #666; margin-bottom: 15px;';
+            title.textContent = 'Scenario ' + (expressScenarioIndex + 1) + ' of ' + data.scenarios.length;
+            container.appendChild(title);
+
+            var promptDiv = document.createElement('div');
+            promptDiv.className = 'feeling-prompt';
+
+            var promptP = document.createElement('p');
+            promptP.textContent = scenario.situation;
+            promptDiv.appendChild(promptP);
+            container.appendChild(promptDiv);
+
+            var question = document.createElement('p');
+            question.style.cssText = 'text-align: center; color: #666; margin: 15px 0; font-weight: bold;';
+            question.textContent = 'What would you say?';
+            container.appendChild(question);
+
+            var optionsDiv = document.createElement('div');
+            optionsDiv.className = 'response-options';
+            optionsDiv.id = 'scenario-options';
+
+            // Shuffle options
+            var shuffledOptions = scenario.options.slice().sort(function() { return Math.random() - 0.5; });
+
+            shuffledOptions.forEach(function(option) {
+                var btn = document.createElement('button');
+                btn.className = 'response-btn';
+                btn.textContent = option;
+                btn.onclick = function() {
+                    var buttons = optionsDiv.querySelectorAll('.response-btn');
+                    buttons.forEach(function(b) {
+                        b.disabled = true;
+                        if (b.textContent === scenario.correct) {
+                            b.classList.add('correct');
+                        }
+                    });
+
+                    if (option === scenario.correct) {
+                        btn.classList.add('correct');
+                        playSound('correct');
+                        expressTotalDone++;
+                    } else {
+                        btn.classList.add('wrong');
+                        playSound('wrong');
+                    }
+
+                    // Auto-advance after delay
+                    setTimeout(function() {
+                        expressScenarioIndex++;
+                        if (expressScenarioIndex < data.scenarios.length) {
+                            clearChildren(container);
+                            loadScenarioActivity(container, data);
+                        }
+                    }, 1500);
+                };
+                optionsDiv.appendChild(btn);
+            });
+
+            container.appendChild(optionsDiv);
+        }
+
+        function nextExpressRound() {
+            expressRound++;
+            if (expressRound >= expressData.length) {
+                finishGame();
+            } else {
+                loadExpressRound();
+            }
+        }
+
+        // ==================== PROGRESS & COMPLETION ====================
+        function updateProgress() {
+            var stars = document.querySelectorAll('.star.earned').length;
+            var percent = (stars / 3) * 100;
+            document.getElementById('progress').style.width = percent + '%';
+        }
+
+        function finishGame() {
+            playSound('complete');
+            document.getElementById('progress').style.width = '100%';
+
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.add('hidden'); });
+            document.querySelector('.tab-nav').classList.add('hidden');
+            document.getElementById('celebration').classList.remove('hidden');
+
+            createConfetti();
+        }
+
+        function createConfetti() {
+            var colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#a855f7', '#ec4899'];
+            var celebration = document.getElementById('celebration');
+
+            for (var i = 0; i < 50; i++) {
+                var confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                celebration.appendChild(confetti);
+            }
+        }
+
+        // Initialize game
+        function init() {
+            initRoundIndicators('thankful-rounds', thankfulData.length);
+            initRoundIndicators('affirm-rounds', affirmData.length);
+            initRoundIndicators('love-rounds', loveData.length);
+            initRoundIndicators('express-rounds', expressData.length);
+
+            loadThankfulRound();
+            loadAffirmRound();
+            loadLoveRound();
+            loadExpressRound();
+        }
+
+        init();
+    </script>
+</body>
+</html>

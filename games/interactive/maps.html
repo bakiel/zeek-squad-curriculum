@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps Adventure - Zeek Squad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .mascot {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mascot-emoji {
+            font-size: 4rem;
+            animation: compassSpin 3s ease-in-out infinite;
+        }
+
+        @keyframes compassSpin {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .star {
+            color: rgba(255,255,255,0.3);
+            transition: all 0.5s;
+            display: inline-block;
+        }
+
+        .star.earned {
+            color: #FFD700;
+            animation: starEarn 0.6s ease;
+            filter: drop-shadow(0 0 10px #FFD700);
+        }
+
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 10px 12px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .instruction {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Direction Buttons */
+        .direction-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 220px;
+            margin: 20px auto;
+        }
+
+        .dir-btn {
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .dir-btn:hover {
+            background: #3498db;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .dir-btn.correct {
+            background: #27ae60;
+            color: white;
+            animation: correctPop 0.5s ease;
+        }
+
+        .dir-btn.wrong {
+            background: #e74c3c;
+            color: white;
+            animation: wrongShake 0.5s ease;
+        }
+
+        @keyframes correctPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .direction-question {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 20px 0;
+        }
+
+        .direction-helper {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* Map Symbols */
+        .symbols-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .symbol-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .symbol-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .symbol-card .symbol-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .symbol-card .symbol-label {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .symbol-card.correct {
+            background: #d5f5e3;
+            border-color: #27ae60;
+        }
+
+        .symbol-card.wrong {
+            background: #fadbd8;
+            border-color: #e74c3c;
+        }
+
+        .symbol-question-emoji {
+            text-align: center;
+            font-size: 5rem;
+            margin: 20px 0;
+            animation: symbolPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes symbolPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .symbol-hint {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #3498db;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* Land and Water */
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .map-cell {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .map-cell.land {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .map-cell.water {
+            background: linear-gradient(135deg, #3498db 0%, #5dade2 100%);
+        }
+
+        .map-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .map-cell.selected {
+            border: 4px solid #FFD700;
+            box-shadow: 0 0 15px #FFD700;
+        }
+
+        .lw-instruction {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .lw-instruction.land {
+            background: #d5f5e3;
+            color: #27ae60;
+        }
+
+        .lw-instruction.water {
+            background: #d6eaf8;
+            color: #3498db;
+        }
+
+        /* Treasure Map */
+        .treasure-map {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f5e6c3 0%, #e8d5b0 100%);
+            border-radius: 15px;
+            margin: 20px auto;
+            border: 5px solid #8B4513;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
+        }
+
+        .treasure-map:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="1" fill="%238B4513" opacity="0.3"/></svg>');
+            pointer-events: none;
+        }
+
+        .map-item {
+            position: absolute;
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
+
+        .map-item:hover {
+            transform: scale(1.3);
+        }
+
+        .map-item.found {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        .map-item.highlighted {
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px #FFD700); }
+            50% { filter: drop-shadow(0 0 20px #FFD700); }
+        }
+
+        .treasure-clue {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #8B4513;
+            margin: 15px 0;
+            font-style: italic;
+            background: #f5e6c3;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px dashed #8B4513;
+        }
+
+        .treasure-step {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .celebration {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .celebration.show {
+            display: block;
+            animation: celebrationPop 0.5s ease;
+        }
+
+        @keyframes celebrationPop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .celebration h2 {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .celebration .trophy {
+            font-size: 5rem;
+            animation: trophyBounce 1s ease infinite;
+        }
+
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .celebration p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                top: 100vh;
+                transform: rotate(720deg);
+            }
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .round-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .round-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s;
+        }
+
+        .round-dot.active {
+            background: #3498db;
+        }
+
+        .round-dot.complete {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>Maps Adventure!</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🧭</div>
+            <div class="speech-bubble" id="mascotMessage">
+                Hello explorer! I am Compass Carl! Let us learn about maps together! Maps help us find places and not get lost!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">⭐</span>
+            <span class="star" id="star2">⭐</span>
+            <span class="star" id="star3">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="directions">⬆️ Directions</button>
+            <button class="tab-btn" data-tab="symbols">🏠 Symbols</button>
+            <button class="tab-btn" data-tab="landwater">🌍 Land/Water</button>
+            <button class="tab-btn" data-tab="treasure">💎 Treasure</button>
+        </div>
+
+        <!-- DIRECTIONS TAB -->
+        <div class="tab-content active" id="directions-tab">
+            <div class="game-area">
+                <div class="instruction">Tap the direction I say!</div>
+                <div class="question-counter" id="dirCounter">Question 1 of 12</div>
+                <div class="round-indicator" id="dirRounds"></div>
+                <div class="direction-question" id="dirQuestion">Tap UP!</div>
+                <div class="direction-pad">
+                    <div></div>
+                    <button class="dir-btn" onclick="checkDirection('up')">⬆️</button>
+                    <div></div>
+                    <button class="dir-btn" onclick="checkDirection('left')">⬅️</button>
+                    <button class="dir-btn center-btn" onclick="checkDirection('center')">⭕</button>
+                    <button class="dir-btn" onclick="checkDirection('right')">➡️</button>
+                    <div></div>
+                    <button class="dir-btn" onclick="checkDirection('down')">⬇️</button>
+                    <div></div>
+                </div>
+                <div class="direction-helper">Remember: UP is away from you, DOWN is toward you!</div>
+            </div>
+        </div>
+
+        <!-- SYMBOLS TAB -->
+        <div class="tab-content" id="symbols-tab">
+            <div class="game-area">
+                <div class="instruction">What does this map symbol mean?</div>
+                <div class="question-counter" id="symbolsCounter">Question 1 of 10</div>
+                <div class="symbol-question-emoji" id="symbolQuestion">🏠</div>
+                <div class="symbol-hint" id="symbolHint">This is where people live!</div>
+                <div class="symbols-grid" id="symbolsGrid"></div>
+            </div>
+        </div>
+
+        <!-- LAND/WATER TAB -->
+        <div class="tab-content" id="landwater-tab">
+            <div class="game-area">
+                <div class="instruction">Find all the LAND or WATER on the map!</div>
+                <div class="question-counter" id="lwCounter">Found: 0 / 8</div>
+                <div class="lw-instruction land" id="lwInstruction">Tap all the LAND! (Green = Land)</div>
+                <div class="map-grid" id="mapGrid"></div>
+                <button class="next-btn hidden" id="nextRound" onclick="nextLWRound()">Next Round →</button>
+            </div>
+        </div>
+
+        <!-- TREASURE TAB -->
+        <div class="tab-content" id="treasure-tab">
+            <div class="game-area">
+                <div class="instruction">Follow the clues to find the treasure!</div>
+                <div class="treasure-step" id="treasureStep">Step 1 of 5</div>
+                <div class="treasure-clue" id="treasureClue">Start at the TREE and go RIGHT to find the house!</div>
+                <div class="treasure-map" id="treasureMap">
+                    <div class="map-item" id="tree" style="left: 20px; top: 20px;">🌳</div>
+                    <div class="map-item" id="house" style="left: 120px; top: 20px;">🏠</div>
+                    <div class="map-item" id="mountain" style="left: 220px; top: 20px;">⛰️</div>
+                    <div class="map-item" id="pond" style="left: 20px; top: 120px;">🌊</div>
+                    <div class="map-item" id="park" style="left: 120px; top: 120px;">🏞️</div>
+                    <div class="map-item" id="bridge" style="left: 220px; top: 120px;">🌉</div>
+                    <div class="map-item" id="shop" style="left: 20px; top: 220px;">🏪</div>
+                    <div class="map-item" id="school" style="left: 120px; top: 220px;">🏫</div>
+                    <div class="map-item" id="treasure" style="left: 220px; top: 220px; display: none;">💎</div>
+                    <div class="map-item" id="xmark" style="left: 220px; top: 220px;">❌</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CELEBRATION -->
+        <div class="celebration" id="celebration">
+            <div class="trophy">🏆</div>
+            <h2>Amazing Map Explorer!</h2>
+            <p>You learned directions, symbols, land, water, and found treasure!</p>
+            <button class="next-btn" onclick="location.reload()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        function clearChildren(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        var audioContext = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            var oscillator = audioContext.createOscillator();
+            var gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+            } else if (type === 'star') {
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1108.73, audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            } else if (type === 'click') {
+                oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            } else if (type === 'complete') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.15);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.3);
+                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.45);
+            } else if (type === 'treasure') {
+                oscillator.frequency.setValueAtTime(392, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.2);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.3);
+                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.4);
+            }
+
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        var totalScore = 0;
+        var maxScore = 40;
+        var starsEarned = 0;
+        var tabsCompleted = {
+            directions: false,
+            symbols: false,
+            landwater: false,
+            treasure: false
+        };
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                playSound('click');
+                var tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(function(b) {
+                    b.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(function(c) {
+                    c.classList.remove('active');
+                });
+                this.classList.add('active');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+
+        function updateProgress() {
+            var percent = (totalScore / maxScore) * 100;
+            document.getElementById('progressBar').style.width = Math.min(percent, 100) + '%';
+
+            if (percent >= 33 && starsEarned < 1) {
+                starsEarned = 1;
+                document.getElementById('star1').classList.add('earned');
+                playSound('star');
+            }
+            if (percent >= 66 && starsEarned < 2) {
+                starsEarned = 2;
+                document.getElementById('star2').classList.add('earned');
+                playSound('star');
+            }
+            if (percent >= 100 && starsEarned < 3) {
+                starsEarned = 3;
+                document.getElementById('star3').classList.add('earned');
+                playSound('star');
+            }
+        }
+
+        function updateMascot(message) {
+            document.getElementById('mascotMessage').textContent = message;
+        }
+
+        function checkAllComplete() {
+            if (tabsCompleted.directions && tabsCompleted.symbols && tabsCompleted.landwater && tabsCompleted.treasure) {
+                showCelebration();
+            }
+        }
+
+        function showCelebration() {
+            playSound('complete');
+            document.getElementById('celebration').classList.add('show');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            var colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#3498db', '#FF8E53', '#27ae60'];
+            for (var i = 0; i < 60; i++) {
+                setTimeout(function() {
+                    var confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(function() {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 40);
+            }
+        }
+
+        // ==================== DIRECTIONS TAB ====================
+        var directions = [
+            'up', 'down', 'left', 'right',
+            'up', 'right', 'down', 'left',
+            'right', 'up', 'left', 'down'
+        ];
+        var dirNames = {
+            up: 'UP',
+            down: 'DOWN',
+            left: 'LEFT',
+            right: 'RIGHT'
+        };
+        var dirMessages = {
+            up: 'UP is like going to the sky!',
+            down: 'DOWN is like going to the ground!',
+            left: 'LEFT is where your left hand is!',
+            right: 'RIGHT is where your right hand is!'
+        };
+        var currentDirIndex = 0;
+
+        function initDirRounds() {
+            var container = document.getElementById('dirRounds');
+            clearChildren(container);
+            for (var i = 0; i < directions.length; i++) {
+                var dot = document.createElement('div');
+                dot.className = 'round-dot';
+                if (i === 0) dot.classList.add('active');
+                container.appendChild(dot);
+            }
+        }
+
+        function updateDirRounds() {
+            var dots = document.querySelectorAll('#dirRounds .round-dot');
+            dots.forEach(function(dot, index) {
+                dot.classList.remove('active');
+                if (index < currentDirIndex) {
+                    dot.classList.add('complete');
+                }
+                if (index === currentDirIndex) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function updateDirectionQuestion() {
+            if (currentDirIndex >= directions.length) {
+                tabsCompleted.directions = true;
+                totalScore += 3;
+                updateProgress();
+                updateMascot('Fantastic! You know all your directions! Up, down, left, and right!');
+                checkAllComplete();
+                return;
+            }
+
+            document.getElementById('dirCounter').textContent = 'Question ' + (currentDirIndex + 1) + ' of ' + directions.length;
+            document.getElementById('dirQuestion').textContent = 'Tap ' + dirNames[directions[currentDirIndex]] + '!';
+            updateDirRounds();
+        }
+
+        function checkDirection(dir) {
+            var btns = document.querySelectorAll('.dir-btn');
+            var correctDir = directions[currentDirIndex];
+
+            btns.forEach(function(btn) {
+                btn.classList.remove('correct', 'wrong');
+            });
+
+            if (dir === correctDir) {
+                event.target.classList.add('correct');
+                totalScore++;
+                playSound('correct');
+                updateMascot('Correct! ' + dirMessages[dir]);
+                updateProgress();
+                setTimeout(function() {
+                    currentDirIndex++;
+                    updateDirectionQuestion();
+                }, 800);
+            } else {
+                event.target.classList.add('wrong');
+                playSound('wrong');
+                updateMascot('That is ' + dirNames[dir] + '. Try to find ' + dirNames[correctDir] + '!');
+            }
+        }
+
+        initDirRounds();
+        updateDirectionQuestion();
+
+        // ==================== SYMBOLS TAB ====================
+        var mapSymbols = [
+            { emoji: '🏠', answers: ['House', 'Tree', 'Water', 'Road'], correct: 0, hint: 'This is where people live!' },
+            { emoji: '🌊', answers: ['Land', 'Water', 'Mountain', 'Park'], correct: 1, hint: 'Fish swim in this!' },
+            { emoji: '🏫', answers: ['House', 'Shop', 'School', 'Hospital'], correct: 2, hint: 'Children learn here!' },
+            { emoji: '🛣️', answers: ['River', 'Road', 'Park', 'Forest'], correct: 1, hint: 'Cars drive on this!' },
+            { emoji: '⛰️', answers: ['Mountain', 'Lake', 'Building', 'Bridge'], correct: 0, hint: 'Very tall and has snow on top!' },
+            { emoji: '🏞️', answers: ['Beach', 'Desert', 'Park', 'City'], correct: 2, hint: 'A place to play outside!' },
+            { emoji: '🌉', answers: ['Building', 'Bridge', 'Tower', 'Wall'], correct: 1, hint: 'Helps you cross water!' },
+            { emoji: '🏪', answers: ['School', 'Hospital', 'Shop', 'Library'], correct: 2, hint: 'You buy things here!' },
+            { emoji: '🌳', answers: ['Flower', 'Tree', 'Grass', 'Bush'], correct: 1, hint: 'Tall with leaves and branches!' },
+            { emoji: '🏥', answers: ['School', 'Hospital', 'Shop', 'Park'], correct: 1, hint: 'Doctors help sick people here!' }
+        ];
+        var currentSymbolIndex = 0;
+
+        function shuffleArray(array) {
+            var shuffled = array.slice();
+            for (var i = shuffled.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = shuffled[i];
+                shuffled[i] = shuffled[j];
+                shuffled[j] = temp;
+            }
+            return shuffled;
+        }
+
+        function displaySymbol() {
+            if (currentSymbolIndex >= mapSymbols.length) {
+                tabsCompleted.symbols = true;
+                totalScore += 3;
+                updateProgress();
+                updateMascot('Wonderful! You know all the map symbols! You can read any map now!');
+                checkAllComplete();
+                return;
+            }
+
+            var symbol = mapSymbols[currentSymbolIndex];
+            document.getElementById('symbolsCounter').textContent = 'Question ' + (currentSymbolIndex + 1) + ' of ' + mapSymbols.length;
+            document.getElementById('symbolQuestion').textContent = symbol.emoji;
+            document.getElementById('symbolHint').textContent = symbol.hint;
+
+            var grid = document.getElementById('symbolsGrid');
+            clearChildren(grid);
+
+            symbol.answers.forEach(function(answer, index) {
+                var card = document.createElement('div');
+                card.className = 'symbol-card';
+                card.onclick = function() {
+                    checkSymbol(index, symbol.correct, card);
+                };
+
+                var label = document.createElement('div');
+                label.className = 'symbol-label';
+                label.textContent = answer;
+                card.appendChild(label);
+
+                grid.appendChild(card);
+            });
+        }
+
+        function checkSymbol(selected, correct, card) {
+            if (selected === correct) {
+                card.classList.add('correct');
+                totalScore++;
+                playSound('correct');
+                updateMascot('Correct! ' + mapSymbols[currentSymbolIndex].emoji + ' means ' + mapSymbols[currentSymbolIndex].answers[correct] + ' on a map!');
+                updateProgress();
+                setTimeout(function() {
+                    currentSymbolIndex++;
+                    displaySymbol();
+                }, 1000);
+            } else {
+                card.classList.add('wrong');
+                playSound('wrong');
+                updateMascot('Not quite! Think about the hint: ' + mapSymbols[currentSymbolIndex].hint);
+                setTimeout(function() {
+                    card.classList.remove('wrong');
+                }, 500);
+            }
+        }
+
+        displaySymbol();
+
+        // ==================== LAND/WATER TAB ====================
+        var mapLayouts = [
+            ['land', 'water', 'land', 'land', 'water', 'land', 'water', 'water', 'land', 'land', 'water', 'land', 'water', 'land', 'water', 'land'],
+            ['water', 'water', 'land', 'water', 'land', 'water', 'water', 'land', 'water', 'land', 'land', 'water', 'land', 'water', 'land', 'land'],
+            ['land', 'land', 'water', 'land', 'water', 'water', 'land', 'water', 'land', 'water', 'water', 'land', 'water', 'land', 'land', 'water']
+        ];
+        var currentLayout = 0;
+        var targetType = 'land';
+        var foundLW = 0;
+        var targetCount = 0;
+        var lwRound = 1;
+
+        function initLandWater() {
+            var grid = document.getElementById('mapGrid');
+            clearChildren(grid);
+
+            var mapCells = mapLayouts[currentLayout];
+            targetCount = mapCells.filter(function(c) {
+                return c === targetType;
+            }).length;
+            foundLW = 0;
+
+            document.getElementById('lwCounter').textContent = 'Found: ' + foundLW + ' / ' + targetCount;
+
+            var instruction = document.getElementById('lwInstruction');
+            instruction.className = 'lw-instruction ' + targetType;
+            if (targetType === 'land') {
+                instruction.textContent = 'Tap all the LAND! (Green = Land with trees 🌲)';
+            } else {
+                instruction.textContent = 'Tap all the WATER! (Blue = Water with fish 🐟)';
+            }
+
+            document.getElementById('nextRound').classList.add('hidden');
+
+            mapCells.forEach(function(type, index) {
+                var cell = document.createElement('div');
+                cell.className = 'map-cell ' + type;
+                cell.textContent = type === 'land' ? '🌲' : '🐟';
+                cell.onclick = function() {
+                    checkLandWater(type, cell);
+                };
+                grid.appendChild(cell);
+            });
+        }
+
+        function checkLandWater(type, cell) {
+            if (cell.classList.contains('selected')) return;
+
+            if (type === targetType) {
+                cell.classList.add('selected');
+                foundLW++;
+                totalScore++;
+                playSound('correct');
+
+                if (targetType === 'land') {
+                    updateMascot('Yes! Green is LAND! Trees and animals live on land!');
+                } else {
+                    updateMascot('Yes! Blue is WATER! Fish and dolphins live in water!');
+                }
+
+                document.getElementById('lwCounter').textContent = 'Found: ' + foundLW + ' / ' + targetCount;
+                updateProgress();
+
+                if (foundLW >= targetCount) {
+                    if (targetType === 'land' && lwRound === 1) {
+                        targetType = 'water';
+                        document.getElementById('nextRound').classList.remove('hidden');
+                        updateMascot('Great! You found all the land! Now find the water!');
+                    } else if (targetType === 'water' && lwRound === 1) {
+                        lwRound = 2;
+                        currentLayout = 1;
+                        targetType = 'land';
+                        document.getElementById('nextRound').classList.remove('hidden');
+                        updateMascot('Excellent! Ready for a new map?');
+                    } else if (lwRound === 2) {
+                        tabsCompleted.landwater = true;
+                        totalScore += 3;
+                        updateProgress();
+                        updateMascot('Amazing! You can tell land from water on any map! Green = Land, Blue = Water!');
+                        checkAllComplete();
+                    }
+                }
+            } else {
+                playSound('wrong');
+                updateMascot('That is ' + type + '! Remember: ' + (targetType === 'land' ? 'Green is land!' : 'Blue is water!'));
+            }
+        }
+
+        function nextLWRound() {
+            playSound('click');
+            initLandWater();
+        }
+
+        initLandWater();
+
+        // ==================== TREASURE TAB ====================
+        var treasureClues = [
+            { text: 'Start at the TREE 🌳 and go RIGHT to find the house!', target: 'house', highlight: 'tree' },
+            { text: 'From the HOUSE 🏠, go RIGHT to the mountain!', target: 'mountain', highlight: 'house' },
+            { text: 'From the MOUNTAIN ⛰️, go DOWN to the bridge!', target: 'bridge', highlight: 'mountain' },
+            { text: 'From the BRIDGE 🌉, go DOWN to find the X!', target: 'xmark', highlight: 'bridge' },
+            { text: 'DIG HERE! Tap the X to find the treasure!', target: 'treasure', highlight: 'xmark' }
+        ];
+        var currentClueIndex = 0;
+
+        function updateClue() {
+            // Remove highlights
+            document.querySelectorAll('.map-item').forEach(function(item) {
+                item.classList.remove('highlighted');
+            });
+
+            if (currentClueIndex >= treasureClues.length) {
+                document.getElementById('xmark').style.display = 'none';
+                document.getElementById('treasure').style.display = 'block';
+                document.getElementById('treasure').classList.add('found');
+                document.getElementById('treasureClue').textContent = '🎉 You found the TREASURE! 💎';
+                document.getElementById('treasureStep').textContent = 'Complete!';
+                tabsCompleted.treasure = true;
+                totalScore += 5;
+                updateProgress();
+                playSound('treasure');
+                updateMascot('HOORAY! You followed all the direction clues and found the treasure! You are a real map explorer!');
+                checkAllComplete();
+                return;
+            }
+
+            var clue = treasureClues[currentClueIndex];
+            document.getElementById('treasureClue').textContent = clue.text;
+            document.getElementById('treasureStep').textContent = 'Step ' + (currentClueIndex + 1) + ' of ' + treasureClues.length;
+
+            // Highlight the starting point
+            if (clue.highlight) {
+                var highlightItem = document.getElementById(clue.highlight);
+                if (highlightItem) {
+                    highlightItem.classList.add('highlighted');
+                }
+            }
+        }
+
+        document.querySelectorAll('.map-item').forEach(function(item) {
+            item.onclick = function() {
+                if (currentClueIndex >= treasureClues.length) return;
+
+                var targetId = treasureClues[currentClueIndex].target;
+
+                if (item.id === targetId) {
+                    item.classList.add('found');
+                    totalScore++;
+                    playSound('correct');
+
+                    if (item.id === 'xmark') {
+                        updateMascot('You found the X! The treasure is here! Tap again to dig!');
+                    } else if (item.id === 'treasure') {
+                        // Handled in updateClue
+                    } else {
+                        updateMascot('Correct! You found the ' + item.id.toUpperCase() + '! Read the next clue!');
+                    }
+
+                    updateProgress();
+                    currentClueIndex++;
+                    setTimeout(function() {
+                        updateClue();
+                    }, 800);
+                } else if (item.id !== 'treasure' && item.id !== 'xmark') {
+                    playSound('wrong');
+                    updateMascot('That is the ' + item.id.toUpperCase() + '. Read the clue carefully!');
+                }
+            };
+        });
+
+        updateClue();
+    </script>
+</body>
+</html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Needs vs Wants - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: headerBounce 2s ease infinite;
+        }
+        @keyframes headerBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Mascot - Benny Bunny */
+        .mascot-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .mascot {
+            font-size: 4rem;
+            animation: bunnyHop 1s ease-in-out infinite;
+        }
+        @keyframes bunnyHop {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            position: relative;
+            flex: 1;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+        .speech-bubble p {
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        .mascot-name {
+            font-weight: bold;
+            color: #f5576c;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #f5576c, #f093fb, #667eea);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .progress-text {
+            text-align: center;
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .game-card h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        /* Story Section Enhanced */
+        .story-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .story-box::before {
+            content: '✨';
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.2;
+            right: 10px;
+            top: 10px;
+            animation: sparkle 2s infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .story-character {
+            text-align: center;
+            font-size: 5rem;
+            margin-bottom: 15px;
+            animation: storyBounce 1s ease;
+        }
+        @keyframes storyBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .story-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+        }
+        .highlight { color: #f5576c; font-weight: bold; }
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .next-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .next-btn:active { transform: translateY(0); }
+
+        /* Sorting Game Enhanced */
+        .definition-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #4caf50;
+            transition: all 0.3s;
+        }
+        .definition-box:hover { transform: scale(1.02); }
+        .definition-box h4 { color: #2e7d32; margin-bottom: 10px; font-size: 1.2rem; }
+        .definition-box.want-box { background: #fce4ec; border-color: #e91e63; }
+        .definition-box.want-box h4 { color: #c2185b; }
+
+        .sorting-instruction {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #555;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 10px;
+        }
+
+        .item-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .item-card {
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            border: 4px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .item-card:hover { transform: scale(1.05); }
+        .item-card:active { transform: scale(0.95); }
+        .item-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #e8e4f8, #f0e6ff);
+            animation: pulse 0.5s;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .item-card.sorted {
+            opacity: 0.4;
+            pointer-events: none;
+            transform: scale(0.9);
+        }
+        .item-card .emoji { font-size: 2.5rem; display: block; }
+        .item-card .label { font-size: 1rem; font-weight: bold; margin-top: 5px; }
+
+        .sorting-area {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .drop-zone {
+            flex: 1;
+            min-height: 180px;
+            border: 4px dashed #ddd;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .drop-zone:hover { transform: scale(1.02); }
+        .drop-zone h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .needs-zone { border-color: #28a745; background: rgba(40,167,69,0.05); }
+        .needs-zone:hover { background: rgba(40,167,69,0.15); }
+        .needs-zone h3 { background: #d4edda; color: #155724; }
+        .wants-zone { border-color: #dc3545; background: rgba(220,53,69,0.05); }
+        .wants-zone:hover { background: rgba(220,53,69,0.15); }
+        .wants-zone h3 { background: #f8d7da; color: #721c24; }
+        .sorted-item {
+            display: inline-block;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 10px;
+            margin: 5px;
+            font-size: 1.8rem;
+            animation: dropIn 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        @keyframes dropIn {
+            0% { transform: scale(0) rotate(-180deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* Three Jars Enhanced */
+        .jars {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+        }
+        .jar {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px;
+            border-radius: 15px;
+        }
+        .jar:hover { transform: scale(1.1); background: rgba(0,0,0,0.05); }
+        .jar .emoji {
+            font-size: 4rem;
+            display: block;
+            transition: all 0.3s;
+        }
+        .jar .label {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 8px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .jar-spend .label { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); color: white; }
+        .jar-save .label { background: linear-gradient(135deg, #4ECDC4, #44a08d); color: white; }
+        .jar-share .label { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .jar.selected {
+            transform: scale(1.15);
+            background: rgba(102,126,234,0.1);
+        }
+        .jar.selected .emoji {
+            animation: jarBounce 0.5s ease;
+        }
+        @keyframes jarBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .jar.learned .emoji::after {
+            content: '✓';
+            position: absolute;
+            font-size: 1.5rem;
+            color: #28a745;
+        }
+
+        .coin-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .coin {
+            display: inline-block;
+            font-size: 3rem;
+            animation: coinSpin 2s linear infinite;
+        }
+        @keyframes coinSpin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        .jar-message {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .score {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .stars { font-size: 2.5rem; }
+        .star {
+            color: #ddd;
+            transition: all 0.5s;
+            display: inline-block;
+        }
+        .star.earned {
+            color: #FFD700;
+            animation: starEarned 0.6s ease;
+            filter: drop-shadow(0 0 10px gold);
+        }
+        @keyframes starEarned {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.5) rotate(0deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+        .feedback.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feedback.success { background: linear-gradient(135deg, #d4edda, #a8e6cf); color: #155724; }
+        .feedback.info { background: #fff3cd; color: #856404; }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Celebration Overlay */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .celebration.show {
+            display: flex;
+            animation: fadeIn 0.5s;
+        }
+        .celebration-content {
+            text-align: center;
+            color: white;
+            animation: bounceIn 0.8s;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .celebration-emoji {
+            font-size: 6rem;
+            animation: celebrateBounce 1s ease infinite;
+        }
+        @keyframes celebrateBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .celebration h2 {
+            font-size: 2rem;
+            margin: 20px 0;
+            text-shadow: 0 0 20px gold;
+        }
+        .celebration-stars {
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+        .play-again-btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-family: inherit;
+            background: linear-gradient(135deg, #f5576c, #f093fb);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Needs vs Wants</h1>
+            <p style="color: rgba(255,255,255,0.9);">Learn about money with Benny Bunny!</p>
+        </div>
+
+        <!-- Mascot -->
+        <div class="mascot-container">
+            <div class="mascot">🐰</div>
+            <div class="speech-bubble">
+                <div class="mascot-name">Benny Bunny</div>
+                <p id="mascotSpeech">Hi there! I'm Benny Bunny! Today we're going to learn about NEEDS and WANTS. Ready for an adventure?</p>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0 of 3 activities complete</div>
+        </div>
+
+        <div class="score">
+            <div class="stars">
+                <span class="star" id="star1">★</span>
+                <span class="star" id="star2">★</span>
+                <span class="star" id="star3">★</span>
+            </div>
+        </div>
+
+        <!-- Story Section -->
+        <div class="game-card" id="storyCard">
+            <h2>📖 Benny's Shopping Trip</h2>
+            <div class="story-box">
+                <div class="story-character" id="storyEmoji">🐰</div>
+                <div class="story-text" id="storyText">Hi! I'm Benny Bunny! 🐰 Today I'm going to the store with my mom!</div>
+            </div>
+            <button class="next-btn" id="storyBtn" onclick="nextStory()">Next →</button>
+        </div>
+
+        <!-- Sorting Game -->
+        <div class="game-card" id="sortCard" style="display: none;">
+            <h2>🎯 Sort: Need or Want?</h2>
+            <div class="definition-box">
+                <h4>🏠 NEED = Must have to live</h4>
+                <p>Food, water, clothes, home</p>
+            </div>
+            <div class="definition-box want-box">
+                <h4>🎁 WANT = Nice to have</h4>
+                <p>Toys, candy, games</p>
+            </div>
+            <p class="sorting-instruction">Tap an item, then tap NEEDS or WANTS!</p>
+            <div class="item-cards" id="itemCards"></div>
+            <div class="sorting-area">
+                <div class="drop-zone needs-zone" id="needsZone" onclick="sortItem('need')">
+                    <h3>✓ NEEDS</h3>
+                    <div id="needsItems"></div>
+                </div>
+                <div class="drop-zone wants-zone" id="wantsZone" onclick="sortItem('want')">
+                    <h3>♥ WANTS</h3>
+                    <div id="wantsItems"></div>
+                </div>
+            </div>
+            <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Three Jars -->
+        <div class="game-card" id="jarsCard" style="display: none;">
+            <h2>🏺 Three Jars Activity</h2>
+            <p style="text-align: center; margin-bottom: 15px; font-size: 1.1rem;">When you get money, you can put it in THREE jars!</p>
+            <div class="jars">
+                <div class="jar jar-spend" onclick="selectJar('spend')">
+                    <span class="emoji">🛒</span>
+                    <span class="label">SPEND</span>
+                </div>
+                <div class="jar jar-save" onclick="selectJar('save')">
+                    <span class="emoji">🐷</span>
+                    <span class="label">SAVE</span>
+                </div>
+                <div class="jar jar-share" onclick="selectJar('share')">
+                    <span class="emoji">🎁</span>
+                    <span class="label">SHARE</span>
+                </div>
+            </div>
+            <div class="coin-display">
+                <span class="coin">🪙</span>
+            </div>
+            <div class="jar-message" id="jarMessage">Tap each jar to learn about it!</div>
+            <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to All Games</a>
+    </div>
+
+    <!-- Celebration Overlay -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🐰💰</div>
+            <h2>Money Smart!</h2>
+            <p style="color: #ccc; font-size: 1.2rem;">You learned about Needs, Wants, and the Three Jars!</p>
+            <div class="celebration-stars" id="celebrationStars"></div>
+            <button class="play-again-btn" onclick="location.reload()">Play Again!</button>
+            <a href="index.html" class="back-btn" style="display: inline-block; margin-top: 15px;">Back to Games</a>
+        </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        // Audio Context for sounds
+        var audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            var oscillator = audioCtx.createOscillator();
+            var gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            switch(type) {
+                case 'pop':
+                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.15);
+                    break;
+                case 'success':
+                    oscillator.frequency.setValueAtTime(523, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.4);
+                    break;
+                case 'wrong':
+                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                    break;
+                case 'star':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(523, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.4);
+                    break;
+                case 'coin':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                    break;
+                case 'complete':
+                    var notes = [523, 659, 784, 1047];
+                    notes.forEach(function(freq, i) {
+                        var osc = audioCtx.createOscillator();
+                        var gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.3);
+                        osc.start(audioCtx.currentTime + i * 0.15);
+                        osc.stop(audioCtx.currentTime + i * 0.15 + 0.3);
+                    });
+                    break;
+            }
+        }
+
+        function createConfetti() {
+            var container = document.getElementById('confetti');
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            var colors = ['#f5576c', '#f093fb', '#667eea', '#ffd700', '#4ECDC4', '#FF6B6B'];
+            for (var i = 0; i < 50; i++) {
+                var piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 2 + 's';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                container.appendChild(piece);
+            }
+        }
+
+        var starsEarned = 0;
+        var storyIndex = 0;
+        var selectedItem = null;
+        var sortedCount = 0;
+        var jarsLearned = 0;
+        var learnedJars = {};
+        var activitiesComplete = 0;
+
+        var mascotMessages = {
+            start: "Hi there! I'm Benny Bunny! Today we're going to learn about NEEDS and WANTS. Ready for an adventure?",
+            storyEnd: "Now I understand the difference! Let's practice sorting items!",
+            sortingStart: "Tap an item and then put it in the right box!",
+            sortCorrect: "Great job! You're getting really good at this!",
+            sortWrong: "Oops! Try the other box!",
+            sortComplete: "Amazing! You sorted all the items correctly!",
+            jarsStart: "Now let's learn about the THREE JARS for money!",
+            jarSpend: "The SPEND jar is for buying small treats NOW!",
+            jarSave: "The SAVE jar is for bigger things LATER - like a bike!",
+            jarShare: "The SHARE jar is for helping others - it feels great!",
+            complete: "You did it! You're a MONEY EXPERT now!"
+        };
+
+        function updateMascot(message) {
+            document.getElementById('mascotSpeech').textContent = message;
+        }
+
+        function updateProgress() {
+            var percent = (activitiesComplete / 3) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = activitiesComplete + ' of 3 activities complete';
+        }
+
+        // Story - using textContent for safe updates
+        var storyPages = [
+            { text: "Hi! I'm Benny Bunny! 🐰 Today I'm going to the store with my mom!", emoji: "🐰" },
+            { text: "My mom says: \"Benny, we NEED to buy food for dinner.\" 🥕🥬", emoji: "🛒" },
+            { text: "I see a shiny toy car! 🚗 I say: \"Mom, I WANT that!\"", emoji: "🚗" },
+            { text: "Mom explains: A NEED is something we MUST have to live - like food, water, and clothes.", emoji: "🏠" },
+            { text: "A WANT is something nice to have but we can live without - like toys and candy!", emoji: "🎁" },
+            { text: "Now I understand! Let's practice sorting NEEDS and WANTS! 🎯", emoji: "🎯" }
+        ];
+
+        function nextStory() {
+            initAudio();
+            playSound('pop');
+            storyIndex++;
+            if (storyIndex < storyPages.length) {
+                var page = storyPages[storyIndex];
+                document.getElementById('storyText').textContent = page.text;
+                var emojiEl = document.getElementById('storyEmoji');
+                emojiEl.textContent = page.emoji;
+                emojiEl.style.animation = 'none';
+                emojiEl.offsetHeight;
+                emojiEl.style.animation = 'storyBounce 0.5s ease';
+
+                if (storyIndex === storyPages.length - 1) {
+                    document.getElementById('storyBtn').textContent = "Let's Play! →";
+                    updateMascot(mascotMessages.storyEnd);
+                }
+            } else {
+                earnStar(1);
+                activitiesComplete++;
+                updateProgress();
+                document.getElementById('storyCard').style.display = 'none';
+                document.getElementById('sortCard').style.display = 'block';
+                loadSortingGame();
+                updateMascot(mascotMessages.sortingStart);
+            }
+        }
+
+        // Sorting Game
+        var items = [
+            { emoji: '🍎', label: 'Food', type: 'need' },
+            { emoji: '💧', label: 'Water', type: 'need' },
+            { emoji: '👕', label: 'Clothes', type: 'need' },
+            { emoji: '🏠', label: 'Home', type: 'need' },
+            { emoji: '🧸', label: 'Toy', type: 'want' },
+            { emoji: '🍬', label: 'Candy', type: 'want' },
+            { emoji: '🎮', label: 'Video Game', type: 'want' },
+            { emoji: '🎈', label: 'Balloon', type: 'want' }
+        ];
+
+        function loadSortingGame() {
+            var container = document.getElementById('itemCards');
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            // Shuffle items
+            var shuffled = items.slice().sort(function() { return Math.random() - 0.5; });
+
+            shuffled.forEach(function(item) {
+                var card = document.createElement('div');
+                card.className = 'item-card';
+                card.dataset.type = item.type;
+                card.dataset.emoji = item.emoji;
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.className = 'emoji';
+                emojiSpan.textContent = item.emoji;
+
+                var labelSpan = document.createElement('span');
+                labelSpan.className = 'label';
+                labelSpan.textContent = item.label;
+
+                card.appendChild(emojiSpan);
+                card.appendChild(labelSpan);
+                card.onclick = function() { selectItemCard(card); };
+                container.appendChild(card);
+            });
+        }
+
+        function selectItemCard(card) {
+            if (card.classList.contains('sorted')) return;
+            initAudio();
+            playSound('pop');
+
+            document.querySelectorAll('.item-card').forEach(function(c) {
+                c.classList.remove('selected');
+            });
+            card.classList.add('selected');
+            selectedItem = card;
+        }
+
+        function sortItem(zone) {
+            if (!selectedItem) return;
+            initAudio();
+
+            var itemType = selectedItem.dataset.type;
+            var emoji = selectedItem.dataset.emoji;
+
+            if (itemType === zone) {
+                playSound('success');
+                var sorted = document.createElement('span');
+                sorted.className = 'sorted-item';
+                sorted.textContent = emoji;
+
+                if (zone === 'need') {
+                    document.getElementById('needsItems').appendChild(sorted);
+                } else {
+                    document.getElementById('wantsItems').appendChild(sorted);
+                }
+
+                selectedItem.classList.add('sorted');
+                selectedItem.classList.remove('selected');
+                selectedItem = null;
+                sortedCount++;
+                updateMascot(mascotMessages.sortCorrect);
+
+                if (sortedCount >= 8) {
+                    earnStar(2);
+                    activitiesComplete++;
+                    updateProgress();
+                    showFeedback('feedback1', '🎉 Amazing! You sorted all the items!', true);
+                    updateMascot(mascotMessages.sortComplete);
+                    setTimeout(function() {
+                        document.getElementById('sortCard').style.display = 'none';
+                        document.getElementById('jarsCard').style.display = 'block';
+                        updateMascot(mascotMessages.jarsStart);
+                    }, 2000);
+                }
+            } else {
+                playSound('wrong');
+                updateMascot(mascotMessages.sortWrong);
+                showFeedback('feedback1', 'Hmm, try the other box!', false);
+                setTimeout(function() {
+                    document.getElementById('feedback1').classList.remove('show');
+                }, 1500);
+            }
+        }
+
+        // Three Jars
+        var jarInfo = {
+            spend: { message: "SPEND jar is for buying small things NOW! Like a snack or stickers!", mascot: "jarSpend" },
+            save: { message: "SAVE jar is for buying something BIG later! Like a bike or a special toy!", mascot: "jarSave" },
+            share: { message: "SHARE jar is for helping others! Give to friends or charity!", mascot: "jarShare" }
+        };
+
+        function selectJar(jar) {
+            initAudio();
+            playSound('coin');
+
+            document.querySelectorAll('.jar').forEach(function(j) {
+                j.classList.remove('selected');
+            });
+            document.querySelector('.jar-' + jar).classList.add('selected');
+            document.getElementById('jarMessage').textContent = jarInfo[jar].message;
+            updateMascot(mascotMessages[jarInfo[jar].mascot]);
+
+            if (!learnedJars[jar]) {
+                learnedJars[jar] = true;
+                document.querySelector('.jar-' + jar).classList.add('learned');
+                jarsLearned++;
+                if (jarsLearned >= 3) {
+                    earnStar(3);
+                    activitiesComplete++;
+                    updateProgress();
+                    showFeedback('feedback2', '🏆 You learned about all three jars! Great job!', true);
+                    updateMascot(mascotMessages.complete);
+                    setTimeout(showCelebration, 1500);
+                }
+            }
+        }
+
+        function earnStar(num) {
+            if (document.getElementById('star' + num).classList.contains('earned')) return;
+            document.getElementById('star' + num).classList.add('earned');
+            starsEarned++;
+            playSound('star');
+        }
+
+        function showFeedback(id, message, success) {
+            var el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'feedback show ' + (success ? 'success' : 'info');
+        }
+
+        function showCelebration() {
+            playSound('complete');
+            createConfetti();
+            var celebration = document.getElementById('celebration');
+            var starsDisplay = document.getElementById('celebrationStars');
+            var starsText = '';
+            for (var i = 0; i < starsEarned; i++) {
+                starsText += '⭐';
+            }
+            starsDisplay.textContent = starsText + ' ' + starsEarned + '/3 Stars!';
+            celebration.classList.add('show');
+        }
+    </script>
+</body>
+</html>

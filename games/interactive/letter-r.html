@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter R - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: rabbitHop 0.8s ease-in-out infinite; }
+        @keyframes rabbitHop {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .big-letter {
+            font-size: 6rem;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            margin: 15px 0;
+        }
+        .big-letter span { display: inline-block; animation: letterPop 0.5s ease forwards; }
+        .big-letter span:nth-child(2) { animation-delay: 0.2s; font-size: 4rem; vertical-align: bottom; margin-left: 10px; }
+        @keyframes letterPop {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.3); }
+        .tab-btn.active { background: white; color: #e74c3c; font-weight: bold; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .trace-canvas-container { text-align: center; margin-bottom: 20px; }
+        #traceCanvas {
+            border: 3px dashed #e74c3c;
+            border-radius: 15px;
+            background: #fafafa;
+            touch-action: none;
+            cursor: crosshair;
+        }
+        .trace-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        .trace-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .trace-btn.clear { background: #e74c3c; color: white; }
+        .trace-btn.done { background: #27ae60; color: white; }
+        .trace-btn:hover { transform: scale(1.05); }
+
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .letter-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: #f0f0f0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .letter-cell:hover { transform: scale(1.05); background: #e0e0e0; }
+        .letter-cell.correct {
+            background: #d5f5e3;
+            border-color: #27ae60;
+            animation: correctPop 0.5s ease;
+        }
+        .letter-cell.wrong {
+            background: #fadbd8;
+            border-color: #e74c3c;
+            animation: wrongShake 0.5s ease;
+        }
+        .letter-cell.disabled { pointer-events: none; opacity: 0.6; }
+        @keyframes correctPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .word-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .word-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .word-card .emoji { font-size: 3rem; margin-bottom: 10px; }
+        .word-card .word { font-size: 1.2rem; font-weight: bold; color: #333; }
+        .word-card.correct { background: #d5f5e3; border-color: #27ae60; }
+        .word-card.wrong { background: #fadbd8; border-color: #e74c3c; }
+
+        .missing-word { text-align: center; margin: 30px 0; }
+        .missing-word .emoji { font-size: 5rem; margin-bottom: 15px; }
+        .missing-word .word-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+        }
+        .missing-word .word-display .blank {
+            color: #e74c3c;
+            border-bottom: 4px solid #e74c3c;
+            padding: 0 5px;
+        }
+        .letter-choices { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .letter-choice {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            background: #f0f0f0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-family: inherit;
+        }
+        .letter-choice:hover { background: #e74c3c; color: white; transform: scale(1.1); }
+
+        .celebration {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        .celebration.show { display: block; animation: celebrationPop 0.5s ease; }
+        @keyframes celebrationPop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .celebration h2 { font-size: 2rem; color: #e74c3c; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; animation: trophyBounce 1s ease infinite; }
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confettiFall 3s ease-out forwards;
+        }
+        @keyframes confettiFall {
+            to { top: 100vh; transform: rotate(720deg); }
+        }
+
+        .instruction {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .next-btn:hover { transform: scale(1.02); }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">← Back to Games</a>
+
+        <div class="header">
+            <h1>Letter R Adventure!</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🐰</div>
+            <div class="speech-bubble" id="mascotMessage">
+                Hello! I am Ruby Rabbit! Let us learn about the letter R together! R says /r/ like ROAR!
+            </div>
+        </div>
+
+        <div class="big-letter">
+            <span>R</span><span>r</span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars">
+            <span class="star" id="star1">⭐</span>
+            <span class="star" id="star2">⭐</span>
+            <span class="star" id="star3">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="trace">✏️ Trace</button>
+            <button class="tab-btn" data-tab="find">🔍 Find</button>
+            <button class="tab-btn" data-tab="words">📖 Words</button>
+            <button class="tab-btn" data-tab="missing">🧩 Missing</button>
+        </div>
+
+        <div class="tab-content active" id="trace-tab">
+            <div class="game-area">
+                <div class="instruction">Trace the letter R with your finger or mouse!</div>
+                <div class="trace-canvas-container">
+                    <canvas id="traceCanvas" width="300" height="300"></canvas>
+                </div>
+                <div class="trace-buttons">
+                    <button class="trace-btn clear" onclick="clearCanvas()">🗑️ Clear</button>
+                    <button class="trace-btn done" onclick="completeTrace()">✓ Done!</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="find-tab">
+            <div class="game-area">
+                <div class="instruction">Tap all the letter R's you can find!</div>
+                <div class="question-counter" id="findCounter">Found: 0 / 8</div>
+                <div class="letter-grid" id="letterGrid"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="words-tab">
+            <div class="game-area">
+                <div class="instruction">Tap the words that START with R!</div>
+                <div class="question-counter" id="wordsCounter">Question 1 of 10</div>
+                <div class="word-grid" id="wordGrid"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="missing-tab">
+            <div class="game-area">
+                <div class="instruction">Which letter is missing?</div>
+                <div class="question-counter" id="missingCounter">Question 1 of 6</div>
+                <div class="missing-word" id="missingWord"></div>
+                <div class="letter-choices" id="letterChoices"></div>
+                <button class="next-btn hidden" id="nextMissing" onclick="nextMissingWord()">Next Word →</button>
+            </div>
+        </div>
+
+        <div class="celebration" id="celebration">
+            <div class="trophy">🏆</div>
+            <h2>ROAR-some Job!</h2>
+            <p>You are a Letter R Champion!</p>
+            <button class="next-btn" onclick="location.reload()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        function clearChildren(element) {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        }
+
+        var audioContext = null;
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            var oscillator = audioContext.createOscillator();
+            var gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+            } else if (type === 'wrong') {
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+            } else if (type === 'star') {
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1108.73, audioContext.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            } else if (type === 'click') {
+                oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            } else if (type === 'complete') {
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.15);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.3);
+                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.45);
+            }
+
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        var totalScore = 0;
+        var maxScore = 32;
+        var starsEarned = 0;
+        var tabsCompleted = { trace: false, find: false, words: false, missing: false };
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                playSound('click');
+                var tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                this.classList.add('active');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+
+        function updateProgress() {
+            var percent = (totalScore / maxScore) * 100;
+            document.getElementById('progressBar').style.width = Math.min(percent, 100) + '%';
+
+            if (percent >= 33 && starsEarned < 1) {
+                starsEarned = 1;
+                document.getElementById('star1').classList.add('earned');
+                playSound('star');
+            }
+            if (percent >= 66 && starsEarned < 2) {
+                starsEarned = 2;
+                document.getElementById('star2').classList.add('earned');
+                playSound('star');
+            }
+            if (percent >= 100 && starsEarned < 3) {
+                starsEarned = 3;
+                document.getElementById('star3').classList.add('earned');
+                playSound('star');
+            }
+        }
+
+        function updateMascot(message) {
+            document.getElementById('mascotMessage').textContent = message;
+        }
+
+        function checkAllComplete() {
+            if (tabsCompleted.trace && tabsCompleted.find && tabsCompleted.words && tabsCompleted.missing) {
+                showCelebration();
+            }
+        }
+
+        function showCelebration() {
+            playSound('complete');
+            document.getElementById('celebration').classList.add('show');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            var colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#e74c3c', '#FF8E53'];
+            for (var i = 0; i < 50; i++) {
+                setTimeout(function() {
+                    var confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(function() { confetti.remove(); }, 3000);
+                }, i * 50);
+            }
+        }
+
+        // TAB 1: TRACE
+        var canvas = document.getElementById('traceCanvas');
+        var ctx = canvas.getContext('2d');
+        var isDrawing = false;
+        var hasDrawn = false;
+
+        function drawGuideLetter() {
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = 'bold 200px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('R', 150, 150);
+        }
+        drawGuideLetter();
+
+        function getPos(e) {
+            var rect = canvas.getBoundingClientRect();
+            var x, y;
+            if (e.touches) {
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            return { x: x, y: y };
+        }
+
+        function startDraw(e) {
+            e.preventDefault();
+            isDrawing = true;
+            hasDrawn = true;
+            var pos = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            var pos = getPos(e);
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function stopDraw() { isDrawing = false; }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDraw);
+        canvas.addEventListener('mouseleave', stopDraw);
+        canvas.addEventListener('touchstart', startDraw);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDraw);
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGuideLetter();
+            hasDrawn = false;
+            playSound('click');
+        }
+
+        function completeTrace() {
+            if (hasDrawn && !tabsCompleted.trace) {
+                tabsCompleted.trace = true;
+                totalScore += 5;
+                updateProgress();
+                playSound('correct');
+                updateMascot('Beautiful R! You traced it perfectly! R says /r/ like RABBIT!');
+                checkAllComplete();
+            } else if (!hasDrawn) {
+                updateMascot('Try tracing the letter R first!');
+            }
+        }
+
+        // TAB 2: FIND
+        var letters = ['R', 'P', 'R', 'B', 'D', 'R', 'K', 'P', 'R', 'B', 'R', 'D', 'K', 'R', 'P', 'R'];
+        var totalRs = 8;
+        var foundRs = 0;
+
+        function initFindGame() {
+            var grid = document.getElementById('letterGrid');
+            clearChildren(grid);
+
+            var shuffled = letters.slice().sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(letter) {
+                var cell = document.createElement('div');
+                cell.className = 'letter-cell';
+                cell.textContent = letter;
+                cell.onclick = function() { checkLetter(cell, letter); };
+                grid.appendChild(cell);
+            });
+        }
+
+        function checkLetter(cell, letter) {
+            if (cell.classList.contains('disabled')) return;
+
+            if (letter === 'R') {
+                cell.classList.add('correct', 'disabled');
+                foundRs++;
+                totalScore++;
+                playSound('correct');
+                updateMascot('Yes! You found an R! /r/ /r/ ROAR!');
+            } else {
+                cell.classList.add('wrong');
+                playSound('wrong');
+                updateMascot('That is the letter ' + letter + '. Keep looking for R!');
+                setTimeout(function() { cell.classList.remove('wrong'); }, 500);
+            }
+
+            document.getElementById('findCounter').textContent = 'Found: ' + foundRs + ' / ' + totalRs;
+            updateProgress();
+
+            if (foundRs === totalRs && !tabsCompleted.find) {
+                tabsCompleted.find = true;
+                totalScore += 2;
+                updateProgress();
+                updateMascot('ROAR-some! You found ALL the Rs! You are a R detective!');
+                checkAllComplete();
+            }
+        }
+        initFindGame();
+
+        // TAB 3: WORDS
+        var wordData = [
+            { emoji: '🌈', word: 'Rainbow', startsR: true },
+            { emoji: '🐰', word: 'Rabbit', startsR: true },
+            { emoji: '🔴', word: 'Red', startsR: true },
+            { emoji: '💍', word: 'Ring', startsR: true },
+            { emoji: '🤖', word: 'Robot', startsR: true },
+            { emoji: '🐱', word: 'Cat', startsR: false },
+            { emoji: '🐕', word: 'Dog', startsR: false },
+            { emoji: '🚗', word: 'Car', startsR: false },
+            { emoji: '🏠', word: 'House', startsR: false },
+            { emoji: '🌳', word: 'Tree', startsR: false }
+        ];
+        var currentWordIndex = 0;
+
+        function shuffleArray(array) {
+            var shuffled = array.slice();
+            for (var i = shuffled.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = shuffled[i];
+                shuffled[i] = shuffled[j];
+                shuffled[j] = temp;
+            }
+            return shuffled;
+        }
+
+        function displayWordPair() {
+            var grid = document.getElementById('wordGrid');
+            clearChildren(grid);
+
+            if (currentWordIndex >= wordData.length) {
+                if (!tabsCompleted.words) {
+                    tabsCompleted.words = true;
+                    totalScore += 3;
+                    updateProgress();
+                    updateMascot('Excellent! You know all your R words! Ruby Rabbit is proud!');
+                    checkAllComplete();
+                }
+                return;
+            }
+
+            document.getElementById('wordsCounter').textContent = 'Question ' + (currentWordIndex + 1) + ' of ' + wordData.length;
+
+            var rWords = wordData.filter(function(w) { return w.startsR; });
+            var nonRWords = wordData.filter(function(w) { return !w.startsR; });
+            var displayWords = shuffleArray([
+                rWords[currentWordIndex % rWords.length],
+                nonRWords[currentWordIndex % nonRWords.length]
+            ]);
+
+            displayWords.forEach(function(wordObj) {
+                var card = document.createElement('div');
+                card.className = 'word-card';
+
+                var emoji = document.createElement('div');
+                emoji.className = 'emoji';
+                emoji.textContent = wordObj.emoji;
+                card.appendChild(emoji);
+
+                var word = document.createElement('div');
+                word.className = 'word';
+                word.textContent = wordObj.word;
+                card.appendChild(word);
+
+                card.onclick = function() { checkWord(card, wordObj.startsR, wordObj.word); };
+                grid.appendChild(card);
+            });
+        }
+
+        function checkWord(card, startsR, wordText) {
+            if (startsR) {
+                card.classList.add('correct');
+                totalScore++;
+                playSound('correct');
+                updateMascot('Yes! ' + wordText + ' starts with R! /r/!');
+            } else {
+                card.classList.add('wrong');
+                playSound('wrong');
+                updateMascot('Not quite! That word starts with a different letter.');
+            }
+
+            updateProgress();
+            setTimeout(function() {
+                currentWordIndex++;
+                displayWordPair();
+            }, 1000);
+        }
+        displayWordPair();
+
+        // TAB 4: MISSING LETTER
+        var missingWords = [
+            { emoji: '🌈', word: 'RAINBOW', display: '_AINBOW' },
+            { emoji: '🐰', word: 'RABBIT', display: '_ABBIT' },
+            { emoji: '🔴', word: 'RED', display: '_ED' },
+            { emoji: '💍', word: 'RING', display: '_ING' },
+            { emoji: '🤖', word: 'ROBOT', display: '_OBOT' },
+            { emoji: '🚀', word: 'ROCKET', display: '_OCKET' }
+        ];
+        var currentMissingIndex = 0;
+        var letterOptions = ['R', 'P', 'B', 'D'];
+
+        function displayMissingWord() {
+            if (currentMissingIndex >= missingWords.length) {
+                if (!tabsCompleted.missing) {
+                    tabsCompleted.missing = true;
+                    totalScore += 3;
+                    updateProgress();
+                    updateMascot('Fantastic! You filled in all the missing Rs! You are a R superstar!');
+                    checkAllComplete();
+                }
+                return;
+            }
+
+            document.getElementById('missingCounter').textContent = 'Question ' + (currentMissingIndex + 1) + ' of ' + missingWords.length;
+            document.getElementById('nextMissing').classList.add('hidden');
+
+            var wordObj = missingWords[currentMissingIndex];
+            var container = document.getElementById('missingWord');
+            clearChildren(container);
+
+            var emoji = document.createElement('div');
+            emoji.className = 'emoji';
+            emoji.textContent = wordObj.emoji;
+            container.appendChild(emoji);
+
+            var display = document.createElement('div');
+            display.className = 'word-display';
+            display.id = 'wordDisplay';
+
+            // Build display with blank
+            var blankSpan = document.createElement('span');
+            blankSpan.className = 'blank';
+            blankSpan.textContent = '_';
+            display.appendChild(blankSpan);
+
+            var restOfWord = document.createTextNode(wordObj.display.substring(1));
+            display.appendChild(restOfWord);
+
+            container.appendChild(display);
+
+            var choicesDiv = document.getElementById('letterChoices');
+            clearChildren(choicesDiv);
+
+            var shuffledOptions = shuffleArray(letterOptions);
+            shuffledOptions.forEach(function(letter) {
+                var btn = document.createElement('button');
+                btn.className = 'letter-choice';
+                btn.textContent = letter;
+                btn.onclick = function() { checkMissingLetter(letter, wordObj); };
+                choicesDiv.appendChild(btn);
+            });
+        }
+
+        function checkMissingLetter(letter, wordObj) {
+            var correctLetter = 'R';
+            var display = document.getElementById('wordDisplay');
+
+            if (letter === correctLetter) {
+                clearChildren(display);
+                display.textContent = wordObj.word;
+                totalScore++;
+                playSound('correct');
+                updateMascot('Perfect! The missing letter was R! ' + wordObj.word + '!');
+                document.getElementById('nextMissing').classList.remove('hidden');
+
+                document.querySelectorAll('.letter-choice').forEach(function(btn) {
+                    btn.style.pointerEvents = 'none';
+                    if (btn.textContent === letter) {
+                        btn.style.background = '#27ae60';
+                        btn.style.color = 'white';
+                    }
+                });
+            } else {
+                playSound('wrong');
+                updateMascot('Try again! Look for the /r/ sound!');
+            }
+            updateProgress();
+        }
+
+        function nextMissingWord() {
+            currentMissingIndex++;
+            displayMissingWord();
+            playSound('click');
+        }
+        displayMissingWord();
+    </script>
+</body>
+</html>
