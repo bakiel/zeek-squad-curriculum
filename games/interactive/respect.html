@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respect - Zeek Squad SEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: respectBounce 1s ease-in-out infinite; }
+        @keyframes respectBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #EC4899;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #EC4899;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .respect-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .respect-card {
+            background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .respect-card:hover { transform: scale(1.05); border-color: #EC4899; }
+        .respect-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+        .respect-card .text { color: #831843; font-weight: bold; font-size: 0.9rem; }
+
+        .word-box {
+            background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .word-box .word {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .speak-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speak-btn:hover { transform: scale(1.02); }
+        .speak-btn:active { transform: scale(0.98); }
+
+        .scenario-card {
+            background: #FDF2F8;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .scenario-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .scenario-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .scenario-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .scenario-option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #F9A8D4;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .scenario-option:hover { background: #FCE7F3; transform: scale(1.02); }
+        .scenario-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .scenario-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .chant-area {
+            text-align: center;
+            padding: 20px;
+        }
+        .chant-text {
+            font-size: 1.5rem;
+            color: #831843;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        .chant-text .highlight {
+            color: #EC4899;
+            font-size: 1.8rem;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .action-item {
+            background: #FDF2F8;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .action-item:hover { border-color: #EC4899; }
+        .action-item.done {
+            background: #D1FAE5;
+            border-color: #10B981;
+        }
+        .action-item .emoji { font-size: 2rem; display: block; margin-bottom: 5px; }
+        .action-item .text { font-size: 0.85rem; color: #666; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #EC4899; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Learning Respect</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">💜</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                RESPECT means treating others nicely! Let's learn together!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="scenarios">Scenarios</button>
+            <button class="tab-btn" data-tab="actions">Actions</button>
+            <button class="tab-btn" data-tab="chant">Chant</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">What is RESPECT?</h2>
+
+                <div class="word-box">
+                    <div class="word">R-E-S-P-E-C-T</div>
+                </div>
+
+                <button class="speak-btn" onclick="speakRespect()">
+                    🔊 Say it: RESPECT!
+                </button>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Respect means treating others the way you want to be treated!
+                </p>
+
+                <div class="respect-cards">
+                    <div class="respect-card" onclick="sayPhrase('Please')">
+                        <span class="emoji">🙏</span>
+                        <span class="text">Say PLEASE</span>
+                    </div>
+                    <div class="respect-card" onclick="sayPhrase('Thank You')">
+                        <span class="emoji">💝</span>
+                        <span class="text">Say THANK YOU</span>
+                    </div>
+                    <div class="respect-card" onclick="sayPhrase('Excuse Me')">
+                        <span class="emoji">🤚</span>
+                        <span class="text">Say EXCUSE ME</span>
+                    </div>
+                    <div class="respect-card" onclick="sayPhrase('I am sorry')">
+                        <span class="emoji">💕</span>
+                        <span class="text">Say I'M SORRY</span>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #831843; font-weight: bold;">
+                    Tap each card to practice polite words!
+                </p>
+            </div>
+
+            <div class="tab-content" id="scenarios">
+                <h2 class="section-title">What Would You Do?</h2>
+                <div id="scenarioContainer"></div>
+            </div>
+
+            <div class="tab-content" id="actions">
+                <h2 class="section-title">Ways to Show Respect</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Tap each action you can do today!
+                </p>
+                <div class="action-grid" id="actionGrid"></div>
+            </div>
+
+            <div class="tab-content" id="chant">
+                <h2 class="section-title">Respect Chant!</h2>
+                <div class="chant-area">
+                    <div class="chant-text">
+                        <span class="highlight">I RESPECT you!</span><br>
+                        <span class="highlight">You RESPECT me!</span><br>
+                        We treat each other<br>
+                        <span class="highlight">RESPECTFULLY!</span>
+                    </div>
+                    <button class="speak-btn" onclick="doChant()">
+                        🎤 Chant Together!
+                    </button>
+                    <p style="color: #666; margin-top: 15px;">
+                        Clap your hands while you chant!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉💜🎉</div>
+            <div class="celebration-text">You are RESPECTFUL!</div>
+            <p style="color: #666; margin-bottom: 20px;">You learned how to show respect!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let progress = 0;
+        let scenarioIndex = 0;
+
+        const synth = window.speechSynthesis;
+
+        function speak(text) {
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        function speakRespect() {
+            speak('R, E, S, P, E, C, T! RESPECT!');
+            updateProgress(5);
+        }
+
+        function sayPhrase(phrase) {
+            speak(phrase + '! That is a respectful word!');
+            updateMascot('Great! ' + phrase + ' shows respect!');
+            updateProgress(5);
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'scenarios') initScenarios();
+                if (btn.dataset.tab === 'actions') initActions();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are so respectful!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        var scenarios = [
+            {
+                emoji: '🧑‍🤝‍🧑',
+                text: 'Someone is talking. What do you do?',
+                options: ['Talk louder', 'Listen quietly'],
+                correct: 1,
+                feedback: 'We listen when others talk!'
+            },
+            {
+                emoji: '🚪',
+                text: 'You want to pass by someone. What do you say?',
+                options: ['Excuse me', 'Move!'],
+                correct: 0,
+                feedback: 'Excuse me is polite!'
+            },
+            {
+                emoji: '🎁',
+                text: 'Someone gives you something. What do you say?',
+                options: ['Thank you!', 'Give me more'],
+                correct: 0,
+                feedback: 'Thank you shows gratitude!'
+            },
+            {
+                emoji: '😢',
+                text: 'You accidentally hurt someone. What do you say?',
+                options: ['It was your fault', 'I am sorry'],
+                correct: 1,
+                feedback: 'Saying sorry is respectful!'
+            }
+        ];
+
+        function initScenarios() {
+            scenarioIndex = 0;
+            showScenario();
+        }
+
+        function showScenario() {
+            var container = document.getElementById('scenarioContainer');
+
+            if (scenarioIndex >= scenarios.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '🌟';
+                doneDiv.appendChild(doneEmoji);
+
+                var doneText = document.createElement('p');
+                doneText.style.color = '#831843';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'Great job on all scenarios!';
+                doneDiv.appendChild(doneText);
+
+                container.appendChild(doneDiv);
+                return;
+            }
+
+            var s = scenarios[scenarioIndex];
+            container.textContent = '';
+
+            var card = document.createElement('div');
+            card.className = 'scenario-card';
+
+            var emoji = document.createElement('div');
+            emoji.className = 'scenario-emoji';
+            emoji.textContent = s.emoji;
+            card.appendChild(emoji);
+
+            var text = document.createElement('div');
+            text.className = 'scenario-text';
+            text.textContent = s.text;
+            card.appendChild(text);
+
+            var options = document.createElement('div');
+            options.className = 'scenario-options';
+
+            s.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'scenario-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkScenario(btn, i === s.correct, s.feedback); };
+                options.appendChild(btn);
+            });
+
+            card.appendChild(options);
+            container.appendChild(card);
+
+            speak(s.text);
+        }
+
+        function checkScenario(btn, correct, feedback) {
+            document.querySelectorAll('.scenario-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Yes! ' + feedback);
+                updateMascot(feedback);
+                updateProgress(15);
+                scenarioIndex++;
+                setTimeout(showScenario, 2000);
+            } else {
+                btn.classList.add('wrong');
+                speak('Try again!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.scenario-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        var actions = [
+            { emoji: '👂', text: 'Listen carefully' },
+            { emoji: '🤝', text: 'Share with friends' },
+            { emoji: '🙋', text: 'Raise your hand' },
+            { emoji: '😊', text: 'Be kind' },
+            { emoji: '🧹', text: 'Help clean up' },
+            { emoji: '🚶', text: 'Walk, don\'t run' }
+        ];
+
+        function initActions() {
+            var grid = document.getElementById('actionGrid');
+            grid.textContent = '';
+
+            actions.forEach(function(action) {
+                var item = document.createElement('div');
+                item.className = 'action-item';
+
+                var emoji = document.createElement('span');
+                emoji.className = 'emoji';
+                emoji.textContent = action.emoji;
+                item.appendChild(emoji);
+
+                var text = document.createElement('span');
+                text.className = 'text';
+                text.textContent = action.text;
+                item.appendChild(text);
+
+                item.onclick = function() { completeAction(item, action.text); };
+                grid.appendChild(item);
+            });
+        }
+
+        function completeAction(item, text) {
+            if (item.classList.contains('done')) return;
+            item.classList.add('done');
+            speak('I can ' + text + '!');
+            updateMascot('Great! ' + text + ' shows respect!');
+            updateProgress(8);
+        }
+
+        function doChant() {
+            speak('I RESPECT you! You RESPECT me! We treat each other RESPECTFULLY!');
+            updateMascot('Amazing chant! You are respectful!');
+            updateProgress(15);
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            initScenarios();
+            initActions();
+        }
+
+        updateProgress(5);
+        speak('RESPECT means treating others nicely! Let us learn together!');
+    </script>
+</body>
+</html>

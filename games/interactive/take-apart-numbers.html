@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Apart Numbers - Zeek Squad Math</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: mathBounce 1s ease-in-out infinite; }
+        @keyframes mathBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #10B981;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #059669;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .number-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .big-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+        .equals { font-size: 2rem; color: #059669; }
+        .part-box {
+            width: 60px;
+            height: 60px;
+            background: #D1FAE5;
+            border: 3px dashed #10B981;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #059669;
+            font-weight: bold;
+        }
+        .plus { font-size: 2rem; color: #059669; }
+
+        .blocks-area {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 15px;
+            background: #F0FDF4;
+            border-radius: 15px;
+            min-height: 60px;
+        }
+        .block {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .block:hover { transform: scale(1.1); }
+        .block.selected { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+
+        .parts-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .part-group {
+            text-align: center;
+        }
+        .part-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .part-blocks {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            min-height: 40px;
+            padding: 10px;
+            background: #F0FDF4;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+        .mini-block {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+        }
+        .mini-block.green { background: #10B981; }
+        .mini-block.orange { background: #F59E0B; }
+
+        .example-cards {
+            display: grid;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .example-card {
+            background: #F0FDF4;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .example-card:hover { border-color: #10B981; }
+        .example-card .num {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #059669;
+        }
+        .example-card .sym {
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .chant-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chant-btn:hover { transform: scale(1.02); }
+        .chant-btn:active { transform: scale(0.98); }
+
+        .practice-area {
+            text-align: center;
+        }
+        .practice-question {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .practice-number {
+            font-size: 4rem;
+            color: #059669;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .answer-option {
+            padding: 15px;
+            background: #F0FDF4;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #059669;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .answer-option:hover { transform: scale(1.02); border-color: #10B981; }
+        .answer-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .answer-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .interactive-split {
+            margin: 20px 0;
+        }
+        .split-instruction {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #059669; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Take Apart Numbers</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🧮</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Let's learn to break numbers into parts! 7 can be 4 and 3!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="explore">Explore</button>
+            <button class="tab-btn" data-tab="chant">Chant</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">Breaking Numbers Apart</h2>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    A number can be split into two parts!
+                </p>
+
+                <div class="example-cards">
+                    <div class="example-card" onclick="showExample(5, 2, 3)">
+                        <span class="num">5</span>
+                        <span class="sym">=</span>
+                        <span class="num">2</span>
+                        <span class="sym">+</span>
+                        <span class="num">3</span>
+                    </div>
+                    <div class="example-card" onclick="showExample(6, 4, 2)">
+                        <span class="num">6</span>
+                        <span class="sym">=</span>
+                        <span class="num">4</span>
+                        <span class="sym">+</span>
+                        <span class="num">2</span>
+                    </div>
+                    <div class="example-card" onclick="showExample(7, 5, 2)">
+                        <span class="num">7</span>
+                        <span class="sym">=</span>
+                        <span class="num">5</span>
+                        <span class="sym">+</span>
+                        <span class="num">2</span>
+                    </div>
+                    <div class="example-card" onclick="showExample(8, 5, 3)">
+                        <span class="num">8</span>
+                        <span class="sym">=</span>
+                        <span class="num">5</span>
+                        <span class="sym">+</span>
+                        <span class="num">3</span>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #059669; font-weight: bold;">
+                    Tap each card to hear it!
+                </p>
+            </div>
+
+            <div class="tab-content" id="explore">
+                <h2 class="section-title">Split the Blocks!</h2>
+
+                <div class="number-display">
+                    <div class="big-number" id="exploreNumber">7</div>
+                </div>
+
+                <p class="split-instruction">Tap blocks to move them to the orange group!</p>
+
+                <div class="blocks-area" id="blocksArea"></div>
+
+                <div class="parts-display">
+                    <div class="part-group">
+                        <div class="part-label">Green Part</div>
+                        <div class="part-blocks" id="greenPart"></div>
+                        <div style="font-size: 1.5rem; color: #10B981; font-weight: bold; margin-top: 5px;" id="greenCount">7</div>
+                    </div>
+                    <div style="font-size: 2rem; color: #666; align-self: center;">+</div>
+                    <div class="part-group">
+                        <div class="part-label">Orange Part</div>
+                        <div class="part-blocks" id="orangePart"></div>
+                        <div style="font-size: 1.5rem; color: #F59E0B; font-weight: bold; margin-top: 5px;" id="orangeCount">0</div>
+                    </div>
+                </div>
+
+                <button class="chant-btn" onclick="resetExplore()">Reset Blocks</button>
+            </div>
+
+            <div class="tab-content" id="chant">
+                <h2 class="section-title">Number Chants!</h2>
+
+                <div class="example-cards">
+                    <div class="example-card" onclick="doChant(6)">
+                        <span class="num" style="font-size: 3rem;">6</span>
+                    </div>
+                </div>
+                <button class="chant-btn" onclick="doChant(6)">
+                    🎤 6 is 4 and 2! 6 is 3 and 3!
+                </button>
+
+                <div class="example-cards">
+                    <div class="example-card" onclick="doChant(7)">
+                        <span class="num" style="font-size: 3rem;">7</span>
+                    </div>
+                </div>
+                <button class="chant-btn" onclick="doChant(7)">
+                    🎤 7 is 5 and 2! 7 is 4 and 3!
+                </button>
+
+                <div class="example-cards">
+                    <div class="example-card" onclick="doChant(8)">
+                        <span class="num" style="font-size: 3rem;">8</span>
+                    </div>
+                </div>
+                <button class="chant-btn" onclick="doChant(8)">
+                    🎤 8 is 5 and 3! 8 is 4 and 4!
+                </button>
+            </div>
+
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">Quiz Time!</h2>
+                <div class="practice-area">
+                    <p class="practice-question" id="practiceQuestion">How can we split this number?</p>
+                    <div class="practice-number" id="practiceNumber">7</div>
+                    <div class="answer-options" id="answerOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉🧮🎉</div>
+            <div class="celebration-text">Math Master!</div>
+            <p style="color: #666; margin-bottom: 20px;">You can take apart numbers!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let progress = 0;
+        let practiceIndex = 0;
+        let currentNumber = 7;
+        let greenCount = 7;
+        let orangeCount = 0;
+
+        const synth = window.speechSynthesis;
+
+        function speak(text) {
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        function showExample(total, a, b) {
+            speak(total + ' can be ' + a + ' and ' + b + '!');
+            updateMascot(total + ' = ' + a + ' + ' + b);
+            updateProgress(5);
+        }
+
+        function doChant(num) {
+            var chants = {
+                6: '6 is 4 and 2! 6 is 3 and 3! Say it!',
+                7: '7 is 5 and 2! 7 is 4 and 3! Say it!',
+                8: '8 is 5 and 3! 8 is 4 and 4! Say it!'
+            };
+            speak(chants[num]);
+            updateMascot('Chant with me!');
+            updateProgress(8);
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'explore') initExplore();
+                if (btn.dataset.tab === 'practice') initPractice();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are a math master!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        function initExplore() {
+            currentNumber = 7;
+            greenCount = currentNumber;
+            orangeCount = 0;
+            document.getElementById('exploreNumber').textContent = currentNumber;
+            renderBlocks();
+            updatePartCounts();
+        }
+
+        function renderBlocks() {
+            var area = document.getElementById('blocksArea');
+            area.textContent = '';
+
+            for (var i = 0; i < currentNumber; i++) {
+                var block = document.createElement('div');
+                block.className = 'block';
+                block.textContent = i + 1;
+                block.dataset.index = i;
+                block.onclick = function() { toggleBlock(this); };
+                area.appendChild(block);
+            }
+        }
+
+        function toggleBlock(block) {
+            if (block.classList.contains('selected')) {
+                block.classList.remove('selected');
+                greenCount++;
+                orangeCount--;
+            } else {
+                block.classList.add('selected');
+                greenCount--;
+                orangeCount++;
+            }
+            updatePartCounts();
+            speak(currentNumber + ' is ' + greenCount + ' and ' + orangeCount);
+            updateMascot(currentNumber + ' = ' + greenCount + ' + ' + orangeCount);
+            updateProgress(2);
+        }
+
+        function updatePartCounts() {
+            document.getElementById('greenCount').textContent = greenCount;
+            document.getElementById('orangeCount').textContent = orangeCount;
+
+            var greenPart = document.getElementById('greenPart');
+            var orangePart = document.getElementById('orangePart');
+            greenPart.textContent = '';
+            orangePart.textContent = '';
+
+            for (var i = 0; i < greenCount; i++) {
+                var block = document.createElement('div');
+                block.className = 'mini-block green';
+                greenPart.appendChild(block);
+            }
+            for (var i = 0; i < orangeCount; i++) {
+                var block = document.createElement('div');
+                block.className = 'mini-block orange';
+                orangePart.appendChild(block);
+            }
+        }
+
+        function resetExplore() {
+            initExplore();
+            speak('Blocks reset! Try again!');
+        }
+
+        var practiceQuestions = [
+            { num: 5, options: ['2 + 3', '1 + 5', '2 + 2', '4 + 2'], correct: 0 },
+            { num: 6, options: ['2 + 3', '4 + 2', '5 + 2', '3 + 1'], correct: 1 },
+            { num: 7, options: ['2 + 3', '3 + 3', '5 + 2', '4 + 4'], correct: 2 },
+            { num: 8, options: ['3 + 3', '4 + 4', '2 + 5', '6 + 1'], correct: 1 },
+            { num: 9, options: ['5 + 4', '3 + 3', '2 + 5', '4 + 4'], correct: 0 }
+        ];
+
+        function initPractice() {
+            practiceIndex = 0;
+            showPracticeQuestion();
+        }
+
+        function showPracticeQuestion() {
+            if (practiceIndex >= practiceQuestions.length) {
+                document.getElementById('practiceQuestion').textContent = 'All done! Great job!';
+                document.getElementById('practiceNumber').textContent = '🌟';
+                document.getElementById('answerOptions').textContent = '';
+                return;
+            }
+
+            var q = practiceQuestions[practiceIndex];
+            document.getElementById('practiceQuestion').textContent = 'How can we split this number?';
+            document.getElementById('practiceNumber').textContent = q.num;
+
+            var options = document.getElementById('answerOptions');
+            options.textContent = '';
+
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'answer-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkPractice(btn, i === q.correct, q.num, opt); };
+                options.appendChild(btn);
+            });
+        }
+
+        function checkPractice(btn, correct, num, answer) {
+            document.querySelectorAll('.answer-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Yes! ' + num + ' is ' + answer + '!');
+                updateMascot('Correct! ' + num + ' = ' + answer);
+                updateProgress(12);
+                practiceIndex++;
+                setTimeout(showPracticeQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('Try again!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.answer-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            initExplore();
+            initPractice();
+        }
+
+        updateProgress(5);
+        speak('Lets learn to break numbers into parts! 7 can be 4 and 3!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Vet (ב) - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: starBounce 1s ease-in-out infinite; }
+        @keyframes starBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .big-letter {
+            font-size: 8rem;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+        }
+        .letter-note {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #3B82F6;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #3B82F6;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .letter-compare {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .letter-card {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            padding: 20px 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .letter-card:hover { transform: scale(1.1); }
+        .letter-card .hebrew {
+            font-size: 4rem;
+            color: white;
+            font-family: 'Times New Roman', serif;
+        }
+        .letter-card .name {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+        .letter-card .dot {
+            color: #FFD700;
+            font-size: 0.8rem;
+        }
+
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+
+        .info-box {
+            background: #EFF6FF;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #3B82F6;
+        }
+        .info-box p {
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        .affirmation-cards {
+            display: grid;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .affirmation-card {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .affirmation-card:hover { border-color: #3B82F6; transform: scale(1.02); }
+        .affirmation-card .emoji { font-size: 2.5rem; }
+        .affirmation-card .text {
+            flex: 1;
+        }
+        .affirmation-card .hebrew-text {
+            font-size: 1.3rem;
+            color: #1E40AF;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .affirmation-card .english-text {
+            color: #3B82F6;
+            font-size: 0.9rem;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .day-card {
+            background: #EFF6FF;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .day-card:hover { border-color: #3B82F6; }
+        .day-card.highlight {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+        }
+        .day-card.highlight .hebrew { color: white; }
+        .day-card.highlight .english { color: rgba(255,255,255,0.9); }
+        .day-card .hebrew {
+            font-size: 1.1rem;
+            color: #1E40AF;
+            font-weight: bold;
+        }
+        .day-card .english {
+            font-size: 0.8rem;
+            color: #3B82F6;
+        }
+
+        .trace-area {
+            background: #FFFBEB;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 15px;
+            touch-action: none;
+        }
+        .trace-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .trace-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .trace-btn.clear { background: #F3F4F6; color: #666; }
+        .trace-btn.done { background: #3B82F6; color: white; }
+
+        .quiz-area {
+            text-align: center;
+        }
+        .quiz-question {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .quiz-option {
+            padding: 20px;
+            background: #EFF6FF;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Times New Roman', serif;
+        }
+        .quiz-option:hover { transform: scale(1.05); border-color: #3B82F6; }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #3B82F6; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Hebrew Letter VET</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">✡️</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                VET is BET without the dot! It says /v/ sound!
+            </div>
+        </div>
+
+        <div class="big-letter">בֿ</div>
+        <p class="letter-note">VET (ב without dot) says /v/</p>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="affirm">Affirm</button>
+            <button class="tab-btn" data-tab="days">Days</button>
+            <button class="tab-btn" data-tab="trace">Trace</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">BET vs VET</h2>
+
+                <div class="letter-compare">
+                    <div class="letter-card" onclick="playBet()">
+                        <div class="hebrew">בּ</div>
+                        <div class="name">BET</div>
+                        <div class="dot">with dot = /b/</div>
+                    </div>
+                    <div class="letter-card" onclick="playVet()">
+                        <div class="hebrew">ב</div>
+                        <div class="name">VET</div>
+                        <div class="dot">no dot = /v/</div>
+                    </div>
+                </div>
+
+                <button class="sound-btn" onclick="playVet()">
+                    🔊 VET says: /v/ /v/ /v/
+                </button>
+
+                <div class="info-box">
+                    <p><strong>Fun Fact:</strong> BET and VET are the same letter! The dot (dagesh) changes the sound. With a dot it says /b/ like "boy". Without a dot it says /v/ like "violin"!</p>
+                </div>
+            </div>
+
+            <div class="tab-content" id="affirm">
+                <h2 class="section-title">Hebrew Affirmations</h2>
+
+                <div class="affirmation-cards">
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Yachol', 'I can do it!')">
+                        <span class="emoji">💪</span>
+                        <div class="text">
+                            <div class="hebrew-text">!אֲנִי יָכוֹל</div>
+                            <div class="english-text">ANI YACHOL! (I can do it!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Chazak', 'I am strong!')">
+                        <span class="emoji">🦁</span>
+                        <div class="text">
+                            <div class="hebrew-text">!אֲנִי חָזָק</div>
+                            <div class="english-text">ANI CHAZAK! (I am strong!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Tov', 'I am good!')">
+                        <span class="emoji">⭐</span>
+                        <div class="text">
+                            <div class="hebrew-text">!אֲנִי טוֹב</div>
+                            <div class="english-text">ANI TOV! (I am good!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Ohev', 'I love!')">
+                        <span class="emoji">❤️</span>
+                        <div class="text">
+                            <div class="hebrew-text">!אֲנִי אוֹהֵב</div>
+                            <div class="english-text">ANI OHEV! (I love!)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #666;">Tap each card to say it proudly!</p>
+            </div>
+
+            <div class="tab-content" id="days">
+                <h2 class="section-title">Days of the Week</h2>
+
+                <button class="sound-btn" onclick="singDays()">
+                    🎵 Sing the Days!
+                </button>
+
+                <div class="days-grid">
+                    <div class="day-card" onclick="sayDay('Yom Rishon', 'Sunday')">
+                        <div class="hebrew">יוֹם רִאשׁוֹן</div>
+                        <div class="english">Sunday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Sheni', 'Monday')">
+                        <div class="hebrew">יוֹם שֵׁנִי</div>
+                        <div class="english">Monday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Shlishi', 'Tuesday')">
+                        <div class="hebrew">יוֹם שְׁלִישִׁי</div>
+                        <div class="english">Tuesday</div>
+                    </div>
+                    <div class="day-card highlight" onclick="sayDay('Yom Revii', 'Wednesday')">
+                        <div class="hebrew">יוֹם רְבִיעִי</div>
+                        <div class="english">Wednesday (Today!)</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Chamishi', 'Thursday')">
+                        <div class="hebrew">יוֹם חֲמִישִׁי</div>
+                        <div class="english">Thursday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Shishi', 'Friday')">
+                        <div class="hebrew">יוֹם שִׁשִּׁי</div>
+                        <div class="english">Friday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Shabbat', 'Saturday')">
+                        <div class="hebrew">שַׁבָּת</div>
+                        <div class="english">Shabbat</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="trace">
+                <h2 class="section-title">Trace VET (ב)</h2>
+                <div class="trace-area">
+                    <canvas id="traceCanvas" width="280" height="200"></canvas>
+                </div>
+                <div class="trace-btns">
+                    <button class="trace-btn clear" onclick="clearCanvas()">Clear</button>
+                    <button class="trace-btn done" onclick="finishTrace()">Done!</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Which is VET?</h2>
+                <div class="quiz-area">
+                    <p class="quiz-question" id="quizQuestion">Tap the letter that says /v/</p>
+                    <div class="quiz-options" id="quizOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉✡️🎉</div>
+            <div class="celebration-text">!מַזָּל טוֹב</div>
+            <p style="color: #666; margin-bottom: 20px;">Mazel Tov! You learned VET!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Todah!</button>
+        </div>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let progress = 0;
+        let quizIndex = 0;
+
+        const synth = window.speechSynthesis;
+
+        function speak(text) {
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.8;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        function playBet() {
+            speak('BET says buh, buh, buh! Like boy!');
+            updateMascot('BET has a dot and says /b/!');
+            updateProgress(5);
+        }
+
+        function playVet() {
+            speak('VET says vuh, vuh, vuh! Like violin!');
+            updateMascot('VET has no dot and says /v/!');
+            updateProgress(5);
+        }
+
+        function sayAffirmation(hebrew, english) {
+            speak(hebrew + '! ' + english);
+            updateMascot('Say it proud: ' + hebrew + '!');
+            updateProgress(8);
+        }
+
+        function sayDay(hebrew, english) {
+            speak(hebrew + ' is ' + english);
+            updateMascot(hebrew + ' means ' + english + '!');
+            updateProgress(3);
+        }
+
+        function singDays() {
+            speak('Yom Rishon, Yom Sheni, Yom Shlishi, Yom Revii, Yom Chamishi, Yom Shishi, Shabbat!');
+            updateMascot('Sing the Hebrew days!');
+            updateProgress(10);
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Kochav! Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Mazel Tov! You learned the letter VET!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        var isDrawing = false;
+        var ctx;
+
+        function initCanvas() {
+            var canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#3B82F6';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.font = 'bold 150px Times New Roman';
+            ctx.fillStyle = '#E5E7EB';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ב', 140, 100);
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            var pos = getPos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            var pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function getPos(e) {
+            var canvas = document.getElementById('traceCanvas');
+            var rect = canvas.getBoundingClientRect();
+            var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            var y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            return { x: x, y: y };
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, 280, 200);
+            ctx.font = 'bold 150px Times New Roman';
+            ctx.fillStyle = '#E5E7EB';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ב', 140, 100);
+        }
+
+        function finishTrace() {
+            speak('Yofi! Beautiful VET!');
+            updateMascot('Beautiful letter VET!');
+            updateProgress(15);
+            clearCanvas();
+        }
+
+        var quizQuestions = [
+            { options: ['בּ', 'ב'], answer: 1 },
+            { options: ['ב', 'בּ'], answer: 0 },
+            { options: ['בּ', 'ב'], answer: 1 }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            if (quizIndex >= quizQuestions.length) {
+                document.getElementById('quizQuestion').textContent = 'Quiz Complete! Mazel Tov!';
+                document.getElementById('quizOptions').textContent = '';
+                return;
+            }
+
+            var q = quizQuestions[quizIndex];
+            document.getElementById('quizQuestion').textContent = 'Tap the letter that says /v/';
+
+            var options = document.getElementById('quizOptions');
+            options.textContent = '';
+
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.answer); };
+                options.appendChild(btn);
+            });
+        }
+
+        function checkQuiz(btn, correct) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Nachon! Correct! VET has no dot!');
+                updateMascot('Correct! VET has no dot!');
+                updateProgress(15);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('That is BET with a dot. Try again!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            initQuiz();
+        }
+
+        initCanvas();
+        updateProgress(5);
+        speak('VET is BET without the dot! It says vuh like violin!');
+    </script>
+</body>
+</html>
