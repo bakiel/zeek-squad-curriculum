@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsibility - Zeek Squad SEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: helperBounce 1s ease-in-out infinite; }
+        @keyframes helperBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #F59E0B;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #D97706;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .word-box {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .word-box .word {
+            font-size: 1.8rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .speak-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speak-btn:hover { transform: scale(1.02); }
+
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .job-card {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .job-card:hover { transform: scale(1.05); border-color: #F59E0B; }
+        .job-card.done { background: #D1FAE5; border-color: #10B981; }
+        .job-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+        .job-card .text { color: #92400E; font-weight: bold; font-size: 0.9rem; }
+
+        .scenario-card {
+            background: #FEF3C7;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .scenario-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .scenario-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .scenario-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .scenario-option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #FCD34D;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .scenario-option:hover { background: #FEF3C7; transform: scale(1.02); }
+        .scenario-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .scenario-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .pledge-area {
+            text-align: center;
+            padding: 20px;
+        }
+        .pledge-text {
+            font-size: 1.3rem;
+            color: #92400E;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        .pledge-text .highlight {
+            color: #F59E0B;
+            font-size: 1.5rem;
+        }
+        .hand-emoji {
+            font-size: 4rem;
+            display: block;
+            margin: 20px auto;
+            animation: raisedHand 1s ease-in-out infinite;
+        }
+        @keyframes raisedHand {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #F59E0B; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Learning Responsibility</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🦸</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                RESPONSIBILITY means doing what you should do! Let's be HELPERS!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="jobs">Home Jobs</button>
+            <button class="tab-btn" data-tab="scenarios">Scenarios</button>
+            <button class="tab-btn" data-tab="pledge">Pledge</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">What is RESPONSIBILITY?</h2>
+
+                <div class="word-box">
+                    <div class="word">RESPONSIBILITY</div>
+                </div>
+
+                <button class="speak-btn" onclick="speakWord()">
+                    🔊 Say it: I AM RESPONSIBLE!
+                </button>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Responsibility means doing what you should do without being asked!
+                </p>
+
+                <div class="jobs-grid">
+                    <div class="job-card" onclick="sayCommit('I will clean up')">
+                        <span class="emoji">🧹</span>
+                        <span class="text">I will CLEAN UP!</span>
+                    </div>
+                    <div class="job-card" onclick="sayCommit('I will help')">
+                        <span class="emoji">🤝</span>
+                        <span class="text">I will HELP!</span>
+                    </div>
+                    <div class="job-card" onclick="sayCommit('I will listen')">
+                        <span class="emoji">👂</span>
+                        <span class="text">I will LISTEN!</span>
+                    </div>
+                    <div class="job-card" onclick="sayCommit('I will try my best')">
+                        <span class="emoji">💪</span>
+                        <span class="text">I will TRY MY BEST!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="jobs">
+                <h2 class="section-title">Jobs I Can Do at Home!</h2>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Tap each job you can do to be a helper!
+                </p>
+
+                <div class="jobs-grid" id="jobsGrid"></div>
+
+                <p style="text-align: center; color: #92400E; margin-top: 15px; font-weight: bold;" id="jobsComplete">
+                    Jobs Done: 0/6
+                </p>
+            </div>
+
+            <div class="tab-content" id="scenarios">
+                <h2 class="section-title">What Would a Helper Do?</h2>
+                <div id="scenarioContainer"></div>
+            </div>
+
+            <div class="tab-content" id="pledge">
+                <h2 class="section-title">The Responsibility Pledge</h2>
+                <div class="pledge-area">
+                    <span class="hand-emoji">✋</span>
+                    <div class="pledge-text">
+                        Raise your hand and say:<br><br>
+                        <span class="highlight">I WILL BE RESPONSIBLE!</span><br>
+                        I will do my jobs.<br>
+                        I will help others.<br>
+                        <span class="highlight">I AM A HELPER!</span>
+                    </div>
+                    <button class="speak-btn" onclick="doPledge()">
+                        🎤 Say the Pledge Together!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉🦸🎉</div>
+            <div class="celebration-text">Super Helper!</div>
+            <p style="color: #666; margin-bottom: 20px;">You are RESPONSIBLE!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">YAY ME!</button>
+        </div>
+    </div>
+
+    <script>
+        let starsEarned = 0;
+        let progress = 0;
+        let scenarioIndex = 0;
+        let jobsDone = 0;
+
+        const synth = window.speechSynthesis;
+
+        function speak(text) {
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        function speakWord() {
+            speak('I am responsible! I do what I should do!');
+            updateProgress(5);
+        }
+
+        function sayCommit(commitment) {
+            speak(commitment + '!');
+            updateMascot('Great! ' + commitment + '!');
+            updateProgress(5);
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'jobs') initJobs();
+                if (btn.dataset.tab === 'scenarios') initScenarios();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are a super helper!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        var homeJobs = [
+            { emoji: '🛏️', text: 'Make my bed' },
+            { emoji: '🧸', text: 'Put away toys' },
+            { emoji: '🍽️', text: 'Set the table' },
+            { emoji: '🐕', text: 'Feed pets' },
+            { emoji: '🪥', text: 'Brush my teeth' },
+            { emoji: '📚', text: 'Put away books' }
+        ];
+
+        function initJobs() {
+            jobsDone = 0;
+            document.getElementById('jobsComplete').textContent = 'Jobs Done: 0/6';
+
+            var grid = document.getElementById('jobsGrid');
+            grid.textContent = '';
+
+            homeJobs.forEach(function(job) {
+                var card = document.createElement('div');
+                card.className = 'job-card';
+
+                var emoji = document.createElement('span');
+                emoji.className = 'emoji';
+                emoji.textContent = job.emoji;
+                card.appendChild(emoji);
+
+                var text = document.createElement('span');
+                text.className = 'text';
+                text.textContent = job.text;
+                card.appendChild(text);
+
+                card.onclick = function() { completeJob(card, job.text); };
+                grid.appendChild(card);
+            });
+        }
+
+        function completeJob(card, text) {
+            if (card.classList.contains('done')) return;
+            card.classList.add('done');
+            jobsDone++;
+            document.getElementById('jobsComplete').textContent = 'Jobs Done: ' + jobsDone + '/6';
+            speak('I can ' + text + '!');
+            updateMascot('Great! ' + text + ' is responsible!');
+            updateProgress(8);
+        }
+
+        var scenarios = [
+            {
+                emoji: '🧸',
+                text: 'Your toys are on the floor. What should you do?',
+                options: ['Leave them there', 'Put them away'],
+                correct: 1,
+                feedback: 'Putting away toys is responsible!'
+            },
+            {
+                emoji: '🍽️',
+                text: 'Dinner is done. What can you do to help?',
+                options: ['Clear your plate', 'Run away and play'],
+                correct: 0,
+                feedback: 'Helping clean up is responsible!'
+            },
+            {
+                emoji: '🐕',
+                text: 'Your pet is hungry. What do you do?',
+                options: ['Ignore them', 'Feed them'],
+                correct: 1,
+                feedback: 'Taking care of pets is responsible!'
+            },
+            {
+                emoji: '📚',
+                text: 'You finished your book. Where does it go?',
+                options: ['Back on the shelf', 'On the floor'],
+                correct: 0,
+                feedback: 'Putting things away is responsible!'
+            }
+        ];
+
+        function initScenarios() {
+            scenarioIndex = 0;
+            showScenario();
+        }
+
+        function showScenario() {
+            var container = document.getElementById('scenarioContainer');
+
+            if (scenarioIndex >= scenarios.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '🌟';
+                doneDiv.appendChild(doneEmoji);
+
+                var doneText = document.createElement('p');
+                doneText.style.color = '#92400E';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'Great choices! You are responsible!';
+                doneDiv.appendChild(doneText);
+
+                container.appendChild(doneDiv);
+                return;
+            }
+
+            var s = scenarios[scenarioIndex];
+            container.textContent = '';
+
+            var card = document.createElement('div');
+            card.className = 'scenario-card';
+
+            var emoji = document.createElement('div');
+            emoji.className = 'scenario-emoji';
+            emoji.textContent = s.emoji;
+            card.appendChild(emoji);
+
+            var text = document.createElement('div');
+            text.className = 'scenario-text';
+            text.textContent = s.text;
+            card.appendChild(text);
+
+            var options = document.createElement('div');
+            options.className = 'scenario-options';
+
+            s.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'scenario-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkScenario(btn, i === s.correct, s.feedback); };
+                options.appendChild(btn);
+            });
+
+            card.appendChild(options);
+            container.appendChild(card);
+
+            speak(s.text);
+        }
+
+        function checkScenario(btn, correct, feedback) {
+            document.querySelectorAll('.scenario-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Yes! ' + feedback);
+                updateMascot(feedback);
+                updateProgress(15);
+                scenarioIndex++;
+                setTimeout(showScenario, 2000);
+            } else {
+                btn.classList.add('wrong');
+                speak('Hmm, try the other choice!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.scenario-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function doPledge() {
+            speak('I will be responsible! I will do my jobs. I will help others. I am a helper!');
+            updateMascot('You said the pledge! You are RESPONSIBLE!');
+            updateProgress(20);
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            initJobs();
+            initScenarios();
+        }
+
+        updateProgress(5);
+        speak('RESPONSIBILITY means doing what you should do! Lets be HELPERS!');
+    </script>
+</body>
+</html>
