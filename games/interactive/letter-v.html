@@ -455,12 +455,26 @@
         let quizIndex = 0;
 
         const synth = window.speechSynthesis;
+        let selectedVoice = null;
+
+        function initVoice() {
+            const voices = synth.getVoices();
+            const preferred = ['Samantha', 'Karen', 'Google US English Female', 'Microsoft Zira', 'Female'];
+            for (const name of preferred) {
+                const found = voices.find(v => v.name.includes(name) && v.lang.startsWith('en'));
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) selectedVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
 
         function speak(text) {
             synth.cancel();
             const utter = new SpeechSynthesisUtterance(text);
-            utter.rate = 0.8;
-            utter.pitch = 1.2;
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
             synth.speak(utter);
         }
 
