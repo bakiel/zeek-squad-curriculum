@@ -334,14 +334,14 @@
         <section id="games" class="section active">
             <!-- Week Selector -->
             <div class="week-selector">
-                <button class="week-btn active" onclick="showWeek(1)">Week 1</button>
-                <button class="week-btn locked" onclick="showWeek(2)" disabled>Week 2 🔒</button>
+                <button class="week-btn" onclick="showWeek(1)">Week 1</button>
+                <button class="week-btn active" onclick="showWeek(2)">Week 2</button>
                 <button class="week-btn locked" onclick="showWeek(3)" disabled>Week 3 🔒</button>
                 <button class="week-btn locked" onclick="showWeek(4)" disabled>Week 4 🔒</button>
             </div>
 
             <!-- Week 1 Content -->
-            <div class="week-content active" id="week-1">
+            <div class="week-content" id="week-1">
                 <div class="day-tabs">
                     <button class="day-tab active" onclick="showDay(1, 'monday')">📅 Monday</button>
                     <button class="day-tab" onclick="showDay(1, 'tuesday')">📅 Tuesday</button>
@@ -707,13 +707,335 @@
                 </div>
             </div>
 
-            <!-- Placeholder for future weeks -->
-            <div class="week-content" id="week-2">
-                <div class="day-header">
-                    <span class="day-icon">🔒</span>
-                    <div>
-                        <h2>Week 2 - Coming Soon!</h2>
-                        <p>New content will be added as the curriculum progresses.</p>
+            <!-- Week 2 Content (Feb 2-5) -->
+            <div class="week-content active" id="week-2">
+                <div class="day-tabs">
+                    <button class="day-tab" onclick="showDay(2, 'monday')">📅 Monday</button>
+                    <button class="day-tab" onclick="showDay(2, 'tuesday')">📅 Tuesday</button>
+                    <button class="day-tab" onclick="showDay(2, 'wednesday')">📅 Wednesday</button>
+                    <button class="day-tab active" onclick="showDay(2, 'thursday')">📅 Thursday</button>
+                    <button class="day-tab" onclick="showDay(2, 'all')">📋 All Days</button>
+                </div>
+
+                <!-- Monday (Feb 3) -->
+                <div class="day-content" id="week-2-monday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Monday - Yom Sheni (Feb 3)</h2>
+                            <p>Letter U, Optimism, Counting Forward, Living Things, Hebrew Aleph</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-green">😊</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Optimism</h3>
+                                <p>Look on the bright side! Learn to see the good in every situation.</p>
+                                <a href="games/interactive/optimism.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-purple">☂️</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter U</h3>
+                                <p>U says /u/ like Umbrella! Trace, find, and practice U words.</p>
+                                <a href="games/interactive/letter-u.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🔢</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Counting Forward</h3>
+                                <p>Count to 10 and beyond! What number comes next?</p>
+                                <a href="games/interactive/counting-forward.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌿</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Living Things</h3>
+                                <p>What makes something alive? Living vs non-living things!</p>
+                                <a href="games/interactive/living-things-plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Aleph</h3>
+                                <p>ALEPH is SILENT! Review the first Hebrew letter.</p>
+                                <a href="games/interactive/hebrew-aleph.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuesday (Feb 4) -->
+                <div class="day-content" id="week-2-tuesday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Tuesday - Yom Shlishi (Feb 4)</h2>
+                            <p>Letter N, My Strengths, Counting, Light & Shadows, Hebrew Bet</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-purple">💪</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>My Strengths</h3>
+                                <p>Discover your special strengths and what makes you amazing!</p>
+                                <a href="games/interactive/my-strengths.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-pink">👃</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter N</h3>
+                                <p>N says /n/ like Nose! Find all the N's and practice N words.</p>
+                                <a href="games/interactive/letter-n.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🔢</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Counting Forward</h3>
+                                <p>Jump and count to 10! Fill in the missing numbers.</p>
+                                <a href="games/interactive/counting-forward.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🔦</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Light & Shadows</h3>
+                                <p>Discover what makes light and how shadows change!</p>
+                                <a href="games/interactive/light-shadows.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">בּ</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Bet</h3>
+                                <p>BET says /b/ like BAYIT (house)! Bet has a dot inside.</p>
+                                <a href="games/interactive/hebrew-bet.html" class="play-btn">Coming Soon</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday (Feb 4 - Yom Revi'i) -->
+                <div class="day-content" id="week-2-wednesday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Wednesday - Yom Revi'i (Feb 4)</h2>
+                            <p>Letter V, Respect, Take Apart Numbers, Living Things: Plants, Hebrew Vet</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-purple">💜</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Respect</h3>
+                                <p>RESPECT means treating others nicely! Practice polite words.</p>
+                                <a href="games/interactive/respect.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-pink">🎻</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter V</h3>
+                                <p>V looks like a valley! V says /v/ like VIOLIN!</p>
+                                <a href="games/interactive/letter-v.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🧮</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Take Apart Numbers</h3>
+                                <p>Break numbers into parts! 7 = 4 + 3. Interactive blocks!</p>
+                                <a href="games/interactive/take-apart-numbers.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌱</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Living Things: Plants</h3>
+                                <p>What do plants need? Sun, water, soil, air! Plant life cycle.</p>
+                                <a href="games/interactive/living-things-plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Vet</h3>
+                                <p>VET is BET without the dot! It says /v/ sound. ANI YACHOL!</p>
+                                <a href="games/interactive/hebrew-vet.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thursday (Feb 5 - Yom Chamishi) -->
+                <div class="day-content active" id="week-2-thursday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Thursday - Yom Chamishi (Feb 5)</h2>
+                            <p>Letter W, Responsibility, Take Apart Numbers, Living Things, Hebrew Review</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🏠</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Responsibility</h3>
+                                <p>Being responsible means doing what you should! Learn home jobs.</p>
+                                <a href="games/interactive/responsibility.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🌊</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter W</h3>
+                                <p>W looks like WAVES! W says /w/ like WATER!</p>
+                                <a href="games/interactive/letter-w.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🧮</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Take Apart Numbers</h3>
+                                <p>Continue breaking numbers! 8 = 5 + 3. Split the blocks!</p>
+                                <a href="games/interactive/take-apart-numbers.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌱</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Living Things: Plants</h3>
+                                <p>Review what plants need to live and grow!</p>
+                                <a href="games/interactive/living-things-plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א ב ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Hebrew Review</h3>
+                                <p>Review Aleph, Bet, and Vet! Sound practice and quiz!</p>
+                                <a href="games/interactive/hebrew-review.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Days Week 2 -->
+                <div class="day-content" id="week-2-all">
+                    <div class="day-header" style="background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);">
+                        <span class="day-icon">📋</span>
+                        <div>
+                            <h2>All Week 2 Games</h2>
+                            <p>Complete collection of all interactive games for Week 2 (Feb 2-5)</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <!-- Letters -->
+                        <div class="game-card">
+                            <div class="game-image bg-pink">🎻</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter V</h3>
+                                <p>V says /v/ like Violin! Wednesday letter.</p>
+                                <a href="games/interactive/letter-v.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🌊</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter W</h3>
+                                <p>W says /w/ like Water! Thursday letter.</p>
+                                <a href="games/interactive/letter-w.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Math -->
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🧮</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Take Apart Numbers</h3>
+                                <p>Break numbers into parts! 7 = 4 + 3</p>
+                                <a href="games/interactive/take-apart-numbers.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Science -->
+                        <div class="game-card">
+                            <div class="game-image bg-green">🌱</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Living Things: Plants</h3>
+                                <p>What do plants need to grow?</p>
+                                <a href="games/interactive/living-things-plants.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- SEL -->
+                        <div class="game-card">
+                            <div class="game-image bg-purple">💜</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Respect</h3>
+                                <p>Treat others nicely! Wednesday.</p>
+                                <a href="games/interactive/respect.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-teal">🏠</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Responsibility</h3>
+                                <p>Do what you should do! Thursday.</p>
+                                <a href="games/interactive/responsibility.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Hebrew -->
+                        <div class="game-card">
+                            <div class="game-image bg-dark">ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Letter Vet</h3>
+                                <p>Vet = Bet without dot! /v/ sound.</p>
+                                <a href="games/interactive/hebrew-vet.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א ב ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Hebrew Review</h3>
+                                <p>Review Aleph, Bet, and Vet!</p>
+                                <a href="games/interactive/hebrew-review.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
