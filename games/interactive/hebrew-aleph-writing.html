@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew: ALEPH (&#1488;) Writing - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: starBounce 1s ease-in-out infinite; }
+        @keyframes starBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .big-letter {
+            font-size: 8rem;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+        }
+        .letter-note {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #764ba2;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Learn Tab */
+        .learn-letter-display {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .learn-letter-display:hover { transform: scale(1.05); }
+        .learn-letter-display .hebrew-big {
+            font-size: 7rem;
+            color: white;
+            font-family: 'Times New Roman', serif;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+        .stroke-arrows {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.3);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .stroke-order-note {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .fact-cards {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .fact-card {
+            background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+            padding: 15px;
+            border-radius: 15px;
+            border-left: 4px solid #764ba2;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .fact-card:hover { transform: scale(1.02); }
+        .fact-card p {
+            color: #5B21B6;
+            line-height: 1.5;
+        }
+        .fact-card .fact-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+
+        .info-box {
+            background: #F3E8FF;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #764ba2;
+        }
+        .info-box p {
+            color: #5B21B6;
+            line-height: 1.6;
+        }
+
+        /* Write Tab */
+        .trace-area {
+            background: #FFFBEB;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 15px;
+            touch-action: none;
+        }
+        .trace-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .trace-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .trace-btn.clear { background: #F3F4F6; color: #666; }
+        .trace-btn.done { background: #764ba2; color: white; }
+        .trace-btn.done:hover { background: #5B21B6; }
+        .write-counter {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            color: #764ba2;
+            font-weight: bold;
+        }
+        .write-stars {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .write-star {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.4s;
+        }
+        .write-star.completed {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            animation: starEarn 0.6s ease;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Practice Tab */
+        .word-cards {
+            display: grid;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .word-card {
+            background: linear-gradient(135deg, #F3E8FF 0%, #EDE9FE 100%);
+            padding: 18px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .word-card:hover { border-color: #764ba2; transform: scale(1.02); }
+        .word-card .word-hebrew {
+            font-size: 2.5rem;
+            color: #5B21B6;
+            font-family: 'Times New Roman', serif;
+            min-width: 80px;
+            text-align: center;
+        }
+        .word-card .word-info { flex: 1; }
+        .word-card .word-transliteration {
+            font-size: 1.1rem;
+            color: #5B21B6;
+            font-weight: bold;
+        }
+        .word-card .word-english {
+            font-size: 0.9rem;
+            color: #7C3AED;
+        }
+
+        .recognition-game {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .recognition-prompt {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .letter-option {
+            padding: 20px;
+            background: #F3E8FF;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Times New Roman', serif;
+            color: #5B21B6;
+        }
+        .letter-option:hover { transform: scale(1.05); border-color: #764ba2; }
+        .letter-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .letter-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .recognition-score {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        /* Affirm Tab */
+        .affirmation-cards {
+            display: grid;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .affirmation-card {
+            background: linear-gradient(135deg, #F3E8FF 0%, #EDE9FE 100%);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .affirmation-card:hover { border-color: #764ba2; transform: scale(1.02); }
+        .affirmation-card .emoji { font-size: 2.5rem; }
+        .affirmation-card .text { flex: 1; }
+        .affirmation-card .hebrew-text {
+            font-size: 1.3rem;
+            color: #5B21B6;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .affirmation-card .english-text {
+            color: #7C3AED;
+            font-size: 0.9rem;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .day-card {
+            background: #F3E8FF;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .day-card:hover { border-color: #764ba2; }
+        .day-card.highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .day-card.highlight .day-hebrew { color: white; }
+        .day-card.highlight .day-english { color: rgba(255,255,255,0.9); }
+        .day-hebrew {
+            font-size: 1.1rem;
+            color: #5B21B6;
+            font-weight: bold;
+        }
+        .day-english {
+            font-size: 0.8rem;
+            color: #7C3AED;
+        }
+
+        .days-section-title {
+            color: #764ba2;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Celebration */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #764ba2; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .celebration-btn:hover { transform: scale(1.05); }
+
+        /* Confetti */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            z-index: 99;
+            pointer-events: none;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Hebrew: ALEPH Writing</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x2728;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                ALEPH is the FIRST letter! It is silent and carries vowel sounds!
+            </div>
+        </div>
+
+        <div class="big-letter">&#x05D0;</div>
+        <p class="letter-note">ALEPH (&#x05D0;) - The FIRST letter - Silent!</p>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="write">Write</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+            <button class="tab-btn" data-tab="affirm">Affirm</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">Meet ALEPH!</h2>
+
+                <div class="learn-letter-display" onclick="playAleph()">
+                    <span class="hebrew-big">&#x05D0;</span>
+                    <div class="stroke-arrows">Tap me!</div>
+                </div>
+
+                <p class="stroke-order-note">ALEPH has 3 strokes: upper right arm, diagonal body, lower left leg</p>
+
+                <button class="sound-btn" onclick="playAleph()">
+                    &#x1F50A; ALEPH is SILENT! It carries vowels!
+                </button>
+
+                <div class="fact-cards">
+                    <div class="fact-card" onclick="speakFact(0)">
+                        <div class="fact-icon">&#x1F947;</div>
+                        <p><strong>Number 1!</strong> ALEPH is the FIRST letter of the Hebrew alphabet! Its number value is 1.</p>
+                    </div>
+                    <div class="fact-card" onclick="speakFact(1)">
+                        <div class="fact-icon">&#x1F910;</div>
+                        <p><strong>Silent Letter!</strong> ALEPH is silent! It does not have its own sound. It carries vowel sounds like ah, eh, ee, oh, oo!</p>
+                    </div>
+                    <div class="fact-card" onclick="speakFact(2)">
+                        <div class="fact-icon">&#x1F4AA;</div>
+                        <p><strong>Strong Leader!</strong> ALEPH means "ox" or "leader" in ancient Hebrew. It represents strength and leadership!</p>
+                    </div>
+                    <div class="fact-card" onclick="speakFact(3)">
+                        <div class="fact-icon">&#x270D;&#xFE0F;</div>
+                        <p><strong>3 Strokes!</strong> ALEPH is made of 3 parts: an upper arm (Yod), a diagonal body (Vav), and a lower leg (Yod).</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Remember:</strong> Many Hebrew words start with ALEPH! When you see &#x05D0; at the beginning of a word, the sound comes from the vowel next to it, not from ALEPH itself.</p>
+                </div>
+            </div>
+
+            <!-- WRITE TAB -->
+            <div class="tab-content" id="write">
+                <h2 class="section-title">Write ALEPH Five Times!</h2>
+
+                <div class="write-stars" id="writeStars">
+                    <div class="write-star" id="ws1">&#x2B50;</div>
+                    <div class="write-star" id="ws2">&#x2B50;</div>
+                    <div class="write-star" id="ws3">&#x2B50;</div>
+                    <div class="write-star" id="ws4">&#x2B50;</div>
+                    <div class="write-star" id="ws5">&#x2B50;</div>
+                </div>
+
+                <div class="write-counter" id="writeCounter">0 of 5 completed</div>
+
+                <div class="trace-area">
+                    <canvas id="traceCanvas" width="280" height="250"></canvas>
+                </div>
+
+                <div class="trace-btns">
+                    <button class="trace-btn clear" onclick="clearCanvas()">Clear</button>
+                    <button class="trace-btn done" onclick="finishTrace()">Done!</button>
+                </div>
+
+                <div class="info-box" style="margin-top: 15px;">
+                    <p><strong>How to Write ALEPH:</strong></p>
+                    <p>1. Start with the upper-right stroke (small Yod going down-left)</p>
+                    <p>2. Draw the diagonal line from upper-right to lower-left</p>
+                    <p>3. Finish with the lower-left stroke (small Yod going up-right)</p>
+                </div>
+            </div>
+
+            <!-- PRACTICE TAB -->
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">Words with ALEPH!</h2>
+
+                <div class="word-cards">
+                    <div class="word-card" onclick="speakWord('Abba', 'Father')">
+                        <div class="word-hebrew">&#x05D0;&#x05B7;&#x05D1;&#x05BC;&#x05B8;&#x05D0;</div>
+                        <div class="word-info">
+                            <div class="word-transliteration">ABBA</div>
+                            <div class="word-english">Father / Dad</div>
+                        </div>
+                    </div>
+                    <div class="word-card" onclick="speakWord('Ima', 'Mother')">
+                        <div class="word-hebrew">&#x05D0;&#x05B4;&#x05DE;&#x05BC;&#x05B8;&#x05D0;</div>
+                        <div class="word-info">
+                            <div class="word-transliteration">IMA</div>
+                            <div class="word-english">Mother / Mom</div>
+                        </div>
+                    </div>
+                    <div class="word-card" onclick="speakWord('Ohel', 'Tent')">
+                        <div class="word-hebrew">&#x05D0;&#x05B9;&#x05D4;&#x05B6;&#x05DC;</div>
+                        <div class="word-info">
+                            <div class="word-transliteration">OHEL</div>
+                            <div class="word-english">Tent</div>
+                        </div>
+                    </div>
+                    <div class="word-card" onclick="speakWord('Ohr', 'Light')">
+                        <div class="word-hebrew">&#x05D0;&#x05D5;&#x05B9;&#x05E8;</div>
+                        <div class="word-info">
+                            <div class="word-transliteration">OHR</div>
+                            <div class="word-english">Light</div>
+                        </div>
+                    </div>
+                    <div class="word-card" onclick="speakWord('Eretz', 'Land')">
+                        <div class="word-hebrew">&#x05D0;&#x05B6;&#x05E8;&#x05B6;&#x05E5;</div>
+                        <div class="word-info">
+                            <div class="word-transliteration">ERETZ</div>
+                            <div class="word-english">Land / Earth</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recognition-game" id="recognitionGame">
+                    <h3 class="section-title" style="margin-top: 25px;">Find the ALEPH!</h3>
+                    <p class="recognition-prompt" id="recognitionPrompt">Tap the ALEPH letter!</p>
+                    <div class="letter-grid" id="letterGrid"></div>
+                    <div class="recognition-score" id="recognitionScore">Score: 0</div>
+                </div>
+            </div>
+
+            <!-- AFFIRM TAB -->
+            <div class="tab-content" id="affirm">
+                <h2 class="section-title">Hebrew Affirmations</h2>
+
+                <div class="affirmation-cards">
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Yachol', 'I can!')">
+                        <span class="emoji">&#x1F4AA;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x05D0;&#x05B2;&#x05E0;&#x05B4;&#x05D9; &#x05D9;&#x05B8;&#x05DB;&#x05D5;&#x05B9;&#x05DC;</div>
+                            <div class="english-text">ANI YACHOL! (I can!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Chazak', 'I am strong!')">
+                        <span class="emoji">&#x1F981;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x05D0;&#x05B2;&#x05E0;&#x05B4;&#x05D9; &#x05D7;&#x05B8;&#x05D6;&#x05B8;&#x05E7;</div>
+                            <div class="english-text">ANI CHAZAK! (I am strong!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Tov', 'I am good!')">
+                        <span class="emoji">&#x2B50;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x05D0;&#x05B2;&#x05E0;&#x05B4;&#x05D9; &#x05D8;&#x05D5;&#x05B9;&#x05D1;</div>
+                            <div class="english-text">ANI TOV! (I am good!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Ohev', 'I love!')">
+                        <span class="emoji">&#x2764;&#xFE0F;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x05D0;&#x05B2;&#x05E0;&#x05B4;&#x05D9; &#x05D0;&#x05D5;&#x05B9;&#x05D4;&#x05B5;&#x05D1;</div>
+                            <div class="english-text">ANI OHEV! (I love!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Lomed', 'I am learning!')">
+                        <span class="emoji">&#x1F4D6;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x05D0;&#x05B2;&#x05E0;&#x05B4;&#x05D9; &#x05DC;&#x05D5;&#x05B9;&#x05DE;&#x05B5;&#x05D3;</div>
+                            <div class="english-text">ANI LOMED! (I am learning!)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">Tap each card to say it proudly!</p>
+
+                <div class="days-section-title">Days of the Week</div>
+
+                <button class="sound-btn" onclick="singDays()">
+                    &#x1F3B5; Sing the Days!
+                </button>
+
+                <div class="days-grid" id="daysGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x2728;&#x1F389;</div>
+            <div class="celebration-text">!&#x05DE;&#x05B7;&#x05D6;&#x05BC;&#x05B8;&#x05DC; &#x05D8;&#x05D5;&#x05B9;&#x05D1;</div>
+            <p style="color: #666; margin-bottom: 20px;">Mazel Tov! You learned ALEPH!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Todah!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var writeCount = 0;
+        var recognitionScore = 0;
+        var recognitionRound = 0;
+
+        // Voice setup
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var i = 0; i < preferred.length; i++) {
+                var found = voices.find(function(v) { return v.name.indexOf(preferred[i]) !== -1 && v.lang.indexOf('en') === 0; });
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.indexOf('en') === 0; }) || voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        // Learn Tab
+        function playAleph() {
+            speak('ALEPH is the first letter of the Hebrew alphabet! ALEPH is silent. It carries vowel sounds like ah, eh, ee, oh, and oo!');
+            updateMascot('ALEPH is silent! It carries the vowel sounds!');
+            updateProgress(5);
+        }
+
+        var facts = [
+            'ALEPH is the first letter of the Hebrew alphabet! Its number value is one!',
+            'ALEPH is a silent letter! It does not make its own sound. Instead, it carries vowel sounds like ah, eh, ee, oh, and oo!',
+            'ALEPH means ox or leader in ancient Hebrew. It represents strength and leadership!',
+            'ALEPH is made of three parts! An upper arm, a diagonal body, and a lower leg. Three strokes to write it!'
+        ];
+
+        function speakFact(index) {
+            speak(facts[index]);
+            updateMascot(facts[index].substring(0, 60) + '...');
+            updateProgress(5);
+        }
+
+        // Write Tab
+        var isDrawing = false;
+        var ctx;
+        var hasDrawn = false;
+
+        function initCanvas() {
+            var canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+            drawGuide();
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('mouseleave', stopDraw);
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        function drawGuide() {
+            // Draw dotted guide letter
+            ctx.save();
+            ctx.font = 'bold 180px Times New Roman';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Light fill
+            ctx.fillStyle = '#E5E7EB';
+            ctx.fillText('\u05D0', 140, 125);
+
+            // Dotted outline
+            ctx.strokeStyle = '#C4B5FD';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeText('\u05D0', 140, 125);
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // Draw stroke order arrows
+            ctx.save();
+            ctx.fillStyle = '#764ba2';
+            ctx.font = 'bold 14px Comic Sans MS, cursive';
+
+            // Arrow 1 - upper right arm
+            ctx.fillText('1', 175, 50);
+            drawArrow(ctx, 175, 55, 155, 80, '#764ba2');
+
+            // Arrow 2 - diagonal body
+            ctx.fillText('2', 180, 90);
+            drawArrow(ctx, 170, 85, 110, 165, '#667eea');
+
+            // Arrow 3 - lower left leg
+            ctx.fillText('3', 90, 170);
+            drawArrow(ctx, 100, 170, 120, 145, '#9333EA');
+
+            ctx.restore();
+        }
+
+        function drawArrow(c, fromX, fromY, toX, toY, color) {
+            var headLen = 8;
+            var dx = toX - fromX;
+            var dy = toY - fromY;
+            var angle = Math.atan2(dy, dx);
+
+            c.beginPath();
+            c.strokeStyle = color;
+            c.lineWidth = 2;
+            c.moveTo(fromX, fromY);
+            c.lineTo(toX, toY);
+            c.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+            c.moveTo(toX, toY);
+            c.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+            c.stroke();
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            hasDrawn = true;
+            ctx.beginPath();
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            var pos = getPos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            var pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function getPos(e) {
+            var canvas = document.getElementById('traceCanvas');
+            var rect = canvas.getBoundingClientRect();
+            var scaleX = canvas.width / rect.width;
+            var scaleY = canvas.height / rect.height;
+            var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, 280, 250);
+            hasDrawn = false;
+            drawGuide();
+        }
+
+        function finishTrace() {
+            if (!hasDrawn) {
+                speak('Draw the letter first, then tap Done!');
+                updateMascot('Try tracing the letter first!');
+                return;
+            }
+
+            writeCount++;
+            if (writeCount <= 5) {
+                var star = document.getElementById('ws' + writeCount);
+                star.classList.add('completed');
+
+                var messages = [
+                    'Yofi! Beautiful ALEPH! One down!',
+                    'Nachon! Great job! Two done!',
+                    'Wonderful ALEPH! Three complete!',
+                    'Almost there! Four done!',
+                    'Mazel Tov! All five ALEPHs written!'
+                ];
+
+                speak(messages[writeCount - 1]);
+                updateMascot(messages[writeCount - 1]);
+                document.getElementById('writeCounter').textContent = writeCount + ' of 5 completed';
+                updateProgress(10);
+
+                if (writeCount >= 5) {
+                    setTimeout(function() {
+                        speak('You wrote ALEPH five times! You are amazing!');
+                    }, 2000);
+                }
+            }
+
+            clearCanvas();
+        }
+
+        // Practice Tab - Words
+        function speakWord(transliteration, english) {
+            speak(transliteration + '! ' + transliteration + ' means ' + english + '! This word starts with ALEPH!');
+            updateMascot(transliteration + ' means ' + english + '!');
+            updateProgress(5);
+        }
+
+        // Practice Tab - Recognition Game
+        var hebrewLetters = ['\u05D0', '\u05D1', '\u05D2', '\u05D3', '\u05D4', '\u05D5', '\u05D6', '\u05D7', '\u05D8', '\u05D9', '\u05DB', '\u05DC', '\u05DE', '\u05E0', '\u05E1', '\u05E2', '\u05E4', '\u05E6', '\u05E7', '\u05E8', '\u05E9', '\u05EA'];
+
+        function initRecognitionGame() {
+            recognitionRound = 0;
+            recognitionScore = 0;
+            document.getElementById('recognitionPrompt').textContent = 'Tap the ALEPH letter!';
+            showRecognitionRound();
+        }
+
+        function showRecognitionRound() {
+            var grid = document.getElementById('letterGrid');
+            // Clear safely using DOM methods
+            while (grid.firstChild) {
+                grid.removeChild(grid.firstChild);
+            }
+
+            // Pick random positions for 6 letters, one is ALEPH
+            var letters = [];
+            var alephPos = Math.floor(Math.random() * 6);
+
+            for (var i = 0; i < 6; i++) {
+                if (i === alephPos) {
+                    letters.push('\u05D0');
+                } else {
+                    var randLetter;
+                    do {
+                        randLetter = hebrewLetters[Math.floor(Math.random() * hebrewLetters.length)];
+                    } while (randLetter === '\u05D0' || letters.indexOf(randLetter) !== -1);
+                    letters.push(randLetter);
+                }
+            }
+
+            letters.forEach(function(letter) {
+                var btn = document.createElement('button');
+                btn.className = 'letter-option';
+                btn.textContent = letter;
+                btn.onclick = function() { checkRecognition(btn, letter === '\u05D0'); };
+                grid.appendChild(btn);
+            });
+
+            document.getElementById('recognitionScore').textContent = 'Score: ' + recognitionScore;
+        }
+
+        function checkRecognition(btn, correct) {
+            var options = document.querySelectorAll('.letter-option');
+            options.forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                recognitionScore++;
+                recognitionRound++;
+                speak('Nachon! Correct! That is ALEPH!');
+                updateMascot('You found the ALEPH! Great eyes!');
+                updateProgress(8);
+                document.getElementById('recognitionScore').textContent = 'Score: ' + recognitionScore;
+
+                setTimeout(function() {
+                    if (recognitionRound < 5) {
+                        showRecognitionRound();
+                    } else {
+                        document.getElementById('recognitionPrompt').textContent = 'Amazing! You found all the ALEPHs!';
+                        var grid = document.getElementById('letterGrid');
+                        while (grid.firstChild) {
+                            grid.removeChild(grid.firstChild);
+                        }
+                        var successDiv = document.createElement('div');
+                        successDiv.style.cssText = 'text-align:center; font-size: 3rem; padding: 20px;';
+                        successDiv.textContent = '\u05D0';
+                        grid.appendChild(successDiv);
+                        speak('Amazing! You found all five ALEPHs! You really know your ALEPH!');
+                    }
+                }, 1200);
+            } else {
+                btn.classList.add('wrong');
+                speak('Oops! That is not ALEPH. Look for the one that looks like an X with arms!');
+                updateMascot('Try again! ALEPH looks like an X with arms!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    options.forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 600);
+            }
+        }
+
+        // Affirm Tab
+        function sayAffirmation(hebrew, english) {
+            speak(hebrew + '! ' + english + ' Say it with me: ' + hebrew + '!');
+            updateMascot('Say it proud: ' + hebrew + '!');
+            updateProgress(8);
+        }
+
+        function sayDay(hebrew, english) {
+            speak(hebrew + ' is ' + english);
+            updateMascot(hebrew + ' means ' + english + '!');
+            updateProgress(3);
+        }
+
+        function singDays() {
+            speak('Yom Rishon, Yom Sheni, Yom Shlishi, Yom Revii, Yom Chamishi, Yom Shishi, Shabbat!');
+            updateMascot('Sing the Hebrew days!');
+            updateProgress(10);
+        }
+
+        // Build days grid safely with DOM methods
+        function buildDaysGrid() {
+            var daysGrid = document.getElementById('daysGrid');
+            var days = [
+                { hebrew: '\u05D9\u05D5\u05B9\u05DD \u05E8\u05B4\u05D0\u05E9\u05C1\u05D5\u05B9\u05DF', english: 'Sunday', spoken: 'Yom Rishon' },
+                { hebrew: '\u05D9\u05D5\u05B9\u05DD \u05E9\u05C1\u05B5\u05E0\u05B4\u05D9', english: 'Monday', spoken: 'Yom Sheni' },
+                { hebrew: '\u05D9\u05D5\u05B9\u05DD \u05E9\u05C1\u05B0\u05DC\u05B4\u05D9\u05E9\u05C1\u05B4\u05D9', english: 'Tuesday', spoken: 'Yom Shlishi' },
+                { hebrew: '\u05D9\u05D5\u05B9\u05DD \u05E8\u05B0\u05D1\u05B4\u05D9\u05E2\u05B4\u05D9', english: 'Wednesday', spoken: 'Yom Revii' },
+                { hebrew: '\u05D9\u05D5\u05B9\u05DD \u05D7\u05B2\u05DE\u05B4\u05D9\u05E9\u05C1\u05B4\u05D9', english: 'Thursday', spoken: 'Yom Chamishi' },
+                { hebrew: '\u05D9\u05D5\u05B9\u05DD \u05E9\u05C1\u05B4\u05E9\u05C1\u05B4\u05D9', english: 'Friday', spoken: 'Yom Shishi' },
+                { hebrew: '\u05E9\u05C1\u05B7\u05D1\u05BC\u05B8\u05EA', english: 'Shabbat', spoken: 'Shabbat' }
+            ];
+
+            var today = new Date().getDay();
+
+            days.forEach(function(day, idx) {
+                var card = document.createElement('div');
+                card.className = 'day-card';
+                if (idx === today) card.classList.add('highlight');
+
+                var hebrewDiv = document.createElement('div');
+                hebrewDiv.className = 'day-hebrew';
+                hebrewDiv.textContent = day.hebrew;
+
+                var englishDiv = document.createElement('div');
+                englishDiv.className = 'day-english';
+                englishDiv.textContent = idx === today ? day.english + ' (Today!)' : day.english;
+
+                card.appendChild(hebrewDiv);
+                card.appendChild(englishDiv);
+
+                card.onclick = (function(spoken, eng) {
+                    return function() { sayDay(spoken, eng); };
+                })(day.spoken, day.english);
+
+                daysGrid.appendChild(card);
+            });
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'practice') initRecognitionGame();
+                if (btn.dataset.tab === 'write') clearCanvas();
+            });
+        });
+
+        // Progress and stars
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('#stars .star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Kochav! Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    showCelebration();
+                    speak('Mazel Tov! You learned the letter ALEPH! The first letter of the Hebrew alphabet!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // Celebration with confetti
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            var colors = ['#667eea', '#764ba2', '#FFD700', '#FFA500', '#10B981', '#EC4899', '#F59E0B'];
+            for (var i = 0; i < 50; i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        var piece = document.createElement('div');
+                        piece.className = 'confetti-piece';
+                        piece.style.left = Math.random() * 100 + 'vw';
+                        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        piece.style.width = (Math.random() * 8 + 5) + 'px';
+                        piece.style.height = (Math.random() * 8 + 5) + 'px';
+                        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                        piece.style.animation = 'confettiFall ' + (Math.random() * 2 + 1.5) + 's ease-out forwards';
+                        document.body.appendChild(piece);
+
+                        setTimeout(function() {
+                            if (piece.parentNode) piece.parentNode.removeChild(piece);
+                        }, 4000);
+                    }, idx * 40);
+                })(i);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            writeCount = 0;
+            recognitionScore = 0;
+            recognitionRound = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('#stars .star').forEach(function(s) { s.classList.remove('earned'); });
+            document.querySelectorAll('.write-star').forEach(function(s) { s.classList.remove('completed'); });
+            document.getElementById('writeCounter').textContent = '0 of 5 completed';
+            document.getElementById('recognitionPrompt').textContent = 'Tap the ALEPH letter!';
+            initRecognitionGame();
+            clearCanvas();
+        }
+
+        // Initialize
+        initCanvas();
+        buildDaysGrid();
+        updateProgress(5);
+        speak('Welcome! Today we are learning ALEPH! The first letter of the Hebrew alphabet! ALEPH is silent and carries vowel sounds!');
+    </script>
+</body>
+</html>

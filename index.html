@@ -335,8 +335,8 @@
             <!-- Week Selector -->
             <div class="week-selector">
                 <button class="week-btn" onclick="showWeek(1)">Week 1</button>
-                <button class="week-btn active" onclick="showWeek(2)">Week 2</button>
-                <button class="week-btn locked" onclick="showWeek(3)" disabled>Week 3 🔒</button>
+                <button class="week-btn" onclick="showWeek(2)">Week 2</button>
+                <button class="week-btn active" onclick="showWeek(3)">Week 3</button>
                 <button class="week-btn locked" onclick="showWeek(4)" disabled>Week 4 🔒</button>
             </div>
 
@@ -708,7 +708,7 @@
             </div>
 
             <!-- Week 2 Content (Feb 2-5) -->
-            <div class="week-content active" id="week-2">
+            <div class="week-content" id="week-2">
                 <div class="day-tabs">
                     <button class="day-tab" onclick="showDay(2, 'monday')">📅 Monday</button>
                     <button class="day-tab" onclick="showDay(2, 'tuesday')">📅 Tuesday</button>
@@ -1029,6 +1029,376 @@
                         </div>
                         <div class="game-card">
                             <div class="game-image bg-dark">א ב ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Hebrew Review</h3>
+                                <p>Review Aleph, Bet, and Vet!</p>
+                                <a href="games/interactive/hebrew-review.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <!-- Week 3 Content (Feb 9-12) -->
+            <div class="week-content active" id="week-3">
+                <div class="day-tabs">
+                    <button class="day-tab active" onclick="showDay(3, 'monday')">📅 Monday</button>
+                    <button class="day-tab" onclick="showDay(3, 'tuesday')">📅 Tuesday</button>
+                    <button class="day-tab" onclick="showDay(3, 'wednesday')">📅 Wednesday</button>
+                    <button class="day-tab" onclick="showDay(3, 'thursday')">📅 Thursday</button>
+                    <button class="day-tab" onclick="showDay(3, 'all')">📋 All Days</button>
+                </div>
+
+                <!-- Monday (Feb 9) -->
+                <div class="day-content active" id="week-3-monday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Monday - Yom Sheni (Feb 9)</h2>
+                            <p>Gratitude, Letter X, Addition Word Problems, Ecosystems, Hebrew Aleph Writing</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-green">🙏</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Gratitude</h3>
+                                <p>What am I thankful for? Share gratitude and learn to appreciate the good things!</p>
+                                <a href="games/interactive/gratitude.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🩻</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter X</h3>
+                                <p>X says /ks/ like X-RAY! X marks the spot! Find X in Fox, Box, and Six.</p>
+                                <a href="games/interactive/letter-x.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition Word Problems</h3>
+                                <p>Use cube trains to solve addition word problems with sums up to 10!</p>
+                                <a href="games/interactive/addition-word-problems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🦫</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Ecosystems</h3>
+                                <p>How do living things change their environments? Beavers build dams!</p>
+                                <a href="games/interactive/ecosystems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Aleph (א) Writing</h3>
+                                <p>Learn to WRITE Hebrew letter ALEPH! ANI YACHOL - I can!</p>
+                                <a href="games/interactive/hebrew-aleph-writing.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuesday (Feb 10) -->
+                <div class="day-content" id="week-3-tuesday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Tuesday - Yom Shlishi (Feb 10)</h2>
+                            <p>Kindness, Letter Y, Addition Word Problems, Ecosystems: Squirrels, Hebrew Bet Writing</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-pink">💝</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Kindness</h3>
+                                <p>What is kindness? Being nice, helping, sharing! Practice kind words.</p>
+                                <a href="games/interactive/kindness.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🐂</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter Y</h3>
+                                <p>Y looks like a slingshot! Y says /y/ like YAK! Find Y words.</p>
+                                <a href="games/interactive/letter-y.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition Word Problems</h3>
+                                <p>Addition word problems with pictures - sums up to 10!</p>
+                                <a href="games/interactive/addition-word-problems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-green">🐿️</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Ecosystems: Squirrels</h3>
+                                <p>How do gray squirrels change the forest? They bury acorns!</p>
+                                <a href="games/interactive/ecosystems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">בּ</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Bet (בּ) Writing</h3>
+                                <p>Learn to WRITE Hebrew letter BET! BET says /b/ like BAYIT (house)!</p>
+                                <a href="games/interactive/hebrew-bet-writing.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday (Feb 11) -->
+                <div class="day-content" id="week-3-wednesday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Wednesday - Yom Revi'i (Feb 11)</h2>
+                            <p>Respect, Letter Z, Addition Word Problems, Earth's Resources, Hebrew Vet Writing</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-purple">🤝</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Respect</h3>
+                                <p>RESPECT means treating others nicely! Practice polite words and actions.</p>
+                                <a href="games/interactive/respect.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">🦓</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter Z</h3>
+                                <p>Z has zigzag lines! Z says /z/ like ZEBRA! ZZZZZ like a bee!</p>
+                                <a href="games/interactive/letter-z.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition Word Problems</h3>
+                                <p>Write addition sentences for word problems with pictures!</p>
+                                <a href="games/interactive/addition-word-problems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🪨</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Earth's Resources</h3>
+                                <p>Earth has water, rocks, and soil! Learn about earth materials.</p>
+                                <a href="games/interactive/earth-resources.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Vet (ב) Writing</h3>
+                                <p>VET is BET without the dot! It says /v/! Practice WRITING Vet.</p>
+                                <a href="games/interactive/hebrew-vet.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thursday (Feb 12) -->
+                <div class="day-content" id="week-3-thursday">
+                    <div class="day-header" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
+                        <span class="day-icon">📅</span>
+                        <div>
+                            <h2>Thursday - Yom Chamishi (Feb 12)</h2>
+                            <p>Responsibility, Letters Q-Z Review, Addition Challenge, Rocks & Minerals, Hebrew Review</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <div class="game-card">
+                            <div class="game-image bg-teal">✅</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Responsibility</h3>
+                                <p>Being responsible means doing what you should do! Learn about home jobs.</p>
+                                <a href="games/interactive/responsibility.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🔤</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letters Q-Z Review</h3>
+                                <p>Review ALL letters from Q to Z! Speed round and quiz challenge!</p>
+                                <a href="games/interactive/letter-review-q-z.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-orange">🏆</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition Challenge</h3>
+                                <p>Can you solve addition word problems on your own? Sums up to 10!</p>
+                                <a href="games/interactive/addition-word-problems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">💎</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Rocks & Minerals</h3>
+                                <p>Classify rocks! Smooth, rough, big, or tiny. Start your rock collection!</p>
+                                <a href="games/interactive/earth-resources.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א בּ ב</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Aleph-Bet-Vet Review</h3>
+                                <p>Review writing all 3 letters! Show your best ALEPH, BET, and VET!</p>
+                                <a href="games/interactive/hebrew-review.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Days Week 3 -->
+                <div class="day-content" id="week-3-all">
+                    <div class="day-header" style="background: linear-gradient(135deg, #2c3e50 0%, #4a5568 100%);">
+                        <span class="day-icon">📋</span>
+                        <div>
+                            <h2>All Week 3 Games</h2>
+                            <p>Complete collection of all interactive games for Week 3 (Feb 9-12)</p>
+                        </div>
+                    </div>
+                    <div class="games-grid">
+                        <!-- Letters -->
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🩻</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter X</h3>
+                                <p>X says /ks/ like X-ray! Monday letter.</p>
+                                <a href="games/interactive/letter-x.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🐂</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter Y</h3>
+                                <p>Y says /y/ like Yak! Tuesday letter.</p>
+                                <a href="games/interactive/letter-y.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">🦓</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letter Z</h3>
+                                <p>Z says /z/ like Zebra! Wednesday letter.</p>
+                                <a href="games/interactive/letter-z.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-gold">🔤</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-literacy">Reading</span>
+                                <h3>Letters Q-Z Review</h3>
+                                <p>Review all letters Q through Z! Thursday.</p>
+                                <a href="games/interactive/letter-review-q-z.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Math -->
+                        <div class="game-card">
+                            <div class="game-image bg-orange">➕</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-math">Math</span>
+                                <h3>Addition Word Problems</h3>
+                                <p>Solve word problems with sums up to 10!</p>
+                                <a href="games/interactive/addition-word-problems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Science -->
+                        <div class="game-card">
+                            <div class="game-image bg-green">🦫</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Ecosystems</h3>
+                                <p>How animals change their environments!</p>
+                                <a href="games/interactive/ecosystems.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-blue">🪨</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-science">Science</span>
+                                <h3>Earth's Resources</h3>
+                                <p>Water, rocks, and soil!</p>
+                                <a href="games/interactive/earth-resources.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- TYCS -->
+                        <div class="game-card">
+                            <div class="game-image bg-green">🙏</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Gratitude</h3>
+                                <p>What are you thankful for?</p>
+                                <a href="games/interactive/gratitude.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-pink">💝</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-sel">TYCS</span>
+                                <h3>Kindness</h3>
+                                <p>Practice kind words and actions!</p>
+                                <a href="games/interactive/kindness.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <!-- Hebrew -->
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Aleph Writing</h3>
+                                <p>Write the first Hebrew letter!</p>
+                                <a href="games/interactive/hebrew-aleph-writing.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">בּ</div>
+                            <div class="game-info">
+                                <span class="subject-badge badge-hebrew">Hebrew</span>
+                                <h3>Bet Writing</h3>
+                                <p>BET says /b/ like BAYIT!</p>
+                                <a href="games/interactive/hebrew-bet-writing.html" class="play-btn">Play Now</a>
+                            </div>
+                        </div>
+                        <div class="game-card">
+                            <div class="game-image bg-dark">א בּ ב</div>
                             <div class="game-info">
                                 <span class="subject-badge badge-hebrew">Hebrew</span>
                                 <h3>Hebrew Review</h3>

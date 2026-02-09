@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letters Q-Z Review! - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1rem; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.4); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: mascotBounce 1s ease-in-out infinite; }
+        @keyframes mascotBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.05rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .letter-parade {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0 15px;
+        }
+        .parade-letter {
+            width: 38px;
+            height: 38px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            animation: paradeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+        @keyframes paradeIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B6B, #FF8E53, #FFD93D, #6BCB77, #4D96FF);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 1.8rem; margin-bottom: 10px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 6px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .tab-btn.active {
+            background: white;
+            color: #e67e00;
+            text-shadow: none;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* REVIEW TAB */
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .review-card {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+            border-radius: 15px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .review-card:hover {
+            transform: scale(1.05);
+            border-color: #f7971e;
+            box-shadow: 0 5px 15px rgba(247,151,30,0.3);
+        }
+        .review-card:active { transform: scale(0.98); }
+        .review-card .big { font-size: 2.5rem; font-weight: bold; color: #e67e00; }
+        .review-card .small { font-size: 1.5rem; color: #f7971e; margin-left: 5px; }
+        .review-card .sound { font-size: 0.85rem; color: #888; margin-top: 2px; }
+        .review-card .keyword { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 4px; }
+        .review-card .keyword-emoji { font-size: 1.5rem; }
+        .review-card .keyword-word { font-weight: bold; color: #555; font-size: 0.9rem; }
+
+        /* MATCH TAB */
+        .match-area { text-align: center; }
+        .match-prompt {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .match-picture {
+            font-size: 5rem;
+            margin: 10px 0;
+            animation: matchPop 0.5s ease;
+        }
+        @keyframes matchPop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .match-word {
+            font-size: 1.3rem;
+            color: #e67e00;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .match-options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .match-option {
+            padding: 12px 6px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: inherit;
+            background: #FFF7ED;
+            border: 3px solid #FFEDD5;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #e67e00;
+        }
+        .match-option:hover { transform: scale(1.08); border-color: #f7971e; }
+        .match-option.correct {
+            background: #D1FAE5;
+            border-color: #10B981;
+            color: #059669;
+            animation: correctPulse 0.5s ease;
+        }
+        .match-option.wrong {
+            background: #FEE2E2;
+            border-color: #EF4444;
+            color: #DC2626;
+            animation: shake 0.5s ease;
+        }
+        .match-score { text-align: center; color: #888; font-size: 0.95rem; margin-top: 8px; }
+        .match-round { text-align: center; color: #aaa; font-size: 0.85rem; }
+
+        /* SPEED TAB */
+        .speed-area { text-align: center; }
+        .speed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .speed-timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e67e00;
+        }
+        .speed-score-display {
+            font-size: 1rem;
+            color: #888;
+            font-weight: bold;
+        }
+        .speed-level {
+            font-size: 0.85rem;
+            color: #aaa;
+            padding: 4px 10px;
+            background: #FFF7ED;
+            border-radius: 10px;
+        }
+        .speed-flash {
+            font-size: 8rem;
+            font-weight: bold;
+            color: #e67e00;
+            margin: 20px 0;
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: flashIn 0.3s ease;
+        }
+        @keyframes flashIn {
+            0% { transform: scale(2) rotate(20deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .speed-choices {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .speed-choice {
+            padding: 15px 6px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: inherit;
+            background: #FFF7ED;
+            border: 3px solid #FFEDD5;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #e67e00;
+        }
+        .speed-choice:hover { transform: scale(1.08); border-color: #f7971e; }
+        .speed-choice.correct { background: #D1FAE5; border-color: #10B981; color: #059669; }
+        .speed-choice.wrong { background: #FEE2E2; border-color: #EF4444; color: #DC2626; }
+
+        .start-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        .start-btn:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(247,151,30,0.4); }
+        .start-btn:active { transform: scale(0.98); }
+
+        .speed-result {
+            background: #FFF7ED;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .speed-result h3 { color: #e67e00; font-size: 1.4rem; margin-bottom: 8px; }
+        .speed-result p { color: #888; font-size: 1rem; margin-bottom: 5px; }
+        .big-score { font-size: 3rem; color: #f7971e; font-weight: bold; }
+
+        /* QUIZ TAB */
+        .quiz-counter {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .quiz-question {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 15px;
+            min-height: 50px;
+        }
+        .quiz-visual {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .quiz-option {
+            padding: 16px;
+            background: #FFF7ED;
+            border: 3px solid #FFEDD5;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #555;
+            text-align: center;
+        }
+        .quiz-option:hover { transform: scale(1.03); border-color: #f7971e; }
+        .quiz-option.correct {
+            background: #D1FAE5;
+            border-color: #10B981;
+            color: #059669;
+            animation: correctPulse 0.5s ease;
+        }
+        .quiz-option.wrong {
+            background: #FEE2E2;
+            border-color: #EF4444;
+            color: #DC2626;
+            animation: shake 0.5s ease;
+        }
+        .opt-emoji { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .instruction {
+            text-align: center;
+            color: #888;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        /* CELEBRATION */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 35px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .celebration-text { font-size: 1.6rem; color: #e67e00; font-weight: bold; margin-bottom: 10px; }
+        .celebration-sub { color: #888; margin-bottom: 20px; font-size: 1.1rem; }
+        .celebration-letters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .celebration-letter {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            animation: letterDance 0.6s ease infinite alternate;
+        }
+        @keyframes letterDance {
+            0% { transform: translateY(0) rotate(-5deg); }
+            100% { transform: translateY(-6px) rotate(5deg); }
+        }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .celebration-btn:hover { transform: scale(1.05); }
+
+        /* CONFETTI */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            z-index: 101;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Letters Q-Z Review!</h1>
+            <p>You know so many letters! Let's celebrate!</p>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#127942;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Let's review all the letters from Q to Z! You've learned so much!
+            </div>
+        </div>
+
+        <div class="letter-parade" id="letterParade"></div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="review">Review</button>
+            <button class="tab-btn" data-tab="match">Match</button>
+            <button class="tab-btn" data-tab="speed">Speed</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- REVIEW TAB -->
+            <div class="tab-content active" id="review">
+                <p class="instruction">Tap any letter to hear its sound!</p>
+                <div class="review-grid" id="reviewGrid"></div>
+            </div>
+
+            <!-- MATCH TAB -->
+            <div class="tab-content" id="match">
+                <p class="match-prompt" id="matchPrompt">Which letter starts this word?</p>
+                <div class="match-picture" id="matchPicture"></div>
+                <div class="match-word" id="matchWord"></div>
+                <div class="match-options" id="matchOptions"></div>
+                <p class="match-score" id="matchScore">Matched: 0</p>
+                <p class="match-round" id="matchRound">Round 1 of 10</p>
+            </div>
+
+            <!-- SPEED TAB -->
+            <div class="tab-content" id="speed">
+                <div id="speedSetup">
+                    <p class="instruction">How fast can you find the right letter?</p>
+                    <p style="text-align:center; color:#aaa; margin: 15px 0;">
+                        A letter will flash on screen. Tap the matching letter below as fast as you can!
+                    </p>
+                    <button class="start-btn" onclick="startSpeedRound()">Start Speed Round!</button>
+                </div>
+                <div id="speedGame" style="display:none;">
+                    <div class="speed-header">
+                        <span class="speed-level" id="speedLevel">Level 1</span>
+                        <span class="speed-timer" id="speedTimer">10</span>
+                        <span class="speed-score-display" id="speedScoreDisplay">Score: 0</span>
+                    </div>
+                    <div class="speed-flash" id="speedFlash"></div>
+                    <div class="speed-choices" id="speedChoices"></div>
+                </div>
+                <div id="speedResult" style="display:none;"></div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <p class="quiz-counter" id="quizCounter">Question 1 of 10</p>
+                <p class="quiz-question" id="quizQuestion"></p>
+                <div class="quiz-visual" id="quizVisual"></div>
+                <div class="quiz-options" id="quizOptions"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#127881;&#127942;&#127881;</div>
+            <div class="celebration-text">You know ALL the letters Q through Z!</div>
+            <p class="celebration-sub">What an amazing alphabet champion you are!</p>
+            <div class="celebration-letters" id="celebrationLetters"></div>
+            <button class="celebration-btn" onclick="closeCelebration()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        /* ===== LETTER DATA ===== */
+        var letterData = [
+            { letter: 'Q', lower: 'q', sound: '/kw/', phonetic: 'kwuh', emoji: '\uD83D\uDC78', word: 'Queen' },
+            { letter: 'R', lower: 'r', sound: '/r/',  phonetic: 'rrr',  emoji: '\uD83D\uDC30', word: 'Rabbit' },
+            { letter: 'S', lower: 's', sound: '/s/',  phonetic: 'sss',  emoji: '\uD83D\uDC0D', word: 'Snake' },
+            { letter: 'T', lower: 't', sound: '/t/',  phonetic: 'tuh',  emoji: '\uD83D\uDC2F', word: 'Tiger' },
+            { letter: 'U', lower: 'u', sound: '/u/',  phonetic: 'uh',   emoji: '\u2602\uFE0F', word: 'Umbrella' },
+            { letter: 'V', lower: 'v', sound: '/v/',  phonetic: 'vvv',  emoji: '\uD83C\uDFBB', word: 'Violin' },
+            { letter: 'W', lower: 'w', sound: '/w/',  phonetic: 'wuh',  emoji: '\uD83D\uDCA7', word: 'Water' },
+            { letter: 'X', lower: 'x', sound: '/ks/', phonetic: 'ks',   emoji: '\uD83E\uDDB4', word: 'X-ray' },
+            { letter: 'Y', lower: 'y', sound: '/y/',  phonetic: 'yuh',  emoji: '\uD83D\uDC03', word: 'Yak' },
+            { letter: 'Z', lower: 'z', sound: '/z/',  phonetic: 'zzz',  emoji: '\uD83E\uDD93', word: 'Zebra' }
+        ];
+
+        /* ===== VOICE ===== */
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var p = 0; p < preferred.length; p++) {
+                var found = null;
+                for (var vi = 0; vi < voices.length; vi++) {
+                    if (voices[vi].name.indexOf(preferred[p]) !== -1 && voices[vi].lang.indexOf('en') === 0) {
+                        found = voices[vi];
+                        break;
+                    }
+                }
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) {
+                for (var vi2 = 0; vi2 < voices.length; vi2++) {
+                    if (voices[vi2].lang.indexOf('en') === 0) { selectedVoice = voices[vi2]; break; }
+                }
+            }
+            if (!selectedVoice && voices.length > 0) selectedVoice = voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text, callback) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            if (callback) utter.onend = callback;
+            synth.speak(utter);
+        }
+
+        /* ===== STATE ===== */
+        var starsEarned = 0;
+        var progress = 0;
+        var matchRound = 0;
+        var matchCorrect = 0;
+        var quizIndex = 0;
+        var quizScore = 0;
+        var speedScore = 0;
+        var speedRound = 0;
+        var speedLevel = 1;
+        var speedTimerVal = 0;
+        var speedInterval = null;
+        var speedTotalRounds = 10;
+
+        /* ===== PROGRESS / STARS ===== */
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(showCelebration, 800);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        /* ===== LETTER PARADE ===== */
+        function buildParade() {
+            var container = document.getElementById('letterParade');
+            for (var i = 0; i < letterData.length; i++) {
+                var el = document.createElement('div');
+                el.className = 'parade-letter';
+                el.textContent = letterData[i].letter;
+                el.style.animationDelay = (i * 0.08) + 's';
+                container.appendChild(el);
+            }
+        }
+
+        /* ===== TABS ===== */
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'match') initMatch();
+                if (btn.dataset.tab === 'speed') resetSpeed();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        /* ===== REVIEW TAB ===== */
+        function buildReview() {
+            var grid = document.getElementById('reviewGrid');
+            for (var i = 0; i < letterData.length; i++) {
+                (function(l) {
+                    var card = document.createElement('div');
+                    card.className = 'review-card';
+
+                    var letterRow = document.createElement('div');
+                    var bigSpan = document.createElement('span');
+                    bigSpan.className = 'big';
+                    bigSpan.textContent = l.letter;
+                    var smallSpan = document.createElement('span');
+                    smallSpan.className = 'small';
+                    smallSpan.textContent = l.lower;
+                    letterRow.appendChild(bigSpan);
+                    letterRow.appendChild(smallSpan);
+
+                    var soundDiv = document.createElement('div');
+                    soundDiv.className = 'sound';
+                    soundDiv.textContent = l.sound;
+
+                    var kwDiv = document.createElement('div');
+                    kwDiv.className = 'keyword';
+                    var kwEmoji = document.createElement('span');
+                    kwEmoji.className = 'keyword-emoji';
+                    kwEmoji.textContent = l.emoji;
+                    var kwWord = document.createElement('span');
+                    kwWord.className = 'keyword-word';
+                    kwWord.textContent = l.word;
+                    kwDiv.appendChild(kwEmoji);
+                    kwDiv.appendChild(kwWord);
+
+                    card.appendChild(letterRow);
+                    card.appendChild(soundDiv);
+                    card.appendChild(kwDiv);
+
+                    card.onclick = function() {
+                        speak(l.phonetic + ', ' + l.phonetic + ', ' + l.letter + '! ' + l.word + ' starts with ' + l.letter + '!');
+                        updateMascot(l.letter + ' says ' + l.sound + ' like ' + l.word + '!');
+                        card.style.animation = 'none';
+                        card.offsetHeight;
+                        card.style.animation = 'correctPulse 0.4s ease';
+                        updateProgress(1);
+                    };
+
+                    grid.appendChild(card);
+                })(letterData[i]);
+            }
+        }
+
+        /* ===== MATCH TAB ===== */
+        var matchItems = [
+            { emoji: '\uD83D\uDC78', word: 'Queen', answer: 'Q' },
+            { emoji: '\uD83D\uDC30', word: 'Rabbit', answer: 'R' },
+            { emoji: '\uD83D\uDC0D', word: 'Snake', answer: 'S' },
+            { emoji: '\uD83D\uDC2F', word: 'Tiger', answer: 'T' },
+            { emoji: '\u2602\uFE0F', word: 'Umbrella', answer: 'U' },
+            { emoji: '\uD83C\uDFBB', word: 'Violin', answer: 'V' },
+            { emoji: '\uD83D\uDCA7', word: 'Water', answer: 'W' },
+            { emoji: '\uD83E\uDDB4', word: 'X-ray', answer: 'X' },
+            { emoji: '\uD83D\uDC03', word: 'Yak', answer: 'Y' },
+            { emoji: '\uD83E\uDD93', word: 'Zebra', answer: 'Z' },
+            { emoji: '\u2753', word: 'Question', answer: 'Q' },
+            { emoji: '\uD83C\uDF27\uFE0F', word: 'Rain', answer: 'R' },
+            { emoji: '\u2B50', word: 'Star', answer: 'S' },
+            { emoji: '\uD83C\uDF32', word: 'Tree', answer: 'T' },
+            { emoji: '\uD83E\uDD84', word: 'Unicorn', answer: 'U' },
+            { emoji: '\uD83C\uDF0B', word: 'Volcano', answer: 'V' },
+            { emoji: '\uD83D\uDC0B', word: 'Whale', answer: 'W' },
+            { emoji: '\uD83C\uDF84', word: 'Xmas Tree', answer: 'X' },
+            { emoji: '\uD83D\uDC9B', word: 'Yellow', answer: 'Y' },
+            { emoji: '\uD83E\uDD10', word: 'Zipper', answer: 'Z' }
+        ];
+        var shuffledMatch = [];
+
+        function shuffleArray(arr) {
+            var a = arr.slice();
+            for (var i = a.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = a[i];
+                a[i] = a[j];
+                a[j] = temp;
+            }
+            return a;
+        }
+
+        function initMatch() {
+            matchRound = 0;
+            matchCorrect = 0;
+            shuffledMatch = shuffleArray(matchItems).slice(0, 10);
+            document.getElementById('matchScore').textContent = 'Matched: 0';
+            showMatchRound();
+        }
+
+        function showMatchRound() {
+            if (matchRound >= shuffledMatch.length) {
+                document.getElementById('matchPicture').textContent = '\uD83C\uDF89';
+                document.getElementById('matchWord').textContent = 'All done! You got ' + matchCorrect + ' out of ' + shuffledMatch.length + '!';
+                document.getElementById('matchOptions').textContent = '';
+                document.getElementById('matchRound').textContent = '';
+                speak('Amazing! You matched ' + matchCorrect + ' out of ' + shuffledMatch.length + '!');
+                updateMascot('Great matching! You really know your letters!');
+                return;
+            }
+
+            var item = shuffledMatch[matchRound];
+            var picEl = document.getElementById('matchPicture');
+            picEl.textContent = item.emoji;
+            picEl.style.animation = 'none';
+            picEl.offsetHeight;
+            picEl.style.animation = 'matchPop 0.5s ease';
+            document.getElementById('matchWord').textContent = item.word;
+            document.getElementById('matchRound').textContent = 'Round ' + (matchRound + 1) + ' of ' + shuffledMatch.length;
+
+            var allLetterNames = [];
+            for (var li = 0; li < letterData.length; li++) allLetterNames.push(letterData[li].letter);
+
+            var options = [item.answer];
+            while (options.length < 5) {
+                var pick = allLetterNames[Math.floor(Math.random() * allLetterNames.length)];
+                if (options.indexOf(pick) === -1) options.push(pick);
+            }
+            options = shuffleArray(options);
+
+            var container = document.getElementById('matchOptions');
+            container.textContent = '';
+            for (var oi = 0; oi < options.length; oi++) {
+                (function(opt) {
+                    var btn = document.createElement('button');
+                    btn.className = 'match-option';
+                    btn.textContent = opt;
+                    btn.onclick = function() { checkMatch(btn, opt, item); };
+                    container.appendChild(btn);
+                })(options[oi]);
+            }
+
+            speak('Which letter starts the word ' + item.word + '?');
+        }
+
+        function checkMatch(btn, picked, item) {
+            var allBtns = document.querySelectorAll('.match-option');
+            for (var bi = 0; bi < allBtns.length; bi++) allBtns[bi].style.pointerEvents = 'none';
+
+            if (picked === item.answer) {
+                btn.classList.add('correct');
+                matchCorrect++;
+                document.getElementById('matchScore').textContent = 'Matched: ' + matchCorrect;
+                speak('Yes! ' + item.word + ' starts with ' + item.answer + '!');
+                updateMascot('Correct! ' + item.word + ' starts with ' + item.answer + '!');
+                updateProgress(4);
+                matchRound++;
+                setTimeout(showMatchRound, 1200);
+            } else {
+                btn.classList.add('wrong');
+                speak('Not quite! ' + item.word + ' starts with ' + item.answer + '. Try again!');
+                updateMascot(item.word + ' starts with ' + item.answer + ', not ' + picked + '!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    var btns2 = document.querySelectorAll('.match-option');
+                    for (var bi2 = 0; bi2 < btns2.length; bi2++) btns2[bi2].style.pointerEvents = 'auto';
+                }, 700);
+            }
+        }
+
+        /* ===== SPEED TAB ===== */
+        function resetSpeed() {
+            document.getElementById('speedSetup').style.display = 'block';
+            document.getElementById('speedGame').style.display = 'none';
+            document.getElementById('speedResult').style.display = 'none';
+            if (speedInterval) clearInterval(speedInterval);
+        }
+
+        function startSpeedRound() {
+            speedScore = 0;
+            speedRound = 0;
+            speedLevel = 1;
+            document.getElementById('speedSetup').style.display = 'none';
+            document.getElementById('speedGame').style.display = 'block';
+            document.getElementById('speedResult').style.display = 'none';
+            document.getElementById('speedScoreDisplay').textContent = 'Score: 0';
+            document.getElementById('speedLevel').textContent = 'Level 1';
+            speak('Get ready!', function() {
+                setTimeout(showSpeedFlash, 400);
+            });
+        }
+
+        function showSpeedFlash() {
+            if (speedRound >= speedTotalRounds) {
+                endSpeedRound();
+                return;
+            }
+
+            var targetIdx = Math.floor(Math.random() * letterData.length);
+            var target = letterData[targetIdx];
+
+            /* Time decreases with level */
+            var timeLimit = 10;
+            if (speedLevel === 2) timeLimit = 7;
+            if (speedLevel >= 3) timeLimit = 5;
+
+            speedTimerVal = timeLimit;
+            document.getElementById('speedTimer').textContent = speedTimerVal;
+            document.getElementById('speedTimer').style.color = '#e67e00';
+
+            /* Show target letter big */
+            var flashEl = document.getElementById('speedFlash');
+            flashEl.textContent = target.letter;
+            flashEl.style.animation = 'none';
+            flashEl.offsetHeight;
+            flashEl.style.animation = 'flashIn 0.3s ease';
+
+            /* Build choices: more distractors at higher levels */
+            var numChoices = 5;
+            if (speedLevel === 2) numChoices = 7;
+            if (speedLevel >= 3) numChoices = 10;
+
+            var allLetterNames = [];
+            for (var ali = 0; ali < letterData.length; ali++) allLetterNames.push(letterData[ali].letter);
+
+            var choices = [target.letter];
+            while (choices.length < Math.min(numChoices, allLetterNames.length)) {
+                var pick = allLetterNames[Math.floor(Math.random() * allLetterNames.length)];
+                if (choices.indexOf(pick) === -1) choices.push(pick);
+            }
+            choices = shuffleArray(choices);
+
+            var container = document.getElementById('speedChoices');
+            container.textContent = '';
+            var cols = Math.min(choices.length, 5);
+            container.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+
+            for (var ci = 0; ci < choices.length; ci++) {
+                (function(ch) {
+                    var btn = document.createElement('button');
+                    btn.className = 'speed-choice';
+                    btn.textContent = ch;
+                    btn.onclick = function() { checkSpeedChoice(btn, ch, target.letter); };
+                    container.appendChild(btn);
+                })(choices[ci]);
+            }
+
+            /* Timer countdown */
+            if (speedInterval) clearInterval(speedInterval);
+            speedInterval = setInterval(function() {
+                speedTimerVal--;
+                document.getElementById('speedTimer').textContent = speedTimerVal;
+                if (speedTimerVal <= 3) {
+                    document.getElementById('speedTimer').style.color = '#EF4444';
+                }
+                if (speedTimerVal <= 0) {
+                    clearInterval(speedInterval);
+                    speak('Time is up!');
+                    speedRound++;
+                    setTimeout(showSpeedFlash, 800);
+                }
+            }, 1000);
+        }
+
+        function checkSpeedChoice(btn, picked, correct) {
+            clearInterval(speedInterval);
+            var allBtns = document.querySelectorAll('.speed-choice');
+            for (var bi = 0; bi < allBtns.length; bi++) allBtns[bi].style.pointerEvents = 'none';
+
+            if (picked === correct) {
+                btn.classList.add('correct');
+                var bonus = speedTimerVal;
+                speedScore += 10 + bonus;
+                document.getElementById('speedScoreDisplay').textContent = 'Score: ' + speedScore;
+                /* Level up every 3 correct */
+                if (speedRound > 0 && speedRound % 3 === 2 && speedLevel < 3) {
+                    speedLevel++;
+                    document.getElementById('speedLevel').textContent = 'Level ' + speedLevel;
+                    speak('Level up!');
+                } else {
+                    speak(correct + '!');
+                }
+                updateProgress(3);
+            } else {
+                btn.classList.add('wrong');
+                for (var bi2 = 0; bi2 < allBtns.length; bi2++) {
+                    if (allBtns[bi2].textContent === correct) allBtns[bi2].classList.add('correct');
+                }
+                speak('That was ' + correct + '!');
+            }
+
+            speedRound++;
+            setTimeout(showSpeedFlash, 1000);
+        }
+
+        function endSpeedRound() {
+            document.getElementById('speedGame').style.display = 'none';
+            var resultDiv = document.getElementById('speedResult');
+            resultDiv.style.display = 'block';
+
+            var rating = 'Good try!';
+            if (speedScore >= 80) rating = 'Amazing! Lightning fast!';
+            else if (speedScore >= 50) rating = 'Great job! Super speedy!';
+            else if (speedScore >= 30) rating = 'Nice work! Getting faster!';
+
+            /* Build result DOM safely */
+            resultDiv.textContent = '';
+
+            var resultBox = document.createElement('div');
+            resultBox.className = 'speed-result';
+
+            var h3 = document.createElement('h3');
+            h3.textContent = rating;
+            resultBox.appendChild(h3);
+
+            var scoreEl = document.createElement('div');
+            scoreEl.className = 'big-score';
+            scoreEl.textContent = speedScore;
+            resultBox.appendChild(scoreEl);
+
+            var pPts = document.createElement('p');
+            pPts.textContent = 'points';
+            resultBox.appendChild(pPts);
+
+            var pLevel = document.createElement('p');
+            pLevel.style.marginTop = '10px';
+            pLevel.style.color = '#aaa';
+            pLevel.textContent = 'You reached Level ' + speedLevel + '!';
+            resultBox.appendChild(pLevel);
+
+            resultDiv.appendChild(resultBox);
+
+            var playBtn = document.createElement('button');
+            playBtn.className = 'start-btn';
+            playBtn.style.marginTop = '15px';
+            playBtn.textContent = 'Play Again!';
+            playBtn.onclick = startSpeedRound;
+            resultDiv.appendChild(playBtn);
+
+            speak(rating + ' You scored ' + speedScore + ' points!');
+            updateMascot(rating + ' ' + speedScore + ' points!');
+            updateProgress(5);
+        }
+
+        /* ===== QUIZ TAB ===== */
+        var quizQuestions = [];
+
+        function buildQuizQuestions() {
+            quizQuestions = [
+                {
+                    question: 'Which letter makes the /kw/ sound?',
+                    visual: '\uD83D\uDC78',
+                    options: ['Q', 'R', 'S', 'T'],
+                    answer: 0,
+                    explanation: 'Q makes the /kw/ sound like Queen!'
+                },
+                {
+                    question: 'What letter does Rabbit start with?',
+                    visual: '\uD83D\uDC30',
+                    options: ['T', 'R', 'W', 'Q'],
+                    answer: 1,
+                    explanation: 'Rabbit starts with R!'
+                },
+                {
+                    question: 'Which letter sounds like a snake? Sssss!',
+                    visual: '\uD83D\uDC0D',
+                    options: ['Z', 'X', 'S', 'V'],
+                    answer: 2,
+                    explanation: 'S makes the ssss sound like a Snake!'
+                },
+                {
+                    question: 'Tiger starts with which letter?',
+                    visual: '\uD83D\uDC2F',
+                    options: ['T', 'Y', 'R', 'U'],
+                    answer: 0,
+                    explanation: 'Tiger starts with T!'
+                },
+                {
+                    question: 'Which letter does Umbrella start with?',
+                    visual: '\u2602\uFE0F',
+                    options: ['W', 'V', 'Q', 'U'],
+                    answer: 3,
+                    explanation: 'Umbrella starts with U!'
+                },
+                {
+                    question: 'Violin starts with what letter?',
+                    visual: '\uD83C\uDFBB',
+                    options: ['W', 'V', 'U', 'Y'],
+                    answer: 1,
+                    explanation: 'Violin starts with V!'
+                },
+                {
+                    question: 'What letter does Water start with?',
+                    visual: '\uD83D\uDCA7',
+                    options: ['X', 'Q', 'W', 'R'],
+                    answer: 2,
+                    explanation: 'Water starts with W!'
+                },
+                {
+                    question: 'X-ray starts with which letter?',
+                    visual: '\uD83E\uDDB4',
+                    options: ['S', 'Z', 'Y', 'X'],
+                    answer: 3,
+                    explanation: 'X-ray starts with X!'
+                },
+                {
+                    question: 'What letter makes the /y/ sound like Yak?',
+                    visual: '\uD83D\uDC03',
+                    options: ['Y', 'W', 'U', 'V'],
+                    answer: 0,
+                    explanation: 'Y makes the /y/ sound like Yak!'
+                },
+                {
+                    question: 'Zebra starts with the very last review letter! Which one?',
+                    visual: '\uD83E\uDD93',
+                    options: ['S', 'X', 'Q', 'Z'],
+                    answer: 3,
+                    explanation: 'Zebra starts with Z!'
+                }
+            ];
+        }
+
+        function initQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            buildQuizQuestions();
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            if (quizIndex >= quizQuestions.length) {
+                document.getElementById('quizCounter').textContent = 'Quiz Complete!';
+                document.getElementById('quizQuestion').textContent = 'You got ' + quizScore + ' out of ' + quizQuestions.length + ' correct!';
+                document.getElementById('quizVisual').textContent = '\uD83C\uDF89';
+                document.getElementById('quizOptions').textContent = '';
+                speak('Amazing! You got ' + quizScore + ' out of ' + quizQuestions.length + ' correct! You know your letters!');
+                updateMascot('Quiz champion! ' + quizScore + '/' + quizQuestions.length + '!');
+                updateProgress(10);
+                return;
+            }
+
+            var q = quizQuestions[quizIndex];
+            document.getElementById('quizCounter').textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+            document.getElementById('quizQuestion').textContent = q.question;
+            document.getElementById('quizVisual').textContent = q.visual;
+
+            var container = document.getElementById('quizOptions');
+            container.textContent = '';
+
+            for (var oi = 0; oi < q.options.length; oi++) {
+                (function(opt, idx) {
+                    var btn = document.createElement('button');
+                    btn.className = 'quiz-option';
+
+                    var emojiSpan = document.createElement('span');
+                    emojiSpan.className = 'opt-emoji';
+                    emojiSpan.textContent = getLetterEmoji(opt);
+                    btn.appendChild(emojiSpan);
+
+                    var textNode = document.createTextNode(opt);
+                    btn.appendChild(textNode);
+
+                    btn.onclick = function() { checkQuiz(btn, idx === q.answer, q); };
+                    container.appendChild(btn);
+                })(q.options[oi], oi);
+            }
+
+            speak(q.question);
+        }
+
+        function getLetterEmoji(letter) {
+            for (var i = 0; i < letterData.length; i++) {
+                if (letterData[i].letter === letter) return letterData[i].emoji;
+            }
+            return '';
+        }
+
+        function checkQuiz(btn, correct, q) {
+            var allBtns = document.querySelectorAll('.quiz-option');
+            for (var bi = 0; bi < allBtns.length; bi++) allBtns[bi].style.pointerEvents = 'none';
+
+            if (correct) {
+                btn.classList.add('correct');
+                quizScore++;
+                speak(q.explanation);
+                updateMascot(q.explanation);
+                updateProgress(5);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('Not quite! Try again!');
+                updateMascot('Hmm, that is not right. Try another one!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    var btns2 = document.querySelectorAll('.quiz-option');
+                    for (var bi2 = 0; bi2 < btns2.length; bi2++) btns2[bi2].style.pointerEvents = 'auto';
+                }, 700);
+            }
+        }
+
+        /* ===== CELEBRATION ===== */
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+
+            var lettersContainer = document.getElementById('celebrationLetters');
+            lettersContainer.textContent = '';
+            for (var i = 0; i < letterData.length; i++) {
+                var el = document.createElement('div');
+                el.className = 'celebration-letter';
+                el.textContent = letterData[i].letter;
+                el.style.animationDelay = (i * 0.1) + 's';
+                lettersContainer.appendChild(el);
+            }
+
+            launchConfetti();
+            speak('Hooray! You know ALL the letters Q through Z! You are an alphabet superstar!');
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            var starEls = document.querySelectorAll('.star');
+            for (var si = 0; si < starEls.length; si++) starEls[si].classList.remove('earned');
+            initMatch();
+            initQuiz();
+            resetSpeed();
+            /* Switch to review tab */
+            var tabBtns = document.querySelectorAll('.tab-btn');
+            for (var ti = 0; ti < tabBtns.length; ti++) tabBtns[ti].classList.remove('active');
+            var tabContents = document.querySelectorAll('.tab-content');
+            for (var ci = 0; ci < tabContents.length; ci++) tabContents[ci].classList.remove('active');
+            document.querySelector('[data-tab="review"]').classList.add('active');
+            document.getElementById('review').classList.add('active');
+        }
+
+        function launchConfetti() {
+            var colors = ['#f7971e', '#ffd200', '#FF6B6B', '#6BCB77', '#4D96FF', '#FF8E53', '#A855F7', '#EC4899'];
+            for (var i = 0; i < 60; i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        var confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.width = (Math.random() * 8 + 6) + 'px';
+                        confetti.style.height = (Math.random() * 8 + 6) + 'px';
+                        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                        document.body.appendChild(confetti);
+                        setTimeout(function() { confetti.remove(); }, 4000);
+                    }, idx * 50);
+                })(i);
+            }
+        }
+
+        /* ===== INIT ===== */
+        buildParade();
+        buildReview();
+        speak('Let us review all the letters from Q to Z! You have learned so much! Tap a letter to hear its sound!');
+    </script>
+</body>
+</html>

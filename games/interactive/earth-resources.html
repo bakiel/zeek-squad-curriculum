@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth's Resources - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #45B7D1 0%, #96CEB4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.75rem; opacity: 0.8; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: earthSpin 3s ease-in-out infinite; }
+        @keyframes earthSpin {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-8px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 6px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #2E8B57;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Learn Tab */
+        .resource-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .resource-card {
+            background: #F0FFF4;
+            border-radius: 20px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .resource-card:hover { transform: scale(1.02); }
+        .resource-card.water-card { background: #EBF8FF; border-color: #63B3ED; }
+        .resource-card.rock-card { background: #FAF5FF; border-color: #B794F4; }
+        .resource-card.soil-card { background: #FEFCBF; border-color: #D69E2E; }
+        .resource-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .resource-card .card-emoji { font-size: 2.5rem; }
+        .resource-card .card-title { font-size: 1.3rem; font-weight: bold; }
+        .resource-card.water-card .card-title { color: #2B6CB0; }
+        .resource-card.rock-card .card-title { color: #6B46C1; }
+        .resource-card.soil-card .card-title { color: #975A16; }
+        .resource-card .card-desc { color: #555; font-size: 0.95rem; line-height: 1.4; }
+        .resource-card .card-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .resource-card .example-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .water-card .example-tag { background: #BEE3F8; color: #2A4365; }
+        .rock-card .example-tag { background: #E9D8FD; color: #44337A; }
+        .soil-card .example-tag { background: #FEFCBF; color: #744210; }
+
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0 0 0;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #45B7D1 0%, #2E8B57 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+
+        /* Sort Tab */
+        .sort-instruction {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .sort-buckets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .sort-bucket {
+            background: #F7FAFC;
+            border-radius: 15px;
+            padding: 10px 5px;
+            text-align: center;
+            min-height: 120px;
+            border: 3px dashed #CBD5E0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .sort-bucket.water-bucket { border-color: #63B3ED; background: #EBF8FF; }
+        .sort-bucket.rock-bucket { border-color: #B794F4; background: #FAF5FF; }
+        .sort-bucket.soil-bucket { border-color: #D69E2E; background: #FFFFF0; }
+        .sort-bucket.highlight { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .bucket-label {
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .water-bucket .bucket-label { color: #2B6CB0; }
+        .rock-bucket .bucket-label { color: #6B46C1; }
+        .soil-bucket .bucket-label { color: #975A16; }
+        .bucket-icon { font-size: 1.8rem; display: block; margin-bottom: 5px; }
+        .bucket-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+        }
+        .bucket-item {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.7);
+            color: #333;
+            font-weight: bold;
+        }
+
+        .sort-items {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .sort-item {
+            background: #E2E8F0;
+            border-radius: 12px;
+            padding: 12px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            user-select: none;
+        }
+        .sort-item:hover { transform: scale(1.08); border-color: #A0AEC0; }
+        .sort-item.selected { border-color: #45B7D1; background: #BEE3F8; transform: scale(1.08); }
+        .sort-item.sorted { opacity: 0.4; pointer-events: none; transform: scale(0.9); }
+        .sort-item .item-emoji { font-size: 1.5rem; display: block; }
+        .sort-item .item-label { font-size: 0.7rem; font-weight: bold; color: #555; margin-top: 3px; display: block; }
+
+        .sort-score {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        @keyframes correctBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Explore Tab */
+        .explore-intro {
+            text-align: center;
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        .rock-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .rock-card-explore {
+            background: #F7FAFC;
+            border-radius: 18px;
+            padding: 15px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .rock-card-explore:hover { transform: scale(1.07); border-color: #A0AEC0; }
+        .rock-card-explore.active { border-color: #2E8B57; background: #F0FFF4; }
+        .rock-card-explore .rock-emoji { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+        .rock-card-explore .rock-name { font-size: 0.85rem; font-weight: bold; color: #555; }
+
+        .rock-detail {
+            display: none;
+            background: linear-gradient(135deg, #F0FFF4, #EBF8FF);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .rock-detail.show { display: block; }
+        .rock-detail .detail-emoji { font-size: 4rem; display: block; margin-bottom: 8px; }
+        .rock-detail .detail-name { font-size: 1.4rem; font-weight: bold; color: #2E8B57; margin-bottom: 8px; }
+        .rock-detail .detail-desc { color: #555; font-size: 1rem; line-height: 1.5; }
+        .rock-detail .detail-fact {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .explore-prompt {
+            background: #FEFCBF;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            color: #744210;
+            font-size: 1rem;
+        }
+
+        /* Quiz Tab */
+        .quiz-question {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .quiz-option {
+            padding: 15px 10px;
+            background: #F0FFF4;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-option:hover { transform: scale(1.05); border-color: #2E8B57; }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; animation: correctBounce 0.5s ease; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; animation: shake 0.5s ease; }
+        .quiz-option .opt-emoji { font-size: 1.8rem; display: block; margin-bottom: 5px; }
+        .quiz-progress {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Celebration */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 90%;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #2E8B57; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #45B7D1 0%, #2E8B57 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .celebration-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Earth's Resources</h1>
+            <div class="standard">K-ESS3-1 Earth Materials</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🌍</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Earth gives us water, rocks, and soil! Let's explore!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+            <span class="star">⭐</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="sort">Sort</button>
+            <button class="tab-btn" data-tab="explore">Explore</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <p style="text-align: center; color: #555; margin-bottom: 10px; font-size: 1.05rem;">
+                    Our Earth has amazing resources! Tap each one to learn more.
+                </p>
+                <div class="resource-cards">
+                    <div class="resource-card water-card" onclick="learnResource('water')">
+                        <div class="card-header">
+                            <span class="card-emoji">💧</span>
+                            <span class="card-title">WATER</span>
+                        </div>
+                        <div class="card-desc">
+                            Water is everywhere! We drink it, swim in it, and plants need it to grow.
+                        </div>
+                        <div class="card-examples">
+                            <span class="example-tag">🌊 Oceans</span>
+                            <span class="example-tag">🏞 Rivers</span>
+                            <span class="example-tag">🏖 Lakes</span>
+                            <span class="example-tag">🌧 Rain</span>
+                        </div>
+                    </div>
+                    <div class="resource-card rock-card" onclick="learnResource('rocks')">
+                        <div class="card-header">
+                            <span class="card-emoji">🪨</span>
+                            <span class="card-title">ROCKS</span>
+                        </div>
+                        <div class="card-desc">
+                            Rocks are hard and strong! Some are smooth, some are rough, some are big, some are tiny!
+                        </div>
+                        <div class="card-examples">
+                            <span class="example-tag">Smooth</span>
+                            <span class="example-tag">Rough</span>
+                            <span class="example-tag">Big</span>
+                            <span class="example-tag">Tiny</span>
+                        </div>
+                    </div>
+                    <div class="resource-card soil-card" onclick="learnResource('soil')">
+                        <div class="card-header">
+                            <span class="card-emoji">🌱</span>
+                            <span class="card-title">SOIL</span>
+                        </div>
+                        <div class="card-desc">
+                            Soil is soft and brown! It is where plants grow. Worms and bugs live in the soil too!
+                        </div>
+                        <div class="card-examples">
+                            <span class="example-tag">Soft</span>
+                            <span class="example-tag">Brown</span>
+                            <span class="example-tag">🌻 Plants Grow</span>
+                            <span class="example-tag">🪱 Worms Live</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="sound-btn" onclick="learnAll()">
+                    🔊 Hear About All Earth Resources!
+                </button>
+            </div>
+
+            <!-- SORT TAB -->
+            <div class="tab-content" id="sort">
+                <p class="sort-instruction" id="sortInstruction">Tap an item, then tap the correct bucket!</p>
+                <div class="sort-buckets">
+                    <div class="sort-bucket water-bucket" id="waterBucket" onclick="placeToBucket('water')">
+                        <span class="bucket-icon">💧</span>
+                        <span class="bucket-label">Water</span>
+                        <div class="bucket-items" id="waterItems"></div>
+                    </div>
+                    <div class="sort-bucket rock-bucket" id="rockBucket" onclick="placeToBucket('rocks')">
+                        <span class="bucket-icon">🪨</span>
+                        <span class="bucket-label">Rocks</span>
+                        <div class="bucket-items" id="rockItems"></div>
+                    </div>
+                    <div class="sort-bucket soil-bucket" id="soilBucket" onclick="placeToBucket('soil')">
+                        <span class="bucket-icon">🌱</span>
+                        <span class="bucket-label">Soil</span>
+                        <div class="bucket-items" id="soilItems"></div>
+                    </div>
+                </div>
+                <div class="sort-items" id="sortItems"></div>
+                <p class="sort-score" id="sortScore">Sorted: 0 / 8</p>
+            </div>
+
+            <!-- EXPLORE TAB -->
+            <div class="tab-content" id="explore">
+                <p class="explore-intro">Tap a rock to learn about it!</p>
+                <div class="rock-grid" id="rockGrid">
+                    <div class="rock-card-explore" onclick="exploreRock(0)" id="rock0">
+                        <span class="rock-emoji">🪨</span>
+                        <span class="rock-name">Smooth Rock</span>
+                    </div>
+                    <div class="rock-card-explore" onclick="exploreRock(1)" id="rock1">
+                        <span class="rock-emoji">🧱</span>
+                        <span class="rock-name">Rough Rock</span>
+                    </div>
+                    <div class="rock-card-explore" onclick="exploreRock(2)" id="rock2">
+                        <span class="rock-emoji">💎</span>
+                        <span class="rock-name">Shiny Rock</span>
+                    </div>
+                    <div class="rock-card-explore" onclick="exploreRock(3)" id="rock3">
+                        <span class="rock-emoji">🏔</span>
+                        <span class="rock-name">Big Boulder</span>
+                    </div>
+                    <div class="rock-card-explore" onclick="exploreRock(4)" id="rock4">
+                        <span class="rock-emoji">🏖</span>
+                        <span class="rock-name">Sandy Pebble</span>
+                    </div>
+                    <div class="rock-card-explore" onclick="exploreRock(5)" id="rock5">
+                        <span class="rock-emoji">🌋</span>
+                        <span class="rock-name">Lava Rock</span>
+                    </div>
+                </div>
+                <div class="rock-detail" id="rockDetail">
+                    <span class="detail-emoji" id="detailEmoji"></span>
+                    <div class="detail-name" id="detailName"></div>
+                    <div class="detail-desc" id="detailDesc"></div>
+                    <div class="detail-fact" id="detailFact"></div>
+                </div>
+                <div class="explore-prompt">
+                    🔍 What rocks can you find near your home? Look outside and see!
+                </div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <p class="quiz-question" id="quizQuestion"></p>
+                <div class="quiz-options" id="quizOptions"></div>
+                <p class="quiz-progress" id="quizProgress">Question 1 of 5</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration Modal -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🌍🎉🌍</div>
+            <div class="celebration-text">Earth Explorer!</div>
+            <p style="color: #666; margin-bottom: 20px;">You learned about water, rocks, and soil!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var sortCount = 0;
+        var selectedSortItem = null;
+        var quizIndex = 0;
+        var exploredRocks = [];
+
+        /* --- Voice --- */
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var i = 0; i < preferred.length; i++) {
+                var found = voices.find(function(v) { return v.name.includes(preferred[i]) && v.lang.startsWith('en'); });
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        /* --- Tabs --- */
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'sort') initSort();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+                if (btn.dataset.tab === 'explore') {
+                    speak('Tap a rock to learn about it!');
+                    updateMascot('Rocks come in all shapes and sizes!');
+                }
+            });
+        });
+
+        /* --- Progress & Stars --- */
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are an Earth Explorer! You learned about water, rocks, and soil!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        /* --- Learn Tab --- */
+        function learnResource(type) {
+            if (type === 'water') {
+                speak('Water is found in oceans, rivers, lakes, and rain! We need water to drink and plants need water to grow!');
+                updateMascot('Water is everywhere! Oceans, rivers, lakes, and rain!');
+                updateProgress(5);
+            } else if (type === 'rocks') {
+                speak('Rocks are hard and strong! Some rocks are smooth, some are rough, some are big, and some are tiny!');
+                updateMascot('Rocks come in all shapes and sizes!');
+                updateProgress(5);
+            } else if (type === 'soil') {
+                speak('Soil is soft and brown! It is where plants grow their roots. Worms and bugs live in the soil too!');
+                updateMascot('Soil is where plants grow! Worms love it too!');
+                updateProgress(5);
+            }
+        }
+
+        function learnAll() {
+            speak('Earth gives us three amazing resources! Water is in oceans, rivers, and lakes. Rocks are hard and come in many shapes. Soil is where plants grow!');
+            updateMascot('Water, rocks, and soil. Earth is amazing!');
+            updateProgress(5);
+        }
+
+        /* --- Sort Tab --- */
+        var sortData = [
+            { name: 'Smooth Stone', emoji: '🪨', category: 'rocks' },
+            { name: 'River', emoji: '🏞', category: 'water' },
+            { name: 'Mud', emoji: '🟤', category: 'soil' },
+            { name: 'Boulder', emoji: '🗿', category: 'rocks' },
+            { name: 'Puddle', emoji: '💧', category: 'water' },
+            { name: 'Sand', emoji: '🏖', category: 'soil' },
+            { name: 'Gravel', emoji: '⚪', category: 'rocks' },
+            { name: 'Lake', emoji: '🌊', category: 'water' }
+        ];
+
+        function initSort() {
+            sortCount = 0;
+            selectedSortItem = null;
+            document.getElementById('sortScore').textContent = 'Sorted: 0 / 8';
+            document.getElementById('sortInstruction').textContent = 'Tap an item, then tap the correct bucket!';
+            document.getElementById('waterItems').textContent = '';
+            document.getElementById('rockItems').textContent = '';
+            document.getElementById('soilItems').textContent = '';
+
+            var container = document.getElementById('sortItems');
+            container.textContent = '';
+
+            var shuffled = sortData.slice().sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(item, idx) {
+                var div = document.createElement('div');
+                div.className = 'sort-item';
+                div.id = 'sortItem' + idx;
+                div.setAttribute('data-category', item.category);
+                div.setAttribute('data-name', item.name);
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.className = 'item-emoji';
+                emojiSpan.textContent = item.emoji;
+                div.appendChild(emojiSpan);
+
+                var labelSpan = document.createElement('span');
+                labelSpan.className = 'item-label';
+                labelSpan.textContent = item.name;
+                div.appendChild(labelSpan);
+
+                div.onclick = function() { selectSortItem(div); };
+                container.appendChild(div);
+            });
+
+            speak('Sort the items into water, rocks, or soil! Tap an item, then tap the right bucket!');
+            updateMascot('Sort items into the right groups!');
+        }
+
+        function selectSortItem(el) {
+            if (el.classList.contains('sorted')) return;
+            document.querySelectorAll('.sort-item').forEach(function(s) { s.classList.remove('selected'); });
+            el.classList.add('selected');
+            selectedSortItem = el;
+            speak(el.getAttribute('data-name'));
+
+            document.querySelectorAll('.sort-bucket').forEach(function(b) { b.classList.add('highlight'); });
+        }
+
+        function placeToBucket(bucket) {
+            if (!selectedSortItem) {
+                speak('First, tap an item to pick it up!');
+                return;
+            }
+
+            document.querySelectorAll('.sort-bucket').forEach(function(b) { b.classList.remove('highlight'); });
+
+            var correct = selectedSortItem.getAttribute('data-category') === bucket;
+            var itemName = selectedSortItem.getAttribute('data-name');
+
+            if (correct) {
+                selectedSortItem.classList.remove('selected');
+                selectedSortItem.classList.add('sorted');
+
+                var bucketId = bucket === 'water' ? 'waterItems' : bucket === 'rocks' ? 'rockItems' : 'soilItems';
+                var tag = document.createElement('span');
+                tag.className = 'bucket-item';
+                tag.textContent = itemName;
+                document.getElementById(bucketId).appendChild(tag);
+
+                sortCount++;
+                document.getElementById('sortScore').textContent = 'Sorted: ' + sortCount + ' / 8';
+
+                var categoryName = bucket.charAt(0).toUpperCase() + bucket.slice(1);
+                speak('Yes! ' + itemName + ' goes with ' + categoryName + '!');
+                updateMascot('Great! ' + itemName + ' is ' + categoryName + '!');
+                updateProgress(5);
+
+                selectedSortItem = null;
+
+                if (sortCount === 8) {
+                    setTimeout(function() {
+                        speak('Amazing! You sorted everything correctly!');
+                        updateMascot('You sorted all the Earth resources!');
+                        document.getElementById('sortInstruction').textContent = 'All sorted! Great job!';
+                    }, 500);
+                }
+            } else {
+                selectedSortItem.style.animation = 'shake 0.5s ease';
+                setTimeout(function() {
+                    if (selectedSortItem) selectedSortItem.style.animation = '';
+                }, 500);
+
+                speak('Hmm, ' + itemName + ' does not go there. Try again!');
+                updateMascot('Try again! Where does ' + itemName + ' belong?');
+            }
+        }
+
+        /* --- Explore Tab --- */
+        var rockDataList = [
+            {
+                name: 'Smooth Rock',
+                emoji: '🪨',
+                desc: 'Smooth rocks have been polished by water! Rivers and oceans rub rocks together until they feel smooth.',
+                fact: 'Fun fact: It can take thousands of years for water to make a rock smooth!'
+            },
+            {
+                name: 'Rough Rock',
+                emoji: '🧱',
+                desc: 'Rough rocks feel bumpy and scratchy. They have not been worn down by water yet.',
+                fact: 'Fun fact: You can feel the tiny crystals and minerals on a rough rock!'
+            },
+            {
+                name: 'Shiny Rock',
+                emoji: '💎',
+                desc: 'Some rocks are shiny and sparkly! They have special minerals inside that catch the light.',
+                fact: 'Fun fact: Quartz is a shiny rock you can find almost anywhere!'
+            },
+            {
+                name: 'Big Boulder',
+                emoji: '🏔',
+                desc: 'Boulders are really big rocks! Some are as big as a house! They are too heavy to pick up.',
+                fact: 'Fun fact: Boulders can weigh more than a hundred cars!'
+            },
+            {
+                name: 'Sandy Pebble',
+                emoji: '🏖',
+                desc: 'Pebbles are tiny little rocks! They are small enough to hold in your hand.',
+                fact: 'Fun fact: Sand is made of teeny tiny rocks and shells!'
+            },
+            {
+                name: 'Lava Rock',
+                emoji: '🌋',
+                desc: 'Lava rocks come from volcanoes! Hot lava cools down and turns into rock. They have little holes!',
+                fact: 'Fun fact: Lava rocks are so light that some can float on water!'
+            }
+        ];
+
+        function exploreRock(idx) {
+            var rock = rockDataList[idx];
+
+            document.querySelectorAll('.rock-card-explore').forEach(function(c) { c.classList.remove('active'); });
+            document.getElementById('rock' + idx).classList.add('active');
+
+            document.getElementById('detailEmoji').textContent = rock.emoji;
+            document.getElementById('detailName').textContent = rock.name;
+            document.getElementById('detailDesc').textContent = rock.desc;
+            document.getElementById('detailFact').textContent = rock.fact;
+            document.getElementById('rockDetail').classList.add('show');
+
+            speak(rock.desc);
+            updateMascot('You found a ' + rock.name + '!');
+
+            if (exploredRocks.indexOf(idx) === -1) {
+                exploredRocks.push(idx);
+                updateProgress(3);
+            }
+        }
+
+        /* --- Quiz Tab --- */
+        var quizQuestions = [
+            {
+                question: 'Where do plants grow?',
+                options: [
+                    { text: 'In Soil', emoji: '🌱', correct: true },
+                    { text: 'In Rocks', emoji: '🪨', correct: false },
+                    { text: 'In the Sky', emoji: '☁️', correct: false },
+                    { text: 'On Ice', emoji: '🧊', correct: false }
+                ]
+            },
+            {
+                question: 'Which one is a type of water on Earth?',
+                options: [
+                    { text: 'Boulder', emoji: '🗿', correct: false },
+                    { text: 'River', emoji: '🏞', correct: true },
+                    { text: 'Sand', emoji: '🏖', correct: false },
+                    { text: 'Mud', emoji: '🟤', correct: false }
+                ]
+            },
+            {
+                question: 'What makes rocks smooth?',
+                options: [
+                    { text: 'Paint', emoji: '🎨', correct: false },
+                    { text: 'Wind and Water', emoji: '💨', correct: true },
+                    { text: 'Fire', emoji: '🔥', correct: false },
+                    { text: 'Glue', emoji: '🧴', correct: false }
+                ]
+            },
+            {
+                question: 'What color is soil usually?',
+                options: [
+                    { text: 'Blue', emoji: '🔵', correct: false },
+                    { text: 'Green', emoji: '🟢', correct: false },
+                    { text: 'Brown', emoji: '🟤', correct: true },
+                    { text: 'Pink', emoji: '🩷', correct: false }
+                ]
+            },
+            {
+                question: 'Which of these is an Earth resource?',
+                options: [
+                    { text: 'Toys', emoji: '🧸', correct: false },
+                    { text: 'Candy', emoji: '🍬', correct: false },
+                    { text: 'Water', emoji: '💧', correct: true },
+                    { text: 'Books', emoji: '📚', correct: false }
+                ]
+            }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+            speak('Quiz time! Let us see what you learned about Earth resources!');
+            updateMascot('Quiz time! Show what you learned!');
+        }
+
+        function showQuizQuestion() {
+            if (quizIndex >= quizQuestions.length) {
+                document.getElementById('quizQuestion').textContent = 'Quiz Complete! You are an Earth Expert!';
+                document.getElementById('quizOptions').textContent = '';
+                document.getElementById('quizProgress').textContent = 'All done! Great job!';
+                speak('Amazing! You finished the quiz! You know all about Earth resources!');
+                updateMascot('You are an Earth Resource Expert!');
+                return;
+            }
+
+            var q = quizQuestions[quizIndex];
+            document.getElementById('quizQuestion').textContent = q.question;
+            document.getElementById('quizProgress').textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+
+            var optionsEl = document.getElementById('quizOptions');
+            optionsEl.textContent = '';
+
+            var shuffledOpts = q.options.slice().sort(function() { return Math.random() - 0.5; });
+
+            shuffledOpts.forEach(function(opt) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.className = 'opt-emoji';
+                emojiSpan.textContent = opt.emoji;
+                btn.appendChild(emojiSpan);
+
+                var textNode = document.createTextNode(opt.text);
+                btn.appendChild(textNode);
+
+                btn.onclick = function() { checkQuiz(btn, opt.correct, opt.text); };
+                optionsEl.appendChild(btn);
+            });
+
+            speak(q.question);
+        }
+
+        function checkQuiz(btn, correct, text) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Yes! ' + text + ' is correct!');
+                updateMascot('Correct! ' + text + '!');
+                updateProgress(8);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('Not quite! Try again!');
+                updateMascot('Hmm, try another answer!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 600);
+            }
+        }
+
+        /* --- Celebration --- */
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            sortCount = 0;
+            exploredRocks = [];
+            quizIndex = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            updateMascot('Earth gives us water, rocks, and soil! Let us explore!');
+            initSort();
+            initQuiz();
+        }
+
+        /* --- Init --- */
+        speak('Welcome! Earth gives us water, rocks, and soil! Let us explore!');
+        updateProgress(2);
+    </script>
+</body>
+</html>

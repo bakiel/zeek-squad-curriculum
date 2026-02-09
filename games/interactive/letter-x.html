@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter X - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: xrayPulse 1.2s ease-in-out infinite; }
+        @keyframes xrayPulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.3) drop-shadow(0 0 10px rgba(79, 172, 254, 0.6)); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .big-letter {
+            font-size: 6rem;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            margin: 15px 0;
+        }
+        .big-letter span { display: inline-block; animation: letterPop 0.5s ease forwards; }
+        .big-letter span:nth-child(2) { animation-delay: 0.2s; font-size: 4rem; vertical-align: bottom; margin-left: 10px; }
+        @keyframes letterPop {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #0987d4;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .letter-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .letter-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+        .letter-box:hover { transform: scale(1.1) rotate(5deg); }
+        .letter-box:active { transform: scale(0.95); }
+
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+
+        .x-words {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .x-word {
+            background: #E0F2FE;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .x-word:hover { transform: scale(1.05); border-color: #4facfe; }
+        .x-word .emoji { font-size: 2rem; display: block; margin-bottom: 5px; }
+        .x-word .word { font-weight: bold; color: #0987d4; }
+        .x-word .position-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            background: #0987d4;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+        }
+
+        .fun-fact {
+            background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            color: #0369a1;
+            font-size: 0.95rem;
+            border-left: 4px solid #4facfe;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .game-card {
+            aspect-ratio: 1;
+            background: #E0F2FE;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .game-card:hover { transform: scale(1.05); }
+        .game-card.correct {
+            background: #D1FAE5;
+            border-color: #10B981;
+            animation: correctPulse 0.5s ease;
+        }
+        .game-card.wrong {
+            background: #FEE2E2;
+            border-color: #EF4444;
+            animation: shake 0.5s ease;
+        }
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .game-card .emoji { font-size: 2rem; }
+        .game-card .label { font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: #666; }
+
+        .instruction {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .trace-area {
+            background: #FFFBEB;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 15px;
+            touch-action: none;
+        }
+        .trace-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .trace-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .trace-btn.clear { background: #F3F4F6; color: #666; }
+        .trace-btn.done { background: #4facfe; color: white; }
+
+        .quiz-question {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .quiz-option {
+            padding: 20px;
+            background: #E0F2FE;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { transform: scale(1.05); border-color: #4facfe; }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .quiz-progress {
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #0987d4; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        /* X-ray bone decoration */
+        .xray-bones {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bone {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.15;
+            animation: floatBone 8s ease-in-out infinite;
+        }
+        @keyframes floatBone {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(15deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating decorative bones -->
+    <div class="xray-bones" id="bgBones"></div>
+
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Letter X</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- X-Ray character: a friendly clipboard with an X-ray image -->
+                    <rect x="10" y="4" width="44" height="56" rx="6" fill="white" stroke="#0987d4" stroke-width="2.5"/>
+                    <!-- Clip at top -->
+                    <rect x="22" y="1" width="20" height="8" rx="3" fill="#4facfe"/>
+                    <circle cx="32" cy="5" r="2" fill="white"/>
+                    <!-- X-ray body silhouette -->
+                    <rect x="18" y="16" width="28" height="34" rx="4" fill="#0c2d48"/>
+                    <!-- Ribcage lines -->
+                    <line x1="24" y1="24" x2="40" y2="24" stroke="#4facfe" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="25" y1="28" x2="39" y2="28" stroke="#4facfe" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="26" y1="32" x2="38" y2="32" stroke="#4facfe" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="27" y1="36" x2="37" y2="36" stroke="#4facfe" stroke-width="1.5" stroke-linecap="round"/>
+                    <!-- Spine -->
+                    <line x1="32" y1="20" x2="32" y2="46" stroke="#4facfe" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Friendly eyes on clipboard -->
+                    <circle cx="26" cy="12" r="1.5" fill="#0987d4"/>
+                    <circle cx="38" cy="12" r="1.5" fill="#0987d4"/>
+                    <!-- Smile -->
+                    <path d="M28 14 Q32 17 36 14" stroke="#0987d4" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="speech-bubble" id="mascotSpeech">
+                X marks the spot! X says /ks/ like X-RAY!
+            </div>
+        </div>
+
+        <div class="big-letter">
+            <span>X</span>
+            <span>x</span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="trace">Trace</button>
+            <button class="tab-btn" data-tab="find">Find X</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="learn">
+                <div class="letter-display">
+                    <div class="letter-box" onclick="playSound('x')">X</div>
+                    <div class="letter-box" onclick="playSound('x')">x</div>
+                </div>
+                <button class="sound-btn" onclick="playSound('x')">
+                    &#128266; Tap to hear: /ks/ /ks/ /ks/
+                </button>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    X makes the /ks/ sound! X can be at the start OR end of words!
+                </p>
+                <h3 style="color: #0987d4; margin-bottom: 10px;">X Words:</h3>
+                <div class="x-words">
+                    <div class="x-word" onclick="sayWord('X-ray', true)">
+                        <span class="emoji">&#129657;</span>
+                        <span class="word">X-ray</span>
+                        <span class="position-tag">X at START</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Xylophone', true)">
+                        <span class="emoji">&#127932;</span>
+                        <span class="word">Xylophone</span>
+                        <span class="position-tag">X at START</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Fox', false)">
+                        <span class="emoji">&#129418;</span>
+                        <span class="word">Fox</span>
+                        <span class="position-tag">X at END</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Box', false)">
+                        <span class="emoji">&#128230;</span>
+                        <span class="word">Box</span>
+                        <span class="position-tag">X at END</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Six', false)">
+                        <span class="emoji">&#54;&#65039;&#8419;</span>
+                        <span class="word">Six</span>
+                        <span class="position-tag">X at END</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Mix', false)">
+                        <span class="emoji">&#129379;</span>
+                        <span class="word">Mix</span>
+                        <span class="position-tag">X at END</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Ox', false)">
+                        <span class="emoji">&#128002;</span>
+                        <span class="word">Ox</span>
+                        <span class="position-tag">X at END</span>
+                    </div>
+                    <div class="x-word" onclick="sayWord('Ax', false)">
+                        <span class="emoji">&#129683;</span>
+                        <span class="word">Ax</span>
+                        <span class="position-tag">X at END</span>
+                    </div>
+                </div>
+                <div class="fun-fact">
+                    <strong>Fun Fact:</strong> X is a special letter! It usually hides at the END of words like fo<strong style="color:#4facfe;">x</strong>, bo<strong style="color:#4facfe;">x</strong>, and si<strong style="color:#4facfe;">x</strong>. But sometimes it leads the way, like in <strong style="color:#4facfe;">X</strong>-ray!
+                </div>
+            </div>
+
+            <div class="tab-content" id="trace">
+                <div class="trace-area">
+                    <canvas id="traceCanvas" width="280" height="200"></canvas>
+                </div>
+                <div class="trace-btns">
+                    <button class="trace-btn clear" onclick="clearCanvas()">Clear</button>
+                    <button class="trace-btn done" onclick="finishTrace()">Done!</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="find">
+                <p class="instruction">Tap all the things that have the letter X!</p>
+                <div class="game-grid" id="findGrid"></div>
+                <p style="text-align: center; color: #666; margin-top: 15px;" id="findScore">
+                    Found: 0/4
+                </p>
+            </div>
+
+            <div class="tab-content" id="quiz">
+                <p class="quiz-question" id="quizQuestion">Which one has the letter X?</p>
+                <div class="quiz-options" id="quizOptions"></div>
+                <p class="quiz-progress" id="quizProgress"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#127881;&#129657;&#127881;</div>
+            <div class="celebration-text">X marks the spot!</div>
+            <p style="color: #666; margin-bottom: 20px;">You learned the letter X!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        // Floating bone decorations
+        (function() {
+            var bones = document.getElementById('bgBones');
+            var boneChars = ['\u2620', '\u2695', '\u2716', '\u2573'];
+            for (var i = 0; i < 12; i++) {
+                var b = document.createElement('span');
+                b.className = 'bone';
+                b.textContent = boneChars[i % boneChars.length];
+                b.style.left = (Math.random() * 90 + 5) + '%';
+                b.style.top = (Math.random() * 90 + 5) + '%';
+                b.style.animationDelay = (Math.random() * 5) + 's';
+                b.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+                bones.appendChild(b);
+            }
+        })();
+
+        var starsEarned = 0;
+        var progress = 0;
+        var findFound = 0;
+        var quizIndex = 0;
+
+        // Voice setup with Microsoft voices preferred
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var p = 0; p < preferred.length; p++) {
+                var name = preferred[p];
+                var found = voices.find(function(v) { return v.name.includes(name) && v.lang.startsWith('en'); });
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        function playSound(letter) {
+            speak('ks, ks, ks, X!');
+            document.querySelectorAll('.letter-box').forEach(function(box) {
+                box.style.animation = 'none';
+                box.offsetHeight;
+                box.style.animation = 'letterPop 0.5s ease';
+            });
+        }
+
+        function sayWord(word, atStart) {
+            if (atStart) {
+                speak(word + ' starts with X!');
+            } else {
+                speak(word + ' ends with X!');
+            }
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'find') initFindGame();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+                if (btn.dataset.tab === 'trace') initCanvas();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var stars = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            stars[idx].classList.add('earned');
+                            speak('Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You learned the letter X! X marks the spot!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // FIND GAME - items with X (start or end)
+        var findItems = [
+            { emoji: '\uD83E\uDE7B', label: 'X-ray', hasX: true },
+            { emoji: '\uD83E\uDD8A', label: 'Fox', hasX: true },
+            { emoji: '\uD83D\uDCE6', label: 'Box', hasX: true },
+            { emoji: '6\uFE0F\u20E3', label: 'Six', hasX: true },
+            { emoji: '\uD83D\uDC31', label: 'Cat', hasX: false },
+            { emoji: '\uD83C\uDFC0', label: 'Ball', hasX: false },
+            { emoji: '\uD83C\uDF4E', label: 'Apple', hasX: false },
+            { emoji: '\uD83D\uDC15', label: 'Dog', hasX: false },
+            { emoji: '\uD83C\uDF19', label: 'Moon', hasX: false }
+        ];
+
+        function initFindGame() {
+            findFound = 0;
+            document.getElementById('findScore').textContent = 'Found: 0/4';
+            var grid = document.getElementById('findGrid');
+            grid.textContent = '';
+
+            var shuffled = findItems.slice().sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(item) {
+                var card = document.createElement('div');
+                card.className = 'game-card';
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.className = 'emoji';
+                emojiSpan.textContent = item.emoji;
+                card.appendChild(emojiSpan);
+
+                var labelSpan = document.createElement('span');
+                labelSpan.className = 'label';
+                labelSpan.textContent = item.label;
+                card.appendChild(labelSpan);
+
+                card.onclick = function() { checkFind(card, item); };
+                grid.appendChild(card);
+            });
+        }
+
+        function checkFind(card, item) {
+            if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+
+            if (item.hasX) {
+                card.classList.add('correct');
+                findFound++;
+                document.getElementById('findScore').textContent = 'Found: ' + findFound + '/4';
+                var pos = item.label === 'X-ray' ? 'starts' : 'ends';
+                speak('Yes! ' + item.label + ' has the letter X!');
+                updateMascot('Great job! ' + item.label + ' ' + pos + ' with X!');
+                updateProgress(10);
+            } else {
+                card.classList.add('wrong');
+                speak('Oops! ' + item.label + ' does not have X.');
+                updateMascot(item.label + ' does not have the letter X!');
+                setTimeout(function() { card.classList.remove('wrong'); }, 500);
+            }
+        }
+
+        // TRACE
+        var isDrawing = false;
+        var ctx;
+
+        function initCanvas() {
+            var canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 280, 200);
+            ctx.strokeStyle = '#4facfe';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Draw guide letter
+            ctx.font = 'bold 150px Comic Sans MS';
+            ctx.fillStyle = '#E5E7EB';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('X', 140, 100);
+
+            // Draw guide arrows for tracing X
+            ctx.strokeStyle = '#CBD5E1';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            // First stroke: top-left to bottom-right
+            ctx.beginPath();
+            ctx.moveTo(75, 35);
+            ctx.lineTo(205, 165);
+            ctx.stroke();
+            // Second stroke: top-right to bottom-left
+            ctx.beginPath();
+            ctx.moveTo(205, 35);
+            ctx.lineTo(75, 165);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Reset drawing style
+            ctx.strokeStyle = '#4facfe';
+            ctx.lineWidth = 8;
+
+            canvas.removeEventListener('mousedown', startDraw);
+            canvas.removeEventListener('mousemove', draw);
+            canvas.removeEventListener('mouseup', stopDraw);
+            canvas.removeEventListener('touchstart', startDraw);
+            canvas.removeEventListener('touchmove', draw);
+            canvas.removeEventListener('touchend', stopDraw);
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            var pos = getPos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            var pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function getPos(e) {
+            var canvas = document.getElementById('traceCanvas');
+            var rect = canvas.getBoundingClientRect();
+            var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            var y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            // Scale for CSS vs canvas size
+            x = x * (canvas.width / rect.width);
+            y = y * (canvas.height / rect.height);
+            return { x: x, y: y };
+        }
+
+        function clearCanvas() {
+            initCanvas();
+        }
+
+        function finishTrace() {
+            speak('Excellent X! Two lines that cross!');
+            updateMascot('Beautiful letter X! Two lines crossing!');
+            updateProgress(20);
+            setTimeout(function() { initCanvas(); }, 800);
+        }
+
+        // QUIZ - 5 questions
+        var quizQuestions = [
+            { question: 'Which one starts with X?', options: ['\uD83E\uDE7B', '\uD83D\uDC31', '\uD83C\uDFC0', '\uD83C\uDF4E'], answer: 0, word: 'X-ray' },
+            { question: 'Which one ends with X?', options: ['\uD83D\uDC15', '\uD83E\uDD8A', '\uD83C\uDF19', '\uD83D\uDCD6'], answer: 1, word: 'Fox' },
+            { question: 'Which one ends with X?', options: ['\uD83C\uDFE0', '\uD83D\uDE97', '\uD83C\uDF88', '\uD83D\uDCE6'], answer: 3, word: 'Box' },
+            { question: 'Which one starts with X?', options: ['\uD83C\uDFB5', '\uD83C\uDFB8', '\uD83C\uDF7C', '\uD83C\uDFB9'], answer: 3, word: 'Xylophone' },
+            { question: 'Which number ends with X?', options: ['5\uFE0F\u20E3', '6\uFE0F\u20E3', '7\uFE0F\u20E3', '8\uFE0F\u20E3'], answer: 1, word: 'Six' }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            if (quizIndex >= quizQuestions.length) {
+                document.getElementById('quizQuestion').textContent = 'Quiz Complete! Amazing job!';
+                document.getElementById('quizOptions').textContent = '';
+                document.getElementById('quizProgress').textContent = '';
+                return;
+            }
+
+            var q = quizQuestions[quizIndex];
+            document.getElementById('quizQuestion').textContent = q.question;
+            document.getElementById('quizProgress').textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+
+            var options = document.getElementById('quizOptions');
+            options.textContent = '';
+
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.answer, q.word, q.question); };
+                options.appendChild(btn);
+            });
+        }
+
+        function checkQuiz(btn, correct, word, question) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                var hasStart = question.indexOf('starts') !== -1;
+                if (hasStart) {
+                    speak('Yes! ' + word + ' starts with X!');
+                    updateMascot('Correct! ' + word + ' starts with X!');
+                } else {
+                    speak('Yes! ' + word + ' ends with X!');
+                    updateMascot('Correct! ' + word + ' ends with X!');
+                }
+                updateProgress(12);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('Try again!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            initFindGame();
+            initQuiz();
+        }
+
+        // Init
+        initCanvas();
+        updateProgress(5);
+        speak('X marks the spot! X says ks like X-ray! X can be at the beginning or end of words!');
+    </script>
+</body>
+</html>

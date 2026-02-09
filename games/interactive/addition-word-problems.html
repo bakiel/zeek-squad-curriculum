@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addition Word Problems - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.75rem; opacity: 0.85; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: mascotBounce 1s ease-in-out infinite; }
+        @keyframes mascotBounce {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.05rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 4px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #d6336c;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Learn Tab */
+        .learn-section { margin-bottom: 20px; }
+        .learn-section h3 { color: #d6336c; margin-bottom: 10px; font-size: 1.15rem; }
+        .learn-example {
+            background: #FFF0F5;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 2px dashed #f5a3c7;
+        }
+        .learn-example .emoji-row {
+            font-size: 2.2rem;
+            margin: 10px 0;
+            letter-spacing: 4px;
+            line-height: 1.4;
+        }
+        .learn-example .plus-sign {
+            font-size: 2rem;
+            color: #d6336c;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        .learn-example .equals-sign {
+            font-size: 2rem;
+            color: #d6336c;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        .number-sentence {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d6336c;
+            margin-top: 8px;
+        }
+        .learn-steps {
+            list-style: none;
+            padding: 0;
+        }
+        .learn-steps li {
+            background: #FFF0F5;
+            padding: 12px 16px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-number {
+            background: #d6336c;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+
+        /* Practice and Challenge: Word Problem Card */
+        .problem-card {
+            background: #FFF8FA;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 2px solid #f5c6d8;
+            text-align: center;
+        }
+        .problem-text {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+        .problem-emoji-area {
+            font-size: 2rem;
+            margin: 12px 0;
+            line-height: 1.5;
+            min-height: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+        .emoji-group {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            background: rgba(245,87,108,0.08);
+            border-radius: 12px;
+            padding: 6px 10px;
+        }
+        .emoji-plus {
+            font-size: 1.8rem;
+            color: #d6336c;
+            font-weight: bold;
+            margin: 0 6px;
+        }
+
+        /* Cube train for challenge */
+        .cube-train {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin: 12px 0;
+        }
+        .cube {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: inline-block;
+            border: 2px solid rgba(0,0,0,0.15);
+        }
+        .cube-divider {
+            width: 3px;
+            height: 28px;
+            background: #d6336c;
+            margin: 0 6px;
+            border-radius: 2px;
+        }
+
+        .problem-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .problem-counter {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* Answer choices */
+        .answer-choices {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .answer-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #f5c6d8;
+            background: white;
+            font-size: 1.8rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #d6336c;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .answer-btn:hover { transform: scale(1.1); border-color: #d6336c; background: #FFF0F5; }
+        .answer-btn.correct {
+            background: #D1FAE5;
+            border-color: #10B981;
+            color: #10B981;
+            animation: correctPulse 0.5s ease;
+        }
+        .answer-btn.wrong {
+            background: #FEE2E2;
+            border-color: #EF4444;
+            color: #EF4444;
+            animation: shake 0.5s ease;
+        }
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .next-btn {
+            display: none;
+            margin: 16px auto 0;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .next-btn:hover { transform: scale(1.03); }
+
+        .read-aloud-btn {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #d6336c;
+            background: #FFF0F5;
+            border: 2px solid #f5c6d8;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .read-aloud-btn:hover { background: #ffe0ec; }
+
+        /* Quiz */
+        .quiz-question {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .quiz-emoji-area {
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 14px;
+        }
+        .quiz-option {
+            padding: 18px;
+            background: #FFF0F5;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #d6336c;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .quiz-option:hover { transform: scale(1.05); border-color: #d6336c; }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; color: #EF4444; }
+
+        .quiz-score {
+            text-align: center;
+            margin-top: 14px;
+            color: #999;
+            font-size: 0.95rem;
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            overflow: hidden;
+        }
+        .confetti-piece {
+            position: absolute;
+            top: -20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Celebration */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 340px;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 4rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.6rem; color: #d6336c; font-weight: bold; margin-bottom: 10px; }
+        .celebration-sub { color: #666; margin-bottom: 20px; font-size: 1rem; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .celebration-btn:hover { transform: scale(1.03); }
+
+        /* Correct answer feedback overlay */
+        .feedback-overlay {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 5rem;
+            z-index: 60;
+            pointer-events: none;
+        }
+        .feedback-overlay.show {
+            display: block;
+            animation: feedbackPop 0.7s ease forwards;
+        }
+        @keyframes feedbackPop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-20deg); }
+            40% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); }
+            70% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Addition Word Problems</h1>
+            <div class="standard">CCSS.K.OA.2 - Sums up to 10</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#129518;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Let's solve word problems! Read the story, look at the pictures, and add them up!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+            <button class="tab-btn" data-tab="challenge">Challenge</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <div class="learn-section">
+                    <h3>What is a Word Problem?</h3>
+                    <p style="color:#555; margin-bottom:14px; font-size:1rem; line-height:1.5;">
+                        A word problem is a little story about numbers! We read the story, draw pictures, count them all, and write a number sentence.
+                    </p>
+                    <button class="sound-btn" onclick="speak('A word problem is a little story about numbers! We read the story, draw pictures, count them all, and write a number sentence.')">
+                        &#128264; Hear the explanation
+                    </button>
+                </div>
+
+                <div class="learn-section">
+                    <h3>Example: Apples!</h3>
+                    <div class="learn-example">
+                        <p style="color:#555; font-size:1.05rem; margin-bottom:10px;">
+                            Sam has <strong>2 apples</strong>. His mom gives him <strong>3 more apples</strong>. How many apples does Sam have now?
+                        </p>
+                        <div class="emoji-row">
+                            <span>&#127822;&#127822;</span>
+                            <span class="plus-sign">+</span>
+                            <span>&#127822;&#127822;&#127822;</span>
+                            <span class="equals-sign">=</span>
+                            <span>&#127822;&#127822;&#127822;&#127822;&#127822;</span>
+                        </div>
+                        <div class="number-sentence">2 + 3 = 5</div>
+                    </div>
+                    <button class="sound-btn" onclick="speak('Sam has 2 apples. His mom gives him 3 more apples. How many apples does Sam have now? 2 plus 3 equals 5!')">
+                        &#128264; Hear the problem
+                    </button>
+                </div>
+
+                <div class="learn-section">
+                    <h3>How to Solve Word Problems:</h3>
+                    <ol class="learn-steps">
+                        <li>
+                            <span class="step-number">1</span>
+                            <span><strong>Read</strong> the story carefully.</span>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <span><strong>Draw</strong> pictures for each group.</span>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <span><strong>Count</strong> all the pictures together.</span>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <span><strong>Write</strong> the number sentence!</span>
+                        </li>
+                    </ol>
+                    <button class="sound-btn" onclick="speak('Step 1, Read the story carefully. Step 2, Draw pictures for each group. Step 3, Count all the pictures together. Step 4, Write the number sentence!')">
+                        &#128264; Hear the steps
+                    </button>
+                </div>
+
+                <div class="learn-section">
+                    <h3>Try Another!</h3>
+                    <div class="learn-example">
+                        <p style="color:#555; font-size:1.05rem; margin-bottom:10px;">
+                            There are <strong>4 birds</strong> on a branch. <strong>1 more bird</strong> flies over. How many birds are there?
+                        </p>
+                        <div class="emoji-row">
+                            <span>&#128038;&#128038;&#128038;&#128038;</span>
+                            <span class="plus-sign">+</span>
+                            <span>&#128038;</span>
+                            <span class="equals-sign">=</span>
+                            <span>&#128038;&#128038;&#128038;&#128038;&#128038;</span>
+                        </div>
+                        <div class="number-sentence">4 + 1 = 5</div>
+                    </div>
+                    <button class="sound-btn" onclick="speak('There are 4 birds on a branch. 1 more bird flies over. How many birds are there? 4 plus 1 equals 5!')">
+                        &#128264; Hear the problem
+                    </button>
+                </div>
+            </div>
+
+            <!-- PRACTICE TAB -->
+            <div class="tab-content" id="practice">
+                <button class="read-aloud-btn" id="practiceReadBtn" onclick="readPracticeProblem()">
+                    &#128264; Read Aloud
+                </button>
+                <div class="problem-card" id="practiceCard">
+                    <p class="problem-text" id="practiceText"></p>
+                    <div class="problem-emoji-area" id="practiceEmojis"></div>
+                    <div class="answer-choices" id="practiceChoices"></div>
+                    <button class="next-btn" id="practiceNext" onclick="nextPractice()">Next Problem &#10132;</button>
+                </div>
+                <div class="problem-nav">
+                    <span class="problem-counter" id="practiceCounter">Problem 1 of 10</span>
+                </div>
+            </div>
+
+            <!-- CHALLENGE TAB -->
+            <div class="tab-content" id="challenge">
+                <button class="read-aloud-btn" id="challengeReadBtn" onclick="readChallengeProblem()">
+                    &#128264; Read Aloud
+                </button>
+                <div class="problem-card" id="challengeCard">
+                    <p class="problem-text" id="challengeText"></p>
+                    <div class="cube-train" id="challengeCubes"></div>
+                    <div class="answer-choices" id="challengeChoices"></div>
+                    <button class="next-btn" id="challengeNext" onclick="nextChallenge()">Next Problem &#10132;</button>
+                </div>
+                <div class="problem-nav">
+                    <span class="problem-counter" id="challengeCounter">Problem 1 of 8</span>
+                </div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <div id="quizArea">
+                    <button class="read-aloud-btn" id="quizReadBtn" onclick="readQuizProblem()">
+                        &#128264; Read Aloud
+                    </button>
+                    <p class="quiz-question" id="quizQuestion"></p>
+                    <div class="quiz-emoji-area" id="quizEmojis"></div>
+                    <div class="quiz-options" id="quizOptions"></div>
+                    <div class="quiz-score" id="quizScore">Question 1 of 5</div>
+                </div>
+                <div id="quizResult" style="display:none; text-align:center;">
+                    <div style="font-size:4rem; margin-bottom:12px;">&#127942;</div>
+                    <h3 style="color:#d6336c; font-size:1.4rem; margin-bottom:8px;" id="quizResultTitle"></h3>
+                    <p style="color:#666; margin-bottom:16px;" id="quizResultText"></p>
+                    <button class="sound-btn" onclick="resetQuiz()">Try Again!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="confetti-container" id="confettiContainer"></div>
+    <div class="feedback-overlay" id="feedbackOverlay">&#127881;</div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#127881;&#129395;&#127881;</div>
+            <div class="celebration-text">Math Superstar!</div>
+            <p class="celebration-sub">You solved all the word problems!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var practiceIndex = 0;
+        var challengeIndex = 0;
+        var quizIndex = 0;
+        var quizCorrect = 0;
+
+        /* ========== VOICE ========== */
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var i = 0; i < preferred.length; i++) {
+                var name = preferred[i];
+                var found = null;
+                for (var j = 0; j < voices.length; j++) {
+                    if (voices[j].name.indexOf(name) !== -1 && voices[j].lang.indexOf('en') === 0) {
+                        found = voices[j];
+                        break;
+                    }
+                }
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) {
+                for (var k = 0; k < voices.length; k++) {
+                    if (voices[k].lang.indexOf('en') === 0) { selectedVoice = voices[k]; break; }
+                }
+            }
+            if (!selectedVoice && voices.length > 0) selectedVoice = voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        /* ========== TABS ========== */
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'practice') showPracticeProblem();
+                if (btn.dataset.tab === 'challenge') showChallengeProblem();
+                if (btn.dataset.tab === 'quiz') showQuizQuestion();
+            });
+        });
+
+        /* ========== PROGRESS and STARS ========== */
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are a Math Superstar!');
+                }, 600);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        /* ========== CONFETTI ========== */
+        function launchConfetti() {
+            var container = document.getElementById('confettiContainer');
+            var colors = ['#f093fb', '#f5576c', '#FFD700', '#10B981', '#3B82F6', '#F59E0B'];
+            for (var i = 0; i < 30; i++) {
+                var piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = (Math.random() * 100) + '%';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+                piece.style.animationDelay = (Math.random() * 0.5) + 's';
+                piece.style.width = (8 + Math.random() * 8) + 'px';
+                piece.style.height = (8 + Math.random() * 8) + 'px';
+                container.appendChild(piece);
+            }
+            setTimeout(function() {
+                while (container.firstChild) container.removeChild(container.firstChild);
+            }, 4000);
+        }
+
+        function showFeedback(text) {
+            var el = document.getElementById('feedbackOverlay');
+            el.textContent = text;
+            el.className = 'feedback-overlay';
+            void el.offsetWidth;
+            el.classList.add('show');
+            setTimeout(function() { el.classList.remove('show'); }, 800);
+        }
+
+        /* ========== HELPER FUNCTIONS ========== */
+        function buildEmojiString(emojiCode, count) {
+            var str = '';
+            for (var i = 0; i < count; i++) str += emojiCode;
+            return str;
+        }
+
+        function makeChoices(answer) {
+            var choices = [answer];
+            var attempts = 0;
+            while (choices.length < 3 && attempts < 50) {
+                attempts++;
+                var offset = (Math.random() < 0.5 ? -1 : 1) * (Math.floor(Math.random() * 3) + 1);
+                var wrong = answer + offset;
+                if (wrong >= 0 && wrong <= 10) {
+                    var exists = false;
+                    for (var c = 0; c < choices.length; c++) {
+                        if (choices[c] === wrong) { exists = true; break; }
+                    }
+                    if (!exists) choices.push(wrong);
+                }
+            }
+            /* shuffle */
+            for (var s = choices.length - 1; s > 0; s--) {
+                var r = Math.floor(Math.random() * (s + 1));
+                var tmp = choices[s];
+                choices[s] = choices[r];
+                choices[r] = tmp;
+            }
+            return choices;
+        }
+
+        function setDOMContent(el, htmlStr) {
+            /* Safe in this context: all content is hardcoded, not user-supplied */
+            el.textContent = '';
+            var wrapper = document.createElement('span');
+            wrapper.textContent = '';
+            /* We build DOM nodes instead */
+            el.textContent = htmlStr;
+        }
+
+        /* ========== PRACTICE PROBLEMS ========== */
+        var practiceProblems = [
+            { text: 'Maya has 3 cats. Her friend gives her 2 more cats. How many cats does Maya have?',
+              emoji: '\uD83D\uDC31', a: 3, b: 2, answer: 5,
+              speech: 'Maya has 3 cats. Her friend gives her 2 more cats. How many cats does Maya have?' },
+            { text: 'There are 2 red fish in a pond. 1 blue fish swims in. How many fish are in the pond?',
+              emoji: '\uD83D\uDC1F', a: 2, b: 1, answer: 3,
+              speech: 'There are 2 red fish in a pond. 1 blue fish swims in. How many fish are in the pond?' },
+            { text: 'Leo has 4 toy cars. He gets 2 more for his birthday. How many toy cars does Leo have?',
+              emoji: '\uD83D\uDE97', a: 4, b: 2, answer: 6,
+              speech: 'Leo has 4 toy cars. He gets 2 more for his birthday. How many toy cars does Leo have?' },
+            { text: 'There is 1 dog in the yard. 3 more dogs come to play. How many dogs are there?',
+              emoji: '\uD83D\uDC36', a: 1, b: 3, answer: 4,
+              speech: 'There is 1 dog in the yard. 3 more dogs come to play. How many dogs are there?' },
+            { text: 'Emma picks 3 flowers. Then she picks 3 more. How many flowers does Emma have?',
+              emoji: '\uD83C\uDF3C', a: 3, b: 3, answer: 6,
+              speech: 'Emma picks 3 flowers. Then she picks 3 more. How many flowers does Emma have?' },
+            { text: 'There are 5 ducks on the lake. 2 more ducks join them. How many ducks are there?',
+              emoji: '\uD83E\uDD86', a: 5, b: 2, answer: 7,
+              speech: 'There are 5 ducks on the lake. 2 more ducks join them. How many ducks are there?' },
+            { text: 'Ben has 2 balls. His sister gives him 2 more. How many balls does Ben have?',
+              emoji: '\u26BD', a: 2, b: 2, answer: 4,
+              speech: 'Ben has 2 balls. His sister gives him 2 more. How many balls does Ben have?' },
+            { text: 'There are 4 butterflies. 3 more fly over. How many butterflies are there?',
+              emoji: '\uD83E\uDD8B', a: 4, b: 3, answer: 7,
+              speech: 'There are 4 butterflies. 3 more fly over. How many butterflies are there?' },
+            { text: 'Zoe has 1 cookie. Her dad gives her 4 more cookies. How many cookies does Zoe have?',
+              emoji: '\uD83C\uDF6A', a: 1, b: 4, answer: 5,
+              speech: 'Zoe has 1 cookie. Her dad gives her 4 more cookies. How many cookies does Zoe have?' },
+            { text: 'There are 3 stars in the sky. 5 more stars appear. How many stars are there?',
+              emoji: '\u2B50', a: 3, b: 5, answer: 8,
+              speech: 'There are 3 stars in the sky. 5 more stars appear. How many stars are there?' }
+        ];
+
+        function showPracticeProblem() {
+            if (practiceIndex >= practiceProblems.length) practiceIndex = 0;
+            var p = practiceProblems[practiceIndex];
+
+            document.getElementById('practiceText').textContent = p.text;
+
+            /* Build emoji area with DOM nodes */
+            var emojiArea = document.getElementById('practiceEmojis');
+            while (emojiArea.firstChild) emojiArea.removeChild(emojiArea.firstChild);
+
+            var groupA = document.createElement('span');
+            groupA.className = 'emoji-group';
+            groupA.textContent = buildEmojiString(p.emoji, p.a);
+            emojiArea.appendChild(groupA);
+
+            var plus = document.createElement('span');
+            plus.className = 'emoji-plus';
+            plus.textContent = '+';
+            emojiArea.appendChild(plus);
+
+            var groupB = document.createElement('span');
+            groupB.className = 'emoji-group';
+            groupB.textContent = buildEmojiString(p.emoji, p.b);
+            emojiArea.appendChild(groupB);
+
+            /* Build answer choices */
+            var choices = makeChoices(p.answer);
+            var choicesEl = document.getElementById('practiceChoices');
+            while (choicesEl.firstChild) choicesEl.removeChild(choicesEl.firstChild);
+            for (var ci = 0; ci < choices.length; ci++) {
+                (function(val) {
+                    var btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = val;
+                    btn.onclick = function() { checkPractice(btn, val, p.answer); };
+                    choicesEl.appendChild(btn);
+                })(choices[ci]);
+            }
+
+            document.getElementById('practiceNext').style.display = 'none';
+            document.getElementById('practiceCounter').textContent = 'Problem ' + (practiceIndex + 1) + ' of ' + practiceProblems.length;
+
+            setTimeout(function() { speak(p.speech); }, 400);
+        }
+
+        function readPracticeProblem() {
+            if (practiceIndex < practiceProblems.length) {
+                speak(practiceProblems[practiceIndex].speech);
+            }
+        }
+
+        function checkPractice(btn, selected, answer) {
+            if (selected === answer) {
+                btn.classList.add('correct');
+                var allBtns = document.querySelectorAll('#practiceChoices .answer-btn');
+                allBtns.forEach(function(b) { b.style.pointerEvents = 'none'; });
+                var p = practiceProblems[practiceIndex];
+                speak('Yes! ' + p.a + ' plus ' + p.b + ' equals ' + p.answer + '! Great job!');
+                updateMascot('Correct! ' + p.a + ' + ' + p.b + ' = ' + p.answer + '!');
+                updateProgress(5);
+                launchConfetti();
+                showFeedback('\uD83C\uDF89');
+                document.getElementById('practiceNext').style.display = 'block';
+            } else {
+                btn.classList.add('wrong');
+                speak('Hmm, try again! Count the pictures.');
+                updateMascot('Not quite! Count all the pictures together.');
+                setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+            }
+        }
+
+        function nextPractice() {
+            practiceIndex++;
+            if (practiceIndex >= practiceProblems.length) {
+                updateMascot('You finished all the practice problems! Amazing!');
+                speak('You finished all the practice problems! Amazing!');
+                practiceIndex = 0;
+            }
+            showPracticeProblem();
+        }
+
+        /* ========== CHALLENGE PROBLEMS ========== */
+        var challengeProblems = [
+            { text: 'There are 6 birds in a tree. 4 more birds land on the branch. How many birds are there now?',
+              a: 6, b: 4, answer: 10, colorA: '#f093fb', colorB: '#f5576c',
+              speech: 'There are 6 birds in a tree. 4 more birds land on the branch. How many birds are there now?' },
+            { text: 'A farmer has 5 chickens. He buys 3 more chickens. How many chickens does the farmer have?',
+              a: 5, b: 3, answer: 8, colorA: '#FFD700', colorB: '#FFA500',
+              speech: 'A farmer has 5 chickens. He buys 3 more chickens. How many chickens does the farmer have?' },
+            { text: 'There are 7 crayons in a box. Mom puts 2 more in. How many crayons are in the box?',
+              a: 7, b: 2, answer: 9, colorA: '#3B82F6', colorB: '#10B981',
+              speech: 'There are 7 crayons in a box. Mom puts 2 more in. How many crayons are in the box?' },
+            { text: 'Kai sees 4 ladybugs. Then 6 more ladybugs crawl over. How many ladybugs are there?',
+              a: 4, b: 6, answer: 10, colorA: '#EF4444', colorB: '#F59E0B',
+              speech: 'Kai sees 4 ladybugs. Then 6 more ladybugs crawl over. How many ladybugs are there?' },
+            { text: 'There are 3 books on the shelf. Dad adds 5 more books. How many books are on the shelf?',
+              a: 3, b: 5, answer: 8, colorA: '#8B5CF6', colorB: '#6366F1',
+              speech: 'There are 3 books on the shelf. Dad adds 5 more books. How many books are on the shelf?' },
+            { text: 'Mia has 5 stickers. She gets 5 more stickers at school. How many stickers does she have?',
+              a: 5, b: 5, answer: 10, colorA: '#EC4899', colorB: '#D946EF',
+              speech: 'Mia has 5 stickers. She gets 5 more stickers at school. How many stickers does she have?' },
+            { text: 'There are 8 leaves on the ground. The wind blows 1 more leaf down. How many leaves are there?',
+              a: 8, b: 1, answer: 9, colorA: '#22C55E', colorB: '#16A34A',
+              speech: 'There are 8 leaves on the ground. The wind blows 1 more leaf down. How many leaves are there?' },
+            { text: 'Noah counts 2 clouds. Then he sees 7 more clouds. How many clouds does Noah see?',
+              a: 2, b: 7, answer: 9, colorA: '#60A5FA', colorB: '#93C5FD',
+              speech: 'Noah counts 2 clouds. Then he sees 7 more clouds. How many clouds does Noah see?' }
+        ];
+
+        function showChallengeProblem() {
+            if (challengeIndex >= challengeProblems.length) challengeIndex = 0;
+            var p = challengeProblems[challengeIndex];
+
+            document.getElementById('challengeText').textContent = p.text;
+
+            /* Build cube train with DOM nodes */
+            var cubeArea = document.getElementById('challengeCubes');
+            while (cubeArea.firstChild) cubeArea.removeChild(cubeArea.firstChild);
+
+            for (var i = 0; i < p.a; i++) {
+                var cube = document.createElement('span');
+                cube.className = 'cube';
+                cube.style.background = p.colorA;
+                cubeArea.appendChild(cube);
+            }
+            var divider = document.createElement('span');
+            divider.className = 'cube-divider';
+            cubeArea.appendChild(divider);
+            for (var j = 0; j < p.b; j++) {
+                var cube2 = document.createElement('span');
+                cube2.className = 'cube';
+                cube2.style.background = p.colorB;
+                cubeArea.appendChild(cube2);
+            }
+
+            /* Build answer choices */
+            var choices = makeChoices(p.answer);
+            var choicesEl = document.getElementById('challengeChoices');
+            while (choicesEl.firstChild) choicesEl.removeChild(choicesEl.firstChild);
+            for (var ci = 0; ci < choices.length; ci++) {
+                (function(val) {
+                    var btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = val;
+                    btn.onclick = function() { checkChallenge(btn, val, p.answer); };
+                    choicesEl.appendChild(btn);
+                })(choices[ci]);
+            }
+
+            document.getElementById('challengeNext').style.display = 'none';
+            document.getElementById('challengeCounter').textContent = 'Problem ' + (challengeIndex + 1) + ' of ' + challengeProblems.length;
+
+            setTimeout(function() { speak(p.speech); }, 400);
+        }
+
+        function readChallengeProblem() {
+            if (challengeIndex < challengeProblems.length) {
+                speak(challengeProblems[challengeIndex].speech);
+            }
+        }
+
+        function checkChallenge(btn, selected, answer) {
+            if (selected === answer) {
+                btn.classList.add('correct');
+                var allBtns = document.querySelectorAll('#challengeChoices .answer-btn');
+                allBtns.forEach(function(b) { b.style.pointerEvents = 'none'; });
+                var p = challengeProblems[challengeIndex];
+                speak('Fantastic! ' + p.a + ' plus ' + p.b + ' equals ' + p.answer + '!');
+                updateMascot('Amazing! ' + p.a + ' + ' + p.b + ' = ' + p.answer + '!');
+                updateProgress(8);
+                launchConfetti();
+                showFeedback('\uD83C\uDF1F');
+                document.getElementById('challengeNext').style.display = 'block';
+            } else {
+                btn.classList.add('wrong');
+                speak('Not quite! Count the blocks carefully.');
+                updateMascot('Count each block. The pink line shows where the groups split.');
+                setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+            }
+        }
+
+        function nextChallenge() {
+            challengeIndex++;
+            if (challengeIndex >= challengeProblems.length) {
+                updateMascot('You completed all the challenge problems! You are a star!');
+                speak('You completed all the challenge problems! You are a star!');
+                challengeIndex = 0;
+            }
+            showChallengeProblem();
+        }
+
+        /* ========== QUIZ ========== */
+        var quizProblems = [
+            { text: 'There are 2 frogs on a log. 3 more frogs jump on. How many frogs are on the log?',
+              emoji: '\uD83D\uDC38', a: 2, b: 3, answer: 5,
+              speech: 'There are 2 frogs on a log. 3 more frogs jump on. How many frogs are on the log?' },
+            { text: 'Lucy has 4 pencils. She finds 4 more pencils. How many pencils does Lucy have?',
+              emoji: '\u270F\uFE0F', a: 4, b: 4, answer: 8,
+              speech: 'Lucy has 4 pencils. She finds 4 more pencils. How many pencils does Lucy have?' },
+            { text: 'There are 6 ants on the ground. 3 more ants march over. How many ants are there?',
+              emoji: '\uD83D\uDC1C', a: 6, b: 3, answer: 9,
+              speech: 'There are 6 ants on the ground. 3 more ants march over. How many ants are there?' },
+            { text: 'Jake has 1 balloon. He buys 5 more balloons. How many balloons does Jake have?',
+              emoji: '\uD83C\uDF88', a: 1, b: 5, answer: 6,
+              speech: 'Jake has 1 balloon. He buys 5 more balloons. How many balloons does Jake have?' },
+            { text: 'There are 3 snails in the garden. 4 more snails come out. How many snails are there?',
+              emoji: '\uD83D\uDC0C', a: 3, b: 4, answer: 7,
+              speech: 'There are 3 snails in the garden. 4 more snails come out. How many snails are there?' }
+        ];
+
+        function showQuizQuestion() {
+            if (quizIndex >= quizProblems.length) {
+                showQuizResult();
+                return;
+            }
+            document.getElementById('quizArea').style.display = 'block';
+            document.getElementById('quizResult').style.display = 'none';
+
+            var q = quizProblems[quizIndex];
+            document.getElementById('quizQuestion').textContent = q.text;
+
+            /* Build quiz emoji area with DOM nodes */
+            var emojiArea = document.getElementById('quizEmojis');
+            while (emojiArea.firstChild) emojiArea.removeChild(emojiArea.firstChild);
+
+            var groupA = document.createElement('span');
+            groupA.className = 'emoji-group';
+            groupA.textContent = buildEmojiString(q.emoji, q.a);
+            emojiArea.appendChild(groupA);
+
+            var spacer = document.createTextNode(' ');
+            emojiArea.appendChild(spacer);
+
+            var plus = document.createElement('span');
+            plus.className = 'emoji-plus';
+            plus.style.fontSize = '1.5rem';
+            plus.textContent = '+';
+            emojiArea.appendChild(plus);
+
+            var spacer2 = document.createTextNode(' ');
+            emojiArea.appendChild(spacer2);
+
+            var groupB = document.createElement('span');
+            groupB.className = 'emoji-group';
+            groupB.textContent = buildEmojiString(q.emoji, q.b);
+            emojiArea.appendChild(groupB);
+
+            /* Build answer options */
+            var choices = makeChoices(q.answer);
+            var optionsEl = document.getElementById('quizOptions');
+            while (optionsEl.firstChild) optionsEl.removeChild(optionsEl.firstChild);
+            for (var ci = 0; ci < choices.length; ci++) {
+                (function(val) {
+                    var btn = document.createElement('button');
+                    btn.className = 'quiz-option';
+                    btn.textContent = val;
+                    btn.onclick = function() { checkQuiz(btn, val, q.answer); };
+                    optionsEl.appendChild(btn);
+                })(choices[ci]);
+            }
+
+            document.getElementById('quizScore').textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizProblems.length;
+
+            setTimeout(function() { speak(q.speech); }, 400);
+        }
+
+        function readQuizProblem() {
+            if (quizIndex < quizProblems.length) {
+                speak(quizProblems[quizIndex].speech);
+            }
+        }
+
+        function checkQuiz(btn, selected, answer) {
+            var allBtns = document.querySelectorAll('#quizOptions .quiz-option');
+            allBtns.forEach(function(b) { b.style.pointerEvents = 'none'; });
+
+            if (selected === answer) {
+                btn.classList.add('correct');
+                quizCorrect++;
+                var q = quizProblems[quizIndex];
+                speak('Correct! ' + q.a + ' plus ' + q.b + ' equals ' + q.answer + '!');
+                updateMascot('You got it! ' + q.a + ' + ' + q.b + ' = ' + q.answer);
+                updateProgress(10);
+                launchConfetti();
+                showFeedback('\uD83D\uDC4F');
+            } else {
+                btn.classList.add('wrong');
+                /* Highlight the correct answer */
+                allBtns.forEach(function(b) {
+                    if (parseInt(b.textContent) === answer) b.classList.add('correct');
+                });
+                var q2 = quizProblems[quizIndex];
+                speak('The answer is ' + q2.answer + '. ' + q2.a + ' plus ' + q2.b + ' equals ' + q2.answer + '.');
+                updateMascot('The answer was ' + q2.answer + '. Keep trying!');
+            }
+
+            quizIndex++;
+            setTimeout(function() { showQuizQuestion(); }, 2000);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quizArea').style.display = 'none';
+            var resultEl = document.getElementById('quizResult');
+            resultEl.style.display = 'block';
+
+            var title, text;
+            if (quizCorrect === 5) {
+                title = 'PERFECT SCORE!';
+                text = 'You got all 5 right! You are a word problem wizard!';
+            } else if (quizCorrect >= 3) {
+                title = 'Great Job!';
+                text = 'You got ' + quizCorrect + ' out of 5! Keep it up!';
+            } else {
+                title = 'Good Try!';
+                text = 'You got ' + quizCorrect + ' out of 5. Practice makes perfect!';
+            }
+            document.getElementById('quizResultTitle').textContent = title;
+            document.getElementById('quizResultText').textContent = text;
+            speak(title + ' ' + text);
+        }
+
+        function resetQuiz() {
+            quizIndex = 0;
+            quizCorrect = 0;
+            showQuizQuestion();
+        }
+
+        /* ========== CELEBRATION ========== */
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            practiceIndex = 0;
+            challengeIndex = 0;
+            quizIndex = 0;
+            quizCorrect = 0;
+        }
+
+        /* ========== INIT ========== */
+        speak('Let us solve word problems! Read the story, look at the pictures, and add them up!');
+    </script>
+</body>
+</html>

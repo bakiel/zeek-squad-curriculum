@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindness - Zeek Squad SEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: kindBounce 1s ease-in-out infinite; }
+        @keyframes kindBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #FF6B6B;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #FF6B6B;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .kindness-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .kindness-card {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .kindness-card:hover { transform: scale(1.05); border-color: #FF6B6B; }
+        .kindness-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+        .kindness-card .text { color: #9B2C2C; font-weight: bold; font-size: 0.9rem; }
+
+        .word-box {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .word-box .word {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .word-box .definition {
+            color: rgba(255,255,255,0.95);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .speak-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speak-btn:hover { transform: scale(1.02); }
+        .speak-btn:active { transform: scale(0.98); }
+
+        /* Stories tab */
+        .story-card {
+            background: #FFF5F5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .story-card:hover { border-color: #FF6B6B; transform: scale(1.02); }
+        .story-card.heard {
+            border-color: #FF8E53;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FEEBC8 100%);
+        }
+        .story-card .story-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+        .story-card .story-text {
+            font-size: 1.05rem;
+            color: #333;
+            line-height: 1.5;
+        }
+        .story-card .tap-hint {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 6px;
+        }
+
+        /* Practice tab - checklist */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #FFF5F5;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .checklist-item:hover { border-color: #FF6B6B; }
+        .checklist-item.checked {
+            background: #FED7D7;
+            border-color: #FF6B6B;
+        }
+        .checklist-item .check-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 3px solid #FFB4B4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: all 0.3s;
+            background: white;
+        }
+        .checklist-item.checked .check-circle {
+            background: #FF6B6B;
+            border-color: #FF6B6B;
+            color: white;
+        }
+        .checklist-item .item-text {
+            flex: 1;
+            font-size: 1rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* Floating hearts animation */
+        .floating-heart {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp 2s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { opacity: 1; transform: translateY(-80px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-160px) scale(0.5); }
+        }
+
+        /* Quiz tab */
+        .quiz-card {
+            background: #FFF5F5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .quiz-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .quiz-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .quiz-counter {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .quiz-option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #FFB4B4;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #FFF5F5; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #FF6B6B; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Learning Kindness</h1>
+            <div class="standard">SEL.K.1 - Social Awareness</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F9E1;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                KINDNESS means being nice, helping, and sharing! Let's learn together!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="stories">Stories</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">What is KINDNESS?</h2>
+
+                <div class="word-box">
+                    <div class="word">K-I-N-D-N-E-S-S</div>
+                    <div class="definition">Being nice, helping, and sharing!</div>
+                </div>
+
+                <button class="speak-btn" onclick="speakKindness()">
+                    &#x1F50A; Say it: KINDNESS!
+                </button>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Kindness means doing nice things for others because you care!
+                </p>
+
+                <div class="kindness-cards">
+                    <div class="kindness-card" onclick="learnCard(this, 'Sharing toys with a friend shows you care!')">
+                        <span class="emoji">&#x1F9F8;</span>
+                        <span class="text">Sharing Toys</span>
+                    </div>
+                    <div class="kindness-card" onclick="learnCard(this, 'Helping clean up makes everyone happy!')">
+                        <span class="emoji">&#x1F9F9;</span>
+                        <span class="text">Helping Clean Up</span>
+                    </div>
+                    <div class="kindness-card" onclick="learnCard(this, 'Saying nice words makes people smile!')">
+                        <span class="emoji">&#x1F4AC;</span>
+                        <span class="text">Saying Nice Words</span>
+                    </div>
+                    <div class="kindness-card" onclick="learnCard(this, 'Giving hugs shows love and kindness!')">
+                        <span class="emoji">&#x1F917;</span>
+                        <span class="text">Giving Hugs</span>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #9B2C2C; font-weight: bold;">
+                    Tap each card to learn about kindness!
+                </p>
+            </div>
+
+            <!-- STORIES TAB -->
+            <div class="tab-content" id="stories">
+                <h2 class="section-title">When Were YOU Kind?</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Tap each story to hear it read aloud!
+                </p>
+                <div id="storiesContainer"></div>
+            </div>
+
+            <!-- PRACTICE TAB -->
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">What Kind Things Can You Do Today?</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Tap each kind action to make a promise!
+                </p>
+                <div id="checklistContainer"></div>
+                <div id="heartCounter" style="text-align: center; margin-top: 15px; font-size: 1.1rem; color: #FF6B6B; font-weight: bold; display: none;"></div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Kindness Quiz!</h2>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x1F9E1;&#x1F389;</div>
+            <div class="celebration-text">You Are So KIND!</div>
+            <p style="color: #666; margin-bottom: 20px;">You learned all about kindness! Keep spreading love!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var quizIndex = 0;
+
+        // ---- VOICE SETUP ----
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var p = 0; p < preferred.length; p++) {
+                var found = voices.find(function(v) { return v.name.includes(preferred[p]) && v.lang.startsWith('en'); });
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        // ---- TAB NAVIGATION ----
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'stories') initStories();
+                if (btn.dataset.tab === 'practice') initChecklist();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        // ---- PROGRESS & STARS ----
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            speak('Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are so kind! Keep spreading kindness everywhere!');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // ---- LEARN TAB ----
+        function speakKindness() {
+            speak('K, I, N, D, N, E, S, S! KINDNESS! Kindness means being nice, helping, and sharing!');
+            updateProgress(5);
+        }
+
+        function learnCard(el, message) {
+            speak(message);
+            updateMascot(message);
+            el.style.borderColor = '#FF6B6B';
+            el.style.background = 'linear-gradient(135deg, #FED7D7 0%, #FEEBC8 100%)';
+            updateProgress(5);
+        }
+
+        // ---- STORIES TAB ----
+        var kindnessStories = [
+            { emoji: '\uD83E\uDDF8', text: 'I shared my toy with a friend who was sad.', detail: 'Sharing your toys is a wonderful act of kindness! It makes your friend feel happy and loved.' },
+            { emoji: '\uD83C\uDF7D\uFE0F', text: 'I helped set the table for dinner.', detail: 'Helping at home is so kind! Your family feels grateful when you pitch in.' },
+            { emoji: '\uD83D\uDE0A', text: 'I said something nice to make a friend smile.', detail: 'Nice words are like sunshine! They brighten someone\'s whole day.' },
+            { emoji: '\uD83C\uDF1F', text: 'I helped a friend who fell down on the playground.', detail: 'Helping someone who is hurt shows you really care about them.' },
+            { emoji: '\uD83C\uDF3B', text: 'I drew a picture for someone who was feeling sad.', detail: 'Making something special for someone shows beautiful kindness!' }
+        ];
+
+        var storiesInitialized = false;
+
+        function initStories() {
+            if (storiesInitialized) return;
+            storiesInitialized = true;
+
+            var container = document.getElementById('storiesContainer');
+            container.textContent = '';
+
+            kindnessStories.forEach(function(story, idx) {
+                var card = document.createElement('div');
+                card.className = 'story-card';
+                card.setAttribute('data-idx', idx);
+
+                var emojiEl = document.createElement('div');
+                emojiEl.className = 'story-emoji';
+                emojiEl.textContent = story.emoji;
+                card.appendChild(emojiEl);
+
+                var textEl = document.createElement('div');
+                textEl.className = 'story-text';
+                textEl.textContent = story.text;
+                card.appendChild(textEl);
+
+                var hintEl = document.createElement('div');
+                hintEl.className = 'tap-hint';
+                hintEl.textContent = 'Tap to hear this story!';
+                card.appendChild(hintEl);
+
+                card.onclick = function() { playStory(card, story); };
+                container.appendChild(card);
+            });
+        }
+
+        function playStory(card, story) {
+            speak(story.text + ' ' + story.detail);
+            card.classList.add('heard');
+            card.querySelector('.tap-hint').textContent = 'You heard this story!';
+            updateMascot(story.detail);
+            updateProgress(5);
+        }
+
+        // ---- PRACTICE TAB ----
+        var kindActions = [
+            { emoji: '\uD83E\uDDF8', text: 'Share a toy with someone' },
+            { emoji: '\uD83D\uDC4B', text: 'Say hello to a new friend' },
+            { emoji: '\uD83E\uDD17', text: 'Give someone a hug' },
+            { emoji: '\uD83D\uDCAC', text: 'Say something nice to someone' },
+            { emoji: '\uD83E\uDDF9', text: 'Help clean up without being asked' },
+            { emoji: '\uD83C\uDF1F', text: 'Help a friend who needs it' },
+            { emoji: '\uD83C\uDF3C', text: 'Draw a picture for someone' },
+            { emoji: '\uD83D\uDE0A', text: 'Smile at someone who looks sad' }
+        ];
+
+        var checklistInitialized = false;
+        var heartsCount = 0;
+
+        function initChecklist() {
+            if (checklistInitialized) return;
+            checklistInitialized = true;
+
+            var container = document.getElementById('checklistContainer');
+            container.textContent = '';
+            heartsCount = 0;
+
+            kindActions.forEach(function(action, idx) {
+                var item = document.createElement('div');
+                item.className = 'checklist-item';
+                item.setAttribute('data-idx', idx);
+
+                var circle = document.createElement('div');
+                circle.className = 'check-circle';
+                circle.textContent = '';
+                item.appendChild(circle);
+
+                var textEl = document.createElement('div');
+                textEl.className = 'item-text';
+                textEl.textContent = action.emoji + '  ' + action.text;
+                item.appendChild(textEl);
+
+                item.onclick = function() { checkAction(item, action); };
+                container.appendChild(item);
+            });
+        }
+
+        function checkAction(item, action) {
+            if (item.classList.contains('checked')) return;
+            item.classList.add('checked');
+            item.querySelector('.check-circle').textContent = '\u2764\uFE0F';
+
+            heartsCount++;
+            var counter = document.getElementById('heartCounter');
+            counter.style.display = 'block';
+            counter.textContent = heartsCount + ' kind ' + (heartsCount === 1 ? 'promise' : 'promises') + ' made! ';
+            for (var h = 0; h < heartsCount; h++) {
+                counter.textContent += '\u2764\uFE0F';
+            }
+
+            spawnFloatingHeart(item);
+            speak('I will ' + action.text + '! That is so kind!');
+            updateMascot('Wonderful! ' + action.text + ' is a kind thing to do!');
+            updateProgress(4);
+        }
+
+        function spawnFloatingHeart(el) {
+            var rect = el.getBoundingClientRect();
+            var heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.textContent = '\u2764\uFE0F';
+            heart.style.left = (rect.left + rect.width / 2 - 16) + 'px';
+            heart.style.top = (rect.top) + 'px';
+            document.body.appendChild(heart);
+            setTimeout(function() { heart.remove(); }, 2000);
+        }
+
+        // ---- QUIZ TAB ----
+        var quizQuestions = [
+            {
+                emoji: '\uD83E\uDDF8',
+                text: 'Your friend wants to play with your toy. Which is kind?',
+                options: ['Say "No, it\'s mine!"', 'Share and take turns'],
+                correct: 1,
+                feedback: 'Sharing and taking turns is so kind!'
+            },
+            {
+                emoji: '\uD83D\uDE22',
+                text: 'A classmate is crying. Which is kind?',
+                options: ['Ask if they are okay', 'Walk away and ignore'],
+                correct: 0,
+                feedback: 'Checking on someone who is sad shows real kindness!'
+            },
+            {
+                emoji: '\uD83C\uDF7D\uFE0F',
+                text: 'Mom is carrying lots of groceries. Which is kind?',
+                options: ['Keep playing your game', 'Help carry a bag'],
+                correct: 1,
+                feedback: 'Helping your family is a wonderful act of kindness!'
+            },
+            {
+                emoji: '\uD83D\uDC66',
+                text: 'A new kid joins your class. Which is kind?',
+                options: ['Invite them to play', 'Ignore them'],
+                correct: 0,
+                feedback: 'Including someone new is one of the kindest things you can do!'
+            },
+            {
+                emoji: '\uD83C\uDF1F',
+                text: 'Your friend drew a picture. Which is kind?',
+                options: ['Say "That looks nice!"', 'Say "Mine is better"'],
+                correct: 0,
+                feedback: 'Saying nice things about what others make is very kind!'
+            }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var container = document.getElementById('quizContainer');
+
+            if (quizIndex >= quizQuestions.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+
+                var doneText = document.createElement('p');
+                doneText.style.color = '#9B2C2C';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'Amazing! You know all about kindness!';
+                doneDiv.appendChild(doneText);
+
+                var doneSubtext = document.createElement('p');
+                doneSubtext.style.color = '#666';
+                doneSubtext.style.marginTop = '10px';
+                doneSubtext.textContent = 'Now go spread kindness everywhere you go!';
+                doneDiv.appendChild(doneSubtext);
+
+                container.appendChild(doneDiv);
+                speak('Amazing! You know all about kindness! Now go spread kindness everywhere!');
+                return;
+            }
+
+            var q = quizQuestions[quizIndex];
+            container.textContent = '';
+
+            var card = document.createElement('div');
+            card.className = 'quiz-card';
+
+            var counter = document.createElement('div');
+            counter.className = 'quiz-counter';
+            counter.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+            card.appendChild(counter);
+
+            var emoji = document.createElement('div');
+            emoji.className = 'quiz-emoji';
+            emoji.textContent = q.emoji;
+            card.appendChild(emoji);
+
+            var text = document.createElement('div');
+            text.className = 'quiz-text';
+            text.textContent = q.text;
+            card.appendChild(text);
+
+            var options = document.createElement('div');
+            options.className = 'quiz-options';
+
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.correct, q.feedback); };
+                options.appendChild(btn);
+            });
+
+            card.appendChild(options);
+            container.appendChild(card);
+
+            speak(q.text);
+        }
+
+        function checkQuiz(btn, correct, feedback) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Yes! ' + feedback);
+                updateMascot(feedback);
+                updateProgress(8);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 2000);
+            } else {
+                btn.classList.add('wrong');
+                speak('Hmm, try again!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        // ---- CELEBRATION ----
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            storiesInitialized = false;
+            checklistInitialized = false;
+            heartsCount = 0;
+            document.getElementById('heartCounter').style.display = 'none';
+            initQuiz();
+        }
+
+        // ---- INITIAL LOAD ----
+        updateProgress(5);
+        speak('KINDNESS means being nice, helping, and sharing! Let us learn together!');
+    </script>
+</body>
+</html>

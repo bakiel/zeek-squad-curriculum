@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew: BET (בּ) Writing - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: starBounce 1s ease-in-out infinite; }
+        @keyframes starBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .big-letter {
+            font-size: 8rem;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+        }
+        .letter-note {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #764ba2;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Learn Tab */
+        .learn-letter-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .learn-letter-display .huge-letter {
+            font-size: 7rem;
+            color: #764ba2;
+            font-family: 'Times New Roman', serif;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .learn-letter-display .huge-letter:hover { transform: scale(1.1); }
+        .learn-letter-display .stroke-hint {
+            font-size: 0.95rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .stroke-order {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stroke-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stroke-step:hover { transform: scale(1.15); }
+        .stroke-step .arrow {
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #764ba2;
+            font-size: 1.2rem;
+        }
+        .stroke-step:last-child .arrow { display: none; }
+
+        .letter-compare {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .letter-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .letter-card:hover { transform: scale(1.1); }
+        .letter-card .hebrew {
+            font-size: 4rem;
+            color: white;
+            font-family: 'Times New Roman', serif;
+        }
+        .letter-card .name {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+        .letter-card .dot {
+            color: #FFD700;
+            font-size: 0.8rem;
+        }
+
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+
+        .info-box {
+            background: #F3F0FF;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #764ba2;
+        }
+        .info-box p {
+            color: #4C1D95;
+            line-height: 1.6;
+        }
+        .info-box.dagesh-box {
+            background: #FFF7ED;
+            border-left-color: #F59E0B;
+        }
+        .info-box.dagesh-box p {
+            color: #92400E;
+        }
+
+        /* Write Tab */
+        .trace-area {
+            background: #FFFBEB;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 15px;
+            touch-action: none;
+        }
+        .write-counter {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            color: #764ba2;
+            font-weight: bold;
+        }
+        .write-stars {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 8px 0;
+        }
+        .write-star {
+            display: inline-block;
+            opacity: 0.3;
+            transition: all 0.4s;
+        }
+        .write-star.earned {
+            opacity: 1;
+            animation: starPop 0.5s ease;
+        }
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .trace-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .trace-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .trace-btn.clear { background: #F3F4F6; color: #666; }
+        .trace-btn.done { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .trace-btn:hover { transform: scale(1.03); }
+        .trace-btn:active { transform: scale(0.97); }
+
+        /* Practice Tab */
+        .word-cards {
+            display: grid;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .word-card {
+            background: linear-gradient(135deg, #F3F0FF 0%, #EDE9FE 100%);
+            padding: 18px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .word-card:hover { border-color: #764ba2; transform: scale(1.02); }
+        .word-card:active { transform: scale(0.98); }
+        .word-card .word-icon { font-size: 2.5rem; }
+        .word-card .word-text { flex: 1; }
+        .word-card .hebrew-word {
+            font-size: 1.5rem;
+            color: #4C1D95;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 3px;
+        }
+        .word-card .english-word {
+            color: #764ba2;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .word-card .phonetic {
+            color: #9CA3AF;
+            font-size: 0.85rem;
+        }
+        .word-card .highlight-bet {
+            color: #667eea;
+            font-size: 1.8rem;
+        }
+
+        .mini-quiz {
+            background: #F3F0FF;
+            border-radius: 15px;
+            padding: 18px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .mini-quiz p {
+            color: #4C1D95;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        .mini-quiz-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .mini-quiz-btn {
+            padding: 12px 20px;
+            background: white;
+            border: 3px solid #DDD6FE;
+            border-radius: 12px;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #4C1D95;
+        }
+        .mini-quiz-btn:hover { border-color: #764ba2; transform: scale(1.05); }
+        .mini-quiz-btn.correct { background: #D1FAE5; border-color: #10B981; }
+        .mini-quiz-btn.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        /* Affirm Tab */
+        .affirmation-cards {
+            display: grid;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .affirmation-card {
+            background: linear-gradient(135deg, #F3F0FF 0%, #EDE9FE 100%);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .affirmation-card:hover { border-color: #764ba2; transform: scale(1.02); }
+        .affirmation-card:active { transform: scale(0.98); }
+        .affirmation-card .emoji { font-size: 2.5rem; }
+        .affirmation-card .text { flex: 1; }
+        .affirmation-card .hebrew-text {
+            font-size: 1.3rem;
+            color: #4C1D95;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .affirmation-card .english-text {
+            color: #764ba2;
+            font-size: 0.9rem;
+        }
+        .affirmation-card.active-affirm {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .affirmation-card.active-affirm .hebrew-text,
+        .affirmation-card.active-affirm .english-text { color: white; }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .day-card {
+            background: #F3F0FF;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .day-card:hover { border-color: #764ba2; }
+        .day-card.highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .day-card.highlight .hebrew { color: white; }
+        .day-card.highlight .english { color: rgba(255,255,255,0.9); }
+        .day-card .hebrew {
+            font-size: 1.1rem;
+            color: #4C1D95;
+            font-weight: bold;
+        }
+        .day-card .english {
+            font-size: 0.8rem;
+            color: #764ba2;
+        }
+
+        /* Celebration */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #764ba2; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 101;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Hebrew: BET (&#x5D1;&#x5BC;) Writing</h1>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x2728;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                BET has a DOT inside! It says /b/ like BAYIT - house!
+            </div>
+        </div>
+
+        <div class="big-letter">&#x5D1;&#x5BC;</div>
+        <p class="letter-note">BET (&#x5D1;&#x5BC;) with dagesh says /b/</p>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="write">Write</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+            <button class="tab-btn" data-tab="affirm">Affirm</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">Meet the Letter BET!</h2>
+
+                <div class="learn-letter-display">
+                    <div class="huge-letter" onclick="playBetSound()">&#x5D1;&#x5BC;</div>
+                    <div class="stroke-hint">Tap the letter to hear it!</div>
+                </div>
+
+                <button class="sound-btn" onclick="playBetSound()">
+                    &#x1F50A; BET says: /b/ /b/ /b/
+                </button>
+
+                <div class="info-box dagesh-box">
+                    <p><strong>The Dagesh:</strong> See that DOT inside? That is called a <strong>dagesh</strong>! When BET has a dagesh, it says <strong>/b/</strong> like <strong>BAYIT</strong> (house)!</p>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 25px;">Stroke Order</h2>
+                <div class="stroke-order">
+                    <div class="stroke-step" onclick="showStroke(1)">1<span class="arrow">&#x2192;</span></div>
+                    <div class="stroke-step" onclick="showStroke(2)">2<span class="arrow">&#x2192;</span></div>
+                    <div class="stroke-step" onclick="showStroke(3)">3</div>
+                </div>
+                <div id="strokeInfo" class="info-box">
+                    <p><strong>Step 1:</strong> Start at the top-right corner. Draw a line going LEFT across the top.</p>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 25px;">BET vs VET</h2>
+                <div class="letter-compare">
+                    <div class="letter-card" onclick="playBetCompare()">
+                        <div class="hebrew">&#x5D1;&#x5BC;</div>
+                        <div class="name">BET</div>
+                        <div class="dot">with dot = /b/</div>
+                    </div>
+                    <div class="letter-card" onclick="playVetCompare()">
+                        <div class="hebrew">&#x5D1;</div>
+                        <div class="name">VET</div>
+                        <div class="dot">no dot = /v/</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Remember:</strong> BET and VET look the same! The only difference is the <strong>dot (dagesh)</strong>. BET has a dot = /b/ sound. VET has NO dot = /v/ sound.</p>
+                </div>
+            </div>
+
+            <!-- WRITE TAB -->
+            <div class="tab-content" id="write">
+                <h2 class="section-title">Write BET Five Times!</h2>
+                <div class="write-counter" id="writeCounter">Writes: 0 / 5</div>
+                <div class="write-stars" id="writeStars">
+                    <span class="write-star">&#x2B50;</span>
+                    <span class="write-star">&#x2B50;</span>
+                    <span class="write-star">&#x2B50;</span>
+                    <span class="write-star">&#x2B50;</span>
+                    <span class="write-star">&#x2B50;</span>
+                </div>
+                <div class="trace-area">
+                    <canvas id="traceCanvas" width="280" height="220"></canvas>
+                </div>
+                <div class="trace-btns">
+                    <button class="trace-btn clear" onclick="clearCanvas()">Clear</button>
+                    <button class="trace-btn done" onclick="finishTrace()">Done!</button>
+                </div>
+                <div class="info-box" style="margin-top: 15px;">
+                    <p><strong>Tip:</strong> Trace over the gray letter. Remember to add the <strong>dot (dagesh)</strong> inside to make it BET, not VET!</p>
+                </div>
+            </div>
+
+            <!-- PRACTICE TAB -->
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">Words with BET</h2>
+                <p style="text-align: center; color: #888; margin-bottom: 15px;">Tap each word to hear it!</p>
+
+                <div class="word-cards" id="wordCards">
+                    <div class="word-card" onclick="playWord('Bayit', 'Bayit means house!', this)">
+                        <span class="word-icon">&#x1F3E0;</span>
+                        <div class="word-text">
+                            <div class="hebrew-word"><span class="highlight-bet">&#x5D1;&#x5BC;</span>&#x5B7;&#x5D9;&#x5B4;&#x5EA;</div>
+                            <div class="english-word">BAYIT - House</div>
+                            <div class="phonetic">/bah-YEET/</div>
+                        </div>
+                    </div>
+                    <div class="word-card" onclick="playWord('Boker', 'Boker means morning!', this)">
+                        <span class="word-icon">&#x1F305;</span>
+                        <div class="word-text">
+                            <div class="hebrew-word"><span class="highlight-bet">&#x5D1;&#x5BC;</span>&#x5B9;&#x5E7;&#x5B6;&#x5E8;</div>
+                            <div class="english-word">BOKER - Morning</div>
+                            <div class="phonetic">/BOH-ker/</div>
+                        </div>
+                    </div>
+                    <div class="word-card" onclick="playWord('Bracha', 'Bracha means blessing!', this)">
+                        <span class="word-icon">&#x1F64F;</span>
+                        <div class="word-text">
+                            <div class="hebrew-word"><span class="highlight-bet">&#x5D1;&#x5BC;</span>&#x5B0;&#x5E8;&#x5B8;&#x5DB;&#x5B8;&#x5D4;</div>
+                            <div class="english-word">BRACHA - Blessing</div>
+                            <div class="phonetic">/brah-KHAH/</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 25px;">Quick Challenge</h2>
+                <div class="mini-quiz" id="miniQuiz">
+                    <p id="miniQuizQ">Which word starts with BET (/b/)?</p>
+                    <div class="mini-quiz-options" id="miniQuizOptions"></div>
+                </div>
+
+                <button class="sound-btn" onclick="sayPhrase()" style="margin-top: 15px;">
+                    &#x1F50A; Say: "Boker Tov!" (Good Morning!)
+                </button>
+            </div>
+
+            <!-- AFFIRM TAB -->
+            <div class="tab-content" id="affirm">
+                <h2 class="section-title">Hebrew Affirmations</h2>
+
+                <div class="affirmation-cards">
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Yachol', 'I can do it!', this)">
+                        <span class="emoji">&#x1F4AA;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x5D0;&#x5B2;&#x5E0;&#x5B4;&#x5D9; &#x5D9;&#x5B8;&#x5DB;&#x5D5;&#x5B9;&#x5DC;</div>
+                            <div class="english-text">ANI YACHOL! (I can!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Chazak', 'I am strong!', this)">
+                        <span class="emoji">&#x1F981;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x5D0;&#x5B2;&#x5E0;&#x5B4;&#x5D9; &#x5D7;&#x5B8;&#x5D6;&#x5B8;&#x5E7;</div>
+                            <div class="english-text">ANI CHAZAK! (I am strong!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Tov', 'I am good!', this)">
+                        <span class="emoji">&#x2B50;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x5D0;&#x5B2;&#x5E0;&#x5B4;&#x5D9; &#x5D8;&#x5D5;&#x5B9;&#x5D1;</div>
+                            <div class="english-text">ANI TOV! (I am good!)</div>
+                        </div>
+                    </div>
+                    <div class="affirmation-card" onclick="sayAffirmation('Ani Ohev', 'I love!', this)">
+                        <span class="emoji">&#x2764;&#xFE0F;</span>
+                        <div class="text">
+                            <div class="hebrew-text">!&#x5D0;&#x5B2;&#x5E0;&#x5B4;&#x5D9; &#x5D0;&#x5D5;&#x5B9;&#x5D4;&#x5B5;&#x5D1;</div>
+                            <div class="english-text">ANI OHEV! (I love!)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #888; margin: 15px 0;">Tap each card to say it proudly!</p>
+
+                <h2 class="section-title" style="margin-top: 20px;">Days of the Week</h2>
+
+                <button class="sound-btn" onclick="singDays()">
+                    &#x1F3B5; Sing the Days!
+                </button>
+
+                <div class="days-grid" id="daysGrid">
+                    <div class="day-card" onclick="sayDay('Yom Rishon', 'Sunday', this)">
+                        <div class="hebrew">&#x5D9;&#x5D5;&#x5B9;&#x5DD; &#x5E8;&#x5B4;&#x5D0;&#x5E9;&#x5C1;&#x5D5;&#x5B9;&#x5DF;</div>
+                        <div class="english">Sunday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Sheni', 'Monday', this)">
+                        <div class="hebrew">&#x5D9;&#x5D5;&#x5B9;&#x5DD; &#x5E9;&#x5C1;&#x5B5;&#x5E0;&#x5B4;&#x5D9;</div>
+                        <div class="english">Monday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Shlishi', 'Tuesday', this)">
+                        <div class="hebrew">&#x5D9;&#x5D5;&#x5B9;&#x5DD; &#x5E9;&#x5C1;&#x5B0;&#x5DC;&#x5B4;&#x5D9;&#x5E9;&#x5C1;&#x5B4;&#x5D9;</div>
+                        <div class="english">Tuesday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Revii', 'Wednesday', this)">
+                        <div class="hebrew">&#x5D9;&#x5D5;&#x5B9;&#x5DD; &#x5E8;&#x5B0;&#x5D1;&#x5B4;&#x5D9;&#x5E2;&#x5B4;&#x5D9;</div>
+                        <div class="english">Wednesday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Chamishi', 'Thursday', this)">
+                        <div class="hebrew">&#x5D9;&#x5D5;&#x5B9;&#x5DD; &#x5D7;&#x5B2;&#x5DE;&#x5B4;&#x5D9;&#x5E9;&#x5C1;&#x5B4;&#x5D9;</div>
+                        <div class="english">Thursday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Yom Shishi', 'Friday', this)">
+                        <div class="hebrew">&#x5D9;&#x5D5;&#x5B9;&#x5DD; &#x5E9;&#x5C1;&#x5B4;&#x5E9;&#x5C1;&#x5B4;&#x5D9;</div>
+                        <div class="english">Friday</div>
+                    </div>
+                    <div class="day-card" onclick="sayDay('Shabbat', 'Saturday - Shabbat!', this)">
+                        <div class="hebrew">&#x5E9;&#x5C1;&#x5B7;&#x5D1;&#x5BC;&#x5B8;&#x5EA;</div>
+                        <div class="english">Shabbat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration Modal -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x2728;&#x1F389;</div>
+            <div class="celebration-text">!&#x5DE;&#x5B7;&#x5D6;&#x5BC;&#x5B8;&#x5DC; &#x5D8;&#x5D5;&#x5B9;&#x5D1;</div>
+            <p style="color: #666; margin-bottom: 20px;">Mazel Tov! You mastered BET!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Todah Rabah!</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== STATE ==========
+        var starsEarned = 0;
+        var progress = 0;
+        var writeCount = 0;
+        var miniQuizRound = 0;
+
+        // ========== VOICE ==========
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var i = 0; i < preferred.length; i++) {
+                var name = preferred[i];
+                var found = voices.find(function(v) { return v.name.indexOf(name) !== -1 && v.lang.indexOf('en') === 0; });
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) {
+                selectedVoice = voices.find(function(v) { return v.lang.indexOf('en') === 0; }) || voices[0];
+            }
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        // ========== MASCOT ==========
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // ========== PROGRESS ==========
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('#stars .star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            speak('Kochav! Star!');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    showCelebration();
+                }, 500);
+            }
+        }
+
+        // ========== TAB NAVIGATION ==========
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'write') initCanvas();
+            });
+        });
+
+        // ========== LEARN TAB ==========
+        function playBetSound() {
+            speak('BET says buh, buh, buh! Like Bayit, which means house!');
+            updateMascot('BET says /b/ like BAYIT!');
+            updateProgress(5);
+        }
+
+        function playBetCompare() {
+            speak('BET has a dot inside. It says buh, like boy!');
+            updateMascot('BET has a DOT = /b/ sound!');
+            updateProgress(3);
+        }
+
+        function playVetCompare() {
+            speak('VET has no dot. It says vuh, like violin!');
+            updateMascot('VET has NO dot = /v/ sound!');
+            updateProgress(3);
+        }
+
+        var strokeDescriptions = [
+            'Step 1: Start at the top-right corner. Draw a line going LEFT across the top.',
+            'Step 2: From the top-left, draw straight DOWN to the bottom-left corner.',
+            'Step 3: From the bottom-left, draw a line going RIGHT along the bottom. Then add the DOT, the dagesh, in the middle!'
+        ];
+
+        function showStroke(step) {
+            var infoEl = document.getElementById('strokeInfo');
+            infoEl.textContent = '';
+            var p = document.createElement('p');
+            var strong = document.createElement('strong');
+            strong.textContent = strokeDescriptions[step - 1];
+            p.appendChild(strong);
+            infoEl.appendChild(p);
+            speak(strokeDescriptions[step - 1]);
+            updateProgress(3);
+        }
+
+        // ========== WRITE TAB ==========
+        var isDrawing = false;
+        var ctx;
+
+        function initCanvas() {
+            var canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+
+            drawGuide();
+
+            canvas.removeEventListener('mousedown', startDraw);
+            canvas.removeEventListener('mousemove', draw);
+            canvas.removeEventListener('mouseup', stopDraw);
+            canvas.removeEventListener('touchstart', startDraw);
+            canvas.removeEventListener('touchmove', draw);
+            canvas.removeEventListener('touchend', stopDraw);
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        function drawGuide() {
+            var canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Light background
+            ctx.fillStyle = '#FFF9E6';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Guide lines
+            ctx.strokeStyle = '#E5E7EB';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Ghost BET letter with dagesh
+            ctx.font = 'bold 160px Times New Roman';
+            ctx.fillStyle = '#E5E7EB';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('\u05D1\u05BC', 140, 110);
+
+            // Reset drawing settings
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            var pos = getPos(e);
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            var pos = getPos(e);
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stopDraw() {
+            isDrawing = false;
+        }
+
+        function getPos(e) {
+            var canvas = document.getElementById('traceCanvas');
+            var rect = canvas.getBoundingClientRect();
+            var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            var x = clientX - rect.left;
+            var y = clientY - rect.top;
+            var scaleX = canvas.width / rect.width;
+            var scaleY = canvas.height / rect.height;
+            return { x: x * scaleX, y: y * scaleY };
+        }
+
+        function clearCanvas() {
+            drawGuide();
+        }
+
+        function finishTrace() {
+            if (writeCount < 5) {
+                writeCount++;
+                document.getElementById('writeCounter').textContent = 'Writes: ' + writeCount + ' / 5';
+
+                // Earn star for this write
+                var writeStarEls = document.querySelectorAll('.write-star');
+                if (writeCount <= 5) {
+                    writeStarEls[writeCount - 1].classList.add('earned');
+                }
+
+                var praises = [
+                    'Yofi! Beautiful BET!',
+                    'Nachon! Great writing!',
+                    'Metsuyan! Excellent!',
+                    'Kol HaKavod! Well done!',
+                    'Metzuyan! You did all five! Perfect!'
+                ];
+                var praise = praises[Math.min(writeCount - 1, praises.length - 1)];
+                speak(praise);
+                updateMascot(praise);
+                updateProgress(10);
+
+                if (writeCount >= 5) {
+                    speak('Amazing! You wrote BET five times! Kol HaKavod!');
+                    updateMascot('All 5 stars earned! You are a BET champion!');
+                }
+
+                clearCanvas();
+            } else {
+                speak('You already wrote BET five times! Try the Practice tab!');
+                updateMascot('Try the Practice tab for more fun!');
+            }
+        }
+
+        // ========== PRACTICE TAB ==========
+        function playWord(word, meaning, el) {
+            speak(word + '! ' + meaning + ' ' + word + ' starts with the letter BET!');
+            updateMascot(meaning);
+            updateProgress(5);
+
+            // Brief highlight
+            el.style.borderColor = '#764ba2';
+            el.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)';
+            setTimeout(function() {
+                el.style.borderColor = 'transparent';
+                el.style.background = '';
+            }, 1200);
+        }
+
+        var miniQuizData = [
+            { q: 'Which word starts with BET (/b/)?', opts: ['\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA', '\u05D0\u05B8\u05D1', '\u05D2\u05BC\u05B7\u05DF'], answer: 0 },
+            { q: 'Which means "morning"?', opts: ['\u05D1\u05BC\u05B0\u05E8\u05B8\u05DB\u05B8\u05D4', '\u05D1\u05BC\u05B9\u05E7\u05B6\u05E8', '\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA'], answer: 1 },
+            { q: 'Which means "blessing"?', opts: ['\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA', '\u05D1\u05BC\u05B9\u05E7\u05B6\u05E8', '\u05D1\u05BC\u05B0\u05E8\u05B8\u05DB\u05B8\u05D4'], answer: 2 }
+        ];
+
+        function loadMiniQuiz(round) {
+            if (round >= miniQuizData.length) {
+                document.getElementById('miniQuizQ').textContent = 'All correct! You are a BET expert!';
+                var optContainer = document.getElementById('miniQuizOptions');
+                optContainer.textContent = '';
+                var stars = document.createElement('p');
+                stars.style.cssText = 'color: #764ba2; font-weight: bold; font-size: 1.5rem;';
+                stars.textContent = '\u2B50 \u2B50 \u2B50';
+                optContainer.appendChild(stars);
+                return;
+            }
+            var data = miniQuizData[round];
+            document.getElementById('miniQuizQ').textContent = data.q;
+            var container = document.getElementById('miniQuizOptions');
+            container.textContent = '';
+            data.opts.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'mini-quiz-btn';
+                btn.textContent = opt;
+                btn.addEventListener('click', function() { checkMiniQuiz(btn, i === data.answer); });
+                container.appendChild(btn);
+            });
+        }
+
+        function checkMiniQuiz(btn, isCorrect) {
+            var allBtns = document.querySelectorAll('#miniQuizOptions .mini-quiz-btn');
+            allBtns.forEach(function(b) { b.style.pointerEvents = 'none'; });
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                speak('Nachon! Correct! Kol HaKavod!');
+                updateMascot('Correct! You know your BET words!');
+                updateProgress(8);
+
+                miniQuizRound++;
+                setTimeout(function() { loadMiniQuiz(miniQuizRound); }, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('Oops! Try again!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    allBtns.forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                }, 600);
+            }
+        }
+
+        function sayPhrase() {
+            speak('Boker Tov! Good Morning! Boker starts with BET!');
+            updateMascot('Boker Tov means Good Morning!');
+            updateProgress(5);
+        }
+
+        // ========== AFFIRM TAB ==========
+        function sayAffirmation(hebrew, english, el) {
+            speak(hebrew + '! ' + english);
+            updateMascot('Say it proud: ' + hebrew + '!');
+            updateProgress(6);
+
+            // Highlight
+            el.classList.add('active-affirm');
+            setTimeout(function() { el.classList.remove('active-affirm'); }, 1500);
+        }
+
+        function sayDay(hebrew, english, el) {
+            speak(hebrew + ' is ' + english);
+            updateMascot(hebrew + ' means ' + english + '!');
+            updateProgress(3);
+
+            // Highlight
+            var allDays = document.querySelectorAll('.day-card');
+            allDays.forEach(function(d) { d.classList.remove('highlight'); });
+            el.classList.add('highlight');
+        }
+
+        function singDays() {
+            speak('Yom Rishon, Yom Sheni, Yom Shlishi, Yom Revii, Yom Chamishi, Yom Shishi, Shabbat! Shabbat Shalom!');
+            updateMascot('Sing the Hebrew days!');
+            updateProgress(8);
+        }
+
+        // ========== CELEBRATION ==========
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            speak('Mazel Tov! You mastered the letter BET! Kol HaKavod!');
+            launchConfetti();
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            writeCount = 0;
+            miniQuizRound = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('#stars .star').forEach(function(s) { s.classList.remove('earned'); });
+            document.querySelectorAll('.write-star').forEach(function(s) { s.classList.remove('earned'); });
+            document.getElementById('writeCounter').textContent = 'Writes: 0 / 5';
+            loadMiniQuiz(0);
+        }
+
+        function launchConfetti() {
+            var colors = ['#667eea', '#764ba2', '#FFD700', '#FF6B6B', '#48BB78', '#4299E1'];
+            for (var i = 0; i < 50; i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        var piece = document.createElement('div');
+                        piece.className = 'confetti-piece';
+                        piece.style.left = Math.random() * 100 + 'vw';
+                        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        piece.style.width = (Math.random() * 8 + 5) + 'px';
+                        piece.style.height = (Math.random() * 8 + 5) + 'px';
+                        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                        piece.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                        document.body.appendChild(piece);
+
+                        var duration = Math.random() * 2000 + 1500;
+                        piece.animate([
+                            { top: '-10px', opacity: 1 },
+                            { top: '100vh', opacity: 0.5 }
+                        ], {
+                            duration: duration,
+                            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                        });
+
+                        setTimeout(function() {
+                            if (piece.parentNode) piece.parentNode.removeChild(piece);
+                        }, duration);
+                    }, idx * 40);
+                })(i);
+            }
+        }
+
+        // ========== HIGHLIGHT TODAY ==========
+        function highlightToday() {
+            var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            var todayIdx = new Date().getDay();
+            var todayName = dayNames[todayIdx];
+            var dayCards = document.querySelectorAll('.day-card');
+            dayCards.forEach(function(card) {
+                var eng = card.querySelector('.english');
+                if (eng && eng.textContent.toLowerCase().indexOf(todayName.toLowerCase()) !== -1) {
+                    card.classList.add('highlight');
+                    eng.textContent = todayName + ' (Today!)';
+                }
+            });
+        }
+
+        // ========== INIT ==========
+        highlightToday();
+        initCanvas();
+        loadMiniQuiz(0);
+        updateProgress(3);
+        speak('Welcome! Today we learn BET! BET has a dot inside called dagesh. It says buh, like Bayit, which means house!');
+    </script>
+</body>
+</html>

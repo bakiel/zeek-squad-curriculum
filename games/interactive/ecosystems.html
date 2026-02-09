@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosystems - Animal Builders! - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.75rem; opacity: 0.85; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: mascotBounce 1.2s ease-in-out infinite; }
+        @keyframes mascotBounce {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            position: relative;
+            font-size: 1.05rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 6px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #2d8a2e;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Learn Tab */
+        .animal-card {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .animal-card:hover { transform: scale(1.02); border-color: #4CAF50; }
+        .animal-card:active { transform: scale(0.98); }
+        .animal-card .card-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .animal-card .card-emoji { font-size: 3rem; }
+        .animal-card .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2E7D32;
+            flex: 1;
+        }
+        .animal-card .card-arrow { font-size: 1.4rem; color: #66BB6A; }
+        .animal-card .card-build {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 6px 0;
+        }
+        .animal-card .card-desc {
+            color: #555;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .animal-card .card-label {
+            display: inline-block;
+            background: #2E7D32;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+        .learn-intro {
+            text-align: center;
+            color: #555;
+            margin-bottom: 16px;
+            font-size: 1.05rem;
+        }
+        .learn-intro strong { color: #2E7D32; }
+
+        /* Explore Tab */
+        .explore-section {
+            text-align: center;
+        }
+        .explore-title {
+            font-size: 1.3rem;
+            color: #2E7D32;
+            margin-bottom: 6px;
+        }
+        .explore-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 18px;
+        }
+        .squirrel-hero {
+            font-size: 4.5rem;
+            display: block;
+            margin-bottom: 10px;
+            animation: squirrelHop 1s ease-in-out infinite;
+        }
+        @keyframes squirrelHop {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .fact-box {
+            background: #FFF8E1;
+            border-left: 5px solid #FFA000;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .fact-box:hover { transform: scale(1.02); }
+        .fact-box .fact-icon { font-size: 1.6rem; margin-right: 8px; vertical-align: middle; }
+        .fact-box .fact-text { color: #555; font-size: 0.95rem; }
+        .fact-box .fact-text strong { color: #E65100; }
+
+        .forest-ground {
+            position: relative;
+            background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 45%, #8B6914 45%, #6B4F1D 100%);
+            border-radius: 20px;
+            height: 240px;
+            margin-top: 18px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .forest-ground .grass {
+            position: absolute;
+            bottom: 120px;
+            left: 0;
+            right: 0;
+            height: 25px;
+            background: #4CAF50;
+        }
+        .acorn-slot {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.5s;
+            user-select: none;
+        }
+        .acorn-slot.planted {
+            animation: plantAcorn 0.5s ease forwards;
+        }
+        @keyframes plantAcorn {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(15px) scale(0.8); }
+            100% { transform: translateY(10px) scale(0.6); opacity: 0.5; }
+        }
+        .tree-grown {
+            position: absolute;
+            bottom: 120px;
+            font-size: 3rem;
+            animation: treeGrow 1s ease forwards;
+            transform-origin: bottom center;
+        }
+        @keyframes treeGrow {
+            0% { transform: scaleY(0); opacity: 0; }
+            60% { transform: scaleY(1.15); opacity: 1; }
+            100% { transform: scaleY(1); opacity: 1; }
+        }
+        .planted-count {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #666;
+        }
+        .planted-count strong { color: #2E7D32; }
+        .tap-hint {
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* Match Tab */
+        .match-instruction {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+        .match-container {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+        }
+        .match-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        .match-item {
+            background: #E8F5E9;
+            padding: 14px 10px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            user-select: none;
+        }
+        .match-item:hover { transform: scale(1.05); }
+        .match-item.selected {
+            border-color: #FF9800;
+            background: #FFF3E0;
+            transform: scale(1.08);
+            box-shadow: 0 4px 15px rgba(255,152,0,0.3);
+        }
+        .match-item.matched {
+            border-color: #4CAF50;
+            background: #C8E6C9;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .match-item .m-emoji { font-size: 2rem; display: block; margin-bottom: 4px; }
+        .match-item .m-label { font-size: 0.85rem; font-weight: bold; color: #333; }
+        .match-score {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 1rem;
+        }
+        .match-score strong { color: #2E7D32; }
+        .match-reset {
+            display: block;
+            margin: 12px auto 0;
+            padding: 10px 28px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: white;
+            background: #4CAF50;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .match-reset:hover { transform: scale(1.05); background: #388E3C; }
+
+        /* Quiz Tab */
+        .quiz-question {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+        .quiz-question .q-emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .quiz-option {
+            padding: 16px 10px;
+            background: #E8F5E9;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .quiz-option:hover { transform: scale(1.04); border-color: #4CAF50; }
+        .quiz-option.correct {
+            background: #C8E6C9;
+            border-color: #2E7D32;
+            animation: correctPulse 0.5s ease;
+        }
+        .quiz-option.wrong {
+            background: #FFCDD2;
+            border-color: #E53935;
+            animation: shake 0.5s ease;
+        }
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-top: 14px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Celebration */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+            max-width: 340px;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 4.5rem; margin-bottom: 12px; }
+        .celebration-text { font-size: 1.6rem; color: #2E7D32; font-weight: bold; margin-bottom: 10px; }
+        .celebration-sub { color: #666; margin-bottom: 18px; font-size: 1rem; }
+        .celebration-btn {
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #56ab2f 0%, #2E7D32 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .celebration-btn:hover { transform: scale(1.05); }
+
+        /* Sound button */
+        .sound-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #56ab2f 0%, #2E7D32 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover { transform: scale(1.02); }
+        .sound-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Ecosystems - Animal Builders!</h1>
+            <div class="standard">K-ESS2-2 - Ecosystems</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">🦫</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Animals are amazing builders! They change the world around them!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+            <span class="star">&#11088;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="explore">Explore</button>
+            <button class="tab-btn" data-tab="match">Match</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <p class="learn-intro">Living things <strong>change</strong> the places where they live! Tap each animal to learn how!</p>
+
+                <div class="animal-card" onclick="learnAnimal('beaver')">
+                    <div class="card-top">
+                        <span class="card-emoji">🦫</span>
+                        <span class="card-title">Beavers build DAMS</span>
+                        <span class="card-arrow">&#9654;</span>
+                    </div>
+                    <div class="card-build">🪵🪵🌊💧🪵🪵</div>
+                    <div class="card-desc">
+                        Beavers chew down trees and pile up logs and mud to make a dam across a river. This creates a pond where they live!
+                    </div>
+                    <span class="card-label">Changes the river!</span>
+                </div>
+
+                <div class="animal-card" onclick="learnAnimal('bird')">
+                    <div class="card-top">
+                        <span class="card-emoji">🐦</span>
+                        <span class="card-title">Birds build NESTS</span>
+                        <span class="card-arrow">&#9654;</span>
+                    </div>
+                    <div class="card-build">🪺🪹🌿🪶🌾</div>
+                    <div class="card-desc">
+                        Birds gather sticks, twigs, grass, and feathers to build cozy nests in trees. This is where baby birds grow up!
+                    </div>
+                    <span class="card-label">Changes the tree!</span>
+                </div>
+
+                <div class="animal-card" onclick="learnAnimal('rabbit')">
+                    <div class="card-top">
+                        <span class="card-emoji">🐰</span>
+                        <span class="card-title">Rabbits dig BURROWS</span>
+                        <span class="card-arrow">&#9654;</span>
+                    </div>
+                    <div class="card-build">🕳️🐇🟤🟤🕳️</div>
+                    <div class="card-desc">
+                        Rabbits use their strong paws to dig underground tunnels called burrows. Many rabbits live together in a burrow network!
+                    </div>
+                    <span class="card-label">Changes the ground!</span>
+                </div>
+
+                <div class="animal-card" onclick="learnAnimal('ant')">
+                    <div class="card-top">
+                        <span class="card-emoji">🐜</span>
+                        <span class="card-title">Ants make TUNNELS</span>
+                        <span class="card-arrow">&#9654;</span>
+                    </div>
+                    <div class="card-build">🏔️🐜🐜🐜🏔️</div>
+                    <div class="card-desc">
+                        Thousands of ants work together to dig tunnels underground. They build a whole ant city with rooms for food and baby ants!
+                    </div>
+                    <span class="card-label">Changes the soil!</span>
+                </div>
+
+                <button class="sound-btn" onclick="speak('Animals are amazing builders! Beavers build dams, birds build nests, rabbits dig burrows, and ants make tunnels! They all change the world around them!')">
+                    &#128266; Hear about all animal builders!
+                </button>
+            </div>
+
+            <!-- EXPLORE TAB -->
+            <div class="tab-content" id="explore">
+                <div class="explore-section">
+                    <span class="squirrel-hero">🐿️</span>
+                    <div class="explore-title">Gray Squirrels and Forests</div>
+                    <div class="explore-subtitle">How one little animal grows a whole forest!</div>
+
+                    <div class="fact-box" onclick="speak('Squirrels collect acorns in the fall and bury them underground to save for winter. They hide hundreds of acorns!')">
+                        <span class="fact-icon">🌰</span>
+                        <span class="fact-text">Squirrels bury <strong>acorns</strong> in the ground to save for winter. They hide hundreds!</span>
+                    </div>
+
+                    <div class="fact-box" onclick="speak('Squirrels forget where they buried some of the acorns! Those forgotten acorns grow into brand new oak trees!')">
+                        <span class="fact-icon">🌱</span>
+                        <span class="fact-text">Squirrels <strong>forget</strong> some acorns - and those grow into <strong>new oak trees!</strong></span>
+                    </div>
+
+                    <div class="fact-box" onclick="speak('Squirrels also build cozy nests in trees called dreys. They use leaves and twigs to make a warm ball high up in the branches!')">
+                        <span class="fact-icon">🪹</span>
+                        <span class="fact-text">Squirrels build nests called <strong>DREYS</strong> - cozy leaf balls high in tree branches!</span>
+                    </div>
+
+                    <p style="text-align:center; color:#2E7D32; font-weight:bold; margin: 14px 0 6px;">Tap the acorns to plant them!</p>
+                    <p class="tap-hint">Watch trees grow where you plant!</p>
+
+                    <div class="forest-ground" id="forestGround">
+                        <div class="grass"></div>
+                        <div class="acorn-slot" id="acorn1" style="left:15px; top:30px;" onclick="plantAcorn(1)">🌰</div>
+                        <div class="acorn-slot" id="acorn2" style="left:100px; top:50px;" onclick="plantAcorn(2)">🌰</div>
+                        <div class="acorn-slot" id="acorn3" style="left:200px; top:25px;" onclick="plantAcorn(3)">🌰</div>
+                        <div class="acorn-slot" id="acorn4" style="right:80px; top:45px;" onclick="plantAcorn(4)">🌰</div>
+                        <div class="acorn-slot" id="acorn5" style="right:15px; top:20px;" onclick="plantAcorn(5)">🌰</div>
+                    </div>
+                    <p class="planted-count">Trees planted: <strong id="treesPlanted">0</strong> / 5</p>
+                </div>
+            </div>
+
+            <!-- MATCH TAB -->
+            <div class="tab-content" id="match">
+                <p class="match-instruction">Match each animal to what it builds!</p>
+                <p style="text-align:center; color:#999; font-size:0.85rem; margin-bottom:12px;">Tap an animal, then tap what it builds!</p>
+
+                <div class="match-container">
+                    <div class="match-column" id="matchAnimals">
+                        <div class="match-item" data-animal="beaver" onclick="selectAnimal(this)">
+                            <span class="m-emoji">🦫</span>
+                            <span class="m-label">Beaver</span>
+                        </div>
+                        <div class="match-item" data-animal="bird" onclick="selectAnimal(this)">
+                            <span class="m-emoji">🐦</span>
+                            <span class="m-label">Bird</span>
+                        </div>
+                        <div class="match-item" data-animal="rabbit" onclick="selectAnimal(this)">
+                            <span class="m-emoji">🐰</span>
+                            <span class="m-label">Rabbit</span>
+                        </div>
+                        <div class="match-item" data-animal="squirrel" onclick="selectAnimal(this)">
+                            <span class="m-emoji">🐿️</span>
+                            <span class="m-label">Squirrel</span>
+                        </div>
+                        <div class="match-item" data-animal="ant" onclick="selectAnimal(this)">
+                            <span class="m-emoji">🐜</span>
+                            <span class="m-label">Ant</span>
+                        </div>
+                    </div>
+                    <div class="match-column" id="matchBuilds">
+                        <div class="match-item" data-build="tunnel" onclick="selectBuild(this)">
+                            <span class="m-emoji">🏔️</span>
+                            <span class="m-label">Tunnel</span>
+                        </div>
+                        <div class="match-item" data-build="dam" onclick="selectBuild(this)">
+                            <span class="m-emoji">🪵</span>
+                            <span class="m-label">Dam</span>
+                        </div>
+                        <div class="match-item" data-build="drey" onclick="selectBuild(this)">
+                            <span class="m-emoji">🍂</span>
+                            <span class="m-label">Drey</span>
+                        </div>
+                        <div class="match-item" data-build="burrow" onclick="selectBuild(this)">
+                            <span class="m-emoji">🕳️</span>
+                            <span class="m-label">Burrow</span>
+                        </div>
+                        <div class="match-item" data-build="nest" onclick="selectBuild(this)">
+                            <span class="m-emoji">🪺</span>
+                            <span class="m-label">Nest</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="match-score">Matched: <strong id="matchCount">0</strong> / 5</p>
+                <button class="match-reset" onclick="resetMatch()">Play Again</button>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <div class="quiz-question" id="quizQuestion"></div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <p class="quiz-progress" id="quizProgress">Question 1 of 5</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🌳🦫🌳</div>
+            <div class="celebration-text">Amazing Ecologist!</div>
+            <p class="celebration-sub">You learned how animals change their environments!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var treesPlantedCount = 0;
+        var matchedCount = 0;
+        var selectedAnimalEl = null;
+        var quizIndex = 0;
+
+        // --- Voice ---
+        var synth = window.speechSynthesis;
+        var selectedVoice = null;
+
+        function initVoice() {
+            var voices = synth.getVoices();
+            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
+            for (var i = 0; i < preferred.length; i++) {
+                var found = voices.find(function(v) { return v.name.includes(preferred[i]) && v.lang.startsWith('en'); });
+                if (found) { selectedVoice = found; break; }
+            }
+            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
+        initVoice();
+
+        function speak(text) {
+            synth.cancel();
+            var utter = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.rate = 0.85;
+            utter.pitch = 1.1;
+            synth.speak(utter);
+        }
+
+        // --- Tab Navigation ---
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'learn') {
+                    speak('Animals are amazing builders! Tap each one to learn how they change their environment!');
+                    updateMascot('Animals are amazing builders! Tap each one to learn!');
+                }
+                if (btn.dataset.tab === 'explore') {
+                    speak('Let us explore how squirrels help grow forests! Tap the acorns to plant them!');
+                    updateMascot('Squirrels plant trees by burying acorns! Tap to plant!');
+                }
+                if (btn.dataset.tab === 'match') {
+                    speak('Match each animal to what it builds! Tap an animal, then tap its home!');
+                    updateMascot('Match the animal to what it builds!');
+                }
+                if (btn.dataset.tab === 'quiz') {
+                    initQuiz();
+                    speak('Quiz time! Show what you learned about animal builders!');
+                    updateMascot('Quiz time! What did you learn?');
+                }
+            });
+        });
+
+        // --- Progress & Stars ---
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    speak('Hooray! You are an amazing ecologist! You learned how animals change their environments!');
+                }, 600);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // --- Learn Tab ---
+        var learnedAnimals = {};
+
+        function learnAnimal(animal) {
+            var messages = {
+                beaver: 'Beavers chew down trees and build dams across rivers! The dam makes a pond where the beaver family lives safely!',
+                bird: 'Birds collect sticks, twigs, grass, and feathers to weave a cozy nest! Baby birds are born in the nest!',
+                rabbit: 'Rabbits dig underground tunnels called burrows with their strong paws! Lots of rabbits live together underground!',
+                ant: 'Ants work together to dig tunnels and rooms underground! They build a whole city called a colony!'
+            };
+            speak(messages[animal]);
+            updateMascot(messages[animal].substring(0, 60) + '...');
+
+            if (!learnedAnimals[animal]) {
+                learnedAnimals[animal] = true;
+                updateProgress(5);
+            }
+        }
+
+        // --- Explore Tab (Acorn Planting) ---
+        var plantedAcorns = {};
+        var treePositions = {
+            1: '30px',
+            2: '115px',
+            3: '215px',
+            4: 'calc(100% - 130px)',
+            5: 'calc(100% - 55px)'
+        };
+
+        function plantAcorn(num) {
+            if (plantedAcorns[num]) return;
+            plantedAcorns[num] = true;
+
+            var acorn = document.getElementById('acorn' + num);
+            acorn.classList.add('planted');
+
+            setTimeout(function() {
+                acorn.style.display = 'none';
+                var tree = document.createElement('div');
+                tree.className = 'tree-grown';
+                tree.style.left = treePositions[num];
+                tree.textContent = '🌳';
+                document.getElementById('forestGround').appendChild(tree);
+
+                treesPlantedCount++;
+                document.getElementById('treesPlanted').textContent = treesPlantedCount;
+
+                if (treesPlantedCount === 1) {
+                    speak('You planted an acorn and a tree is growing!');
+                    updateMascot('An acorn grew into a tree!');
+                } else if (treesPlantedCount < 5) {
+                    speak(treesPlantedCount + ' trees! Keep planting!');
+                    updateMascot(treesPlantedCount + ' trees growing! Keep going!');
+                } else {
+                    speak('Wow, five trees! You grew a whole forest, just like a squirrel!');
+                    updateMascot('A whole forest! You are like a squirrel!');
+                }
+
+                updateProgress(4);
+            }, 500);
+        }
+
+        // --- Match Tab ---
+        var matchPairs = {
+            beaver: 'dam',
+            bird: 'nest',
+            rabbit: 'burrow',
+            squirrel: 'drey',
+            ant: 'tunnel'
+        };
+
+        function selectAnimal(el) {
+            if (el.classList.contains('matched')) return;
+            document.querySelectorAll('#matchAnimals .match-item').forEach(function(item) {
+                item.classList.remove('selected');
+            });
+            el.classList.add('selected');
+            selectedAnimalEl = el;
+        }
+
+        function selectBuild(el) {
+            if (el.classList.contains('matched')) return;
+            if (!selectedAnimalEl) {
+                speak('First tap an animal on the left!');
+                updateMascot('Tap an animal first, then what it builds!');
+                return;
+            }
+
+            var animal = selectedAnimalEl.dataset.animal;
+            var build = el.dataset.build;
+
+            if (matchPairs[animal] === build) {
+                selectedAnimalEl.classList.remove('selected');
+                selectedAnimalEl.classList.add('matched');
+                el.classList.add('matched');
+                matchedCount++;
+                document.getElementById('matchCount').textContent = matchedCount;
+
+                var names = {
+                    beaver: 'Beaver builds a Dam',
+                    bird: 'Bird builds a Nest',
+                    rabbit: 'Rabbit digs a Burrow',
+                    squirrel: 'Squirrel builds a Drey',
+                    ant: 'Ant makes a Tunnel'
+                };
+                speak('Correct! ' + names[animal] + '!');
+                updateMascot('Yes! ' + names[animal] + '!');
+                updateProgress(5);
+
+                selectedAnimalEl = null;
+
+                if (matchedCount === 5) {
+                    setTimeout(function() {
+                        speak('Amazing! You matched all five animal builders!');
+                        updateMascot('All matched! You are an ecosystem expert!');
+                    }, 600);
+                }
+            } else {
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = 'shake 0.5s ease';
+                speak('Not quite! Try again!');
+                updateMascot('Hmm, try a different match!');
+                selectedAnimalEl.classList.remove('selected');
+                selectedAnimalEl = null;
+            }
+        }
+
+        function resetMatch() {
+            matchedCount = 0;
+            selectedAnimalEl = null;
+            document.getElementById('matchCount').textContent = '0';
+            document.querySelectorAll('.match-item').forEach(function(item) {
+                item.classList.remove('matched', 'selected');
+                item.style.opacity = '1';
+                item.style.pointerEvents = 'auto';
+            });
+
+            // Shuffle build column
+            var buildCol = document.getElementById('matchBuilds');
+            var items = Array.from(buildCol.children);
+            items.sort(function() { return Math.random() - 0.5; });
+            items.forEach(function(item) { buildCol.appendChild(item); });
+
+            speak('Let us try matching again!');
+            updateMascot('Match the animals to what they build!');
+        }
+
+        // --- Quiz Tab ---
+        var quizQuestions = [
+            {
+                emoji: '🦫',
+                question: 'What does a BEAVER build?',
+                options: ['Dam', 'Nest', 'Burrow', 'Tunnel'],
+                answer: 0
+            },
+            {
+                emoji: '🐦',
+                question: 'What does a BIRD build with sticks and twigs?',
+                options: ['Tunnel', 'Dam', 'Drey', 'Nest'],
+                answer: 3
+            },
+            {
+                emoji: '🐿️',
+                question: 'What happens when squirrels forget buried acorns?',
+                options: ['Nothing', 'New trees grow!', 'They melt', 'Birds eat them'],
+                answer: 1
+            },
+            {
+                emoji: '🐰',
+                question: 'What is a rabbit home under the ground called?',
+                options: ['Nest', 'Dam', 'Burrow', 'Drey'],
+                answer: 2
+            },
+            {
+                emoji: '🐜',
+                question: 'How do ANTS change the soil?',
+                options: ['Paint it', 'Dig tunnels', 'Cover it', 'Water it'],
+                answer: 1
+            }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var questionEl = document.getElementById('quizQuestion');
+            var optionsEl = document.getElementById('quizOptions');
+            var progressEl = document.getElementById('quizProgress');
+
+            if (quizIndex >= quizQuestions.length) {
+                questionEl.textContent = '';
+                var trophy = document.createElement('span');
+                trophy.className = 'q-emoji';
+                trophy.textContent = '🏆';
+                questionEl.appendChild(trophy);
+                questionEl.appendChild(document.createTextNode('Quiz Complete! Great job!'));
+
+                optionsEl.textContent = '';
+                progressEl.textContent = 'All done!';
+                speak('You finished the quiz! You really know your animal builders!');
+                updateMascot('Quiz complete! You are an ecosystem expert!');
+                return;
+            }
+
+            var q = quizQuestions[quizIndex];
+
+            questionEl.textContent = '';
+            var emojiSpan = document.createElement('span');
+            emojiSpan.className = 'q-emoji';
+            emojiSpan.textContent = q.emoji;
+            questionEl.appendChild(emojiSpan);
+            questionEl.appendChild(document.createTextNode(q.question));
+
+            progressEl.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+
+            optionsEl.textContent = '';
+
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.answer, opt); };
+                optionsEl.appendChild(btn);
+            });
+
+            speak(q.question);
+        }
+
+        function checkQuiz(btn, correct, answer) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+            if (correct) {
+                btn.classList.add('correct');
+                speak('Yes! ' + answer + ' is correct!');
+                updateMascot('Correct! ' + answer + '!');
+                updateProgress(7);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                speak('Not quite! Try again!');
+                updateMascot('Hmm, try another answer!');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 600);
+            }
+        }
+
+        // --- Celebration ---
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            matchedCount = 0;
+            treesPlantedCount = 0;
+            learnedAnimals = {};
+            plantedAcorns = {};
+            selectedAnimalEl = null;
+            quizIndex = 0;
+
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            document.getElementById('matchCount').textContent = '0';
+            document.getElementById('treesPlanted').textContent = '0';
+
+            // Reset acorns
+            for (var i = 1; i <= 5; i++) {
+                var acorn = document.getElementById('acorn' + i);
+                acorn.classList.remove('planted');
+                acorn.style.display = 'flex';
+            }
+            // Remove grown trees
+            document.querySelectorAll('.tree-grown').forEach(function(t) { t.remove(); });
+
+            // Reset match
+            resetMatch();
+
+            // Reset quiz
+            initQuiz();
+
+            // Go back to learn tab
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            document.querySelector('[data-tab="learn"]').classList.add('active');
+            document.getElementById('learn').classList.add('active');
+
+            speak('Let us learn about animal builders again!');
+            updateMascot('Animals are amazing builders! Tap each one to learn!');
+        }
+
+        // --- Init ---
+        speak('Animals are amazing builders! They change the world around them! Let us learn how!');
+        updateProgress(2);
+    </script>
+</body>
+</html>
