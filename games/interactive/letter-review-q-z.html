@@ -588,41 +588,20 @@
             { letter: 'Z', lower: 'z', sound: '/z/',  phonetic: 'zzz',  emoji: '\uD83E\uDD93', word: 'Zebra' }
         ];
 
-        /* ===== VOICE ===== */
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        /* ===== AUDIO ===== */
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var p = 0; p < preferred.length; p++) {
-                var found = null;
-                for (var vi = 0; vi < voices.length; vi++) {
-                    if (voices[vi].name.indexOf(preferred[p]) !== -1 && voices[vi].lang.indexOf('en') === 0) {
-                        found = voices[vi];
-                        break;
-                    }
-                }
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key, callback) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) {
-                for (var vi2 = 0; vi2 < voices.length; vi2++) {
-                    if (voices[vi2].lang.indexOf('en') === 0) { selectedVoice = voices[vi2]; break; }
-                }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            if (callback) {
+                currentAudio.onended = callback;
             }
-            if (!selectedVoice && voices.length > 0) selectedVoice = voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text, callback) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            if (callback) utter.onend = callback;
-            synth.speak(utter);
+            currentAudio.play().catch(function(){});
         }
 
         /* ===== STATE ===== */
@@ -730,7 +709,7 @@
                     card.appendChild(kwDiv);
 
                     card.onclick = function() {
-                        speak(l.phonetic + ', ' + l.phonetic + ', ' + l.letter + '! ' + l.word + ' starts with ' + l.letter + '!');
+                        playAudio('qz-' + l.letter.toLowerCase());
                         updateMascot(l.letter + ' says ' + l.sound + ' like ' + l.word + '!');
                         card.style.animation = 'none';
                         card.offsetHeight;
@@ -793,7 +772,7 @@
                 document.getElementById('matchWord').textContent = 'All done! You got ' + matchCorrect + ' out of ' + shuffledMatch.length + '!';
                 document.getElementById('matchOptions').textContent = '';
                 document.getElementById('matchRound').textContent = '';
-                speak('Amazing! You matched ' + matchCorrect + ' out of ' + shuffledMatch.length + '!');
+                playAudio('qz-complete');
                 updateMascot('Great matching! You really know your letters!');
                 return;
             }
@@ -829,7 +808,7 @@
                 })(options[oi]);
             }
 
-            speak('Which letter starts the word ' + item.word + '?');
+            playAudio('qz-' + item.answer.toLowerCase());
         }
 
         function checkMatch(btn, picked, item) {
@@ -840,14 +819,14 @@
                 btn.classList.add('correct');
                 matchCorrect++;
                 document.getElementById('matchScore').textContent = 'Matched: ' + matchCorrect;
-                speak('Yes! ' + item.word + ' starts with ' + item.answer + '!');
+                playAudio('correct');
                 updateMascot('Correct! ' + item.word + ' starts with ' + item.answer + '!');
                 updateProgress(4);
                 matchRound++;
                 setTimeout(showMatchRound, 1200);
             } else {
                 btn.classList.add('wrong');
-                speak('Not quite! ' + item.word + ' starts with ' + item.answer + '. Try again!');
+                playAudio('wrong');
                 updateMascot(item.word + ' starts with ' + item.answer + ', not ' + picked + '!');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
@@ -874,7 +853,7 @@
             document.getElementById('speedResult').style.display = 'none';
             document.getElementById('speedScoreDisplay').textContent = 'Score: 0';
             document.getElementById('speedLevel').textContent = 'Level 1';
-            speak('Get ready!', function() {
+            playAudio('qz-speed', function() {
                 setTimeout(showSpeedFlash, 400);
             });
         }
@@ -944,7 +923,7 @@
                 }
                 if (speedTimerVal <= 0) {
                     clearInterval(speedInterval);
-                    speak('Time is up!');
+                    playAudio('wrong');
                     speedRound++;
                     setTimeout(showSpeedFlash, 800);
                 }
@@ -965,9 +944,9 @@
                 if (speedRound > 0 && speedRound % 3 === 2 && speedLevel < 3) {
                     speedLevel++;
                     document.getElementById('speedLevel').textContent = 'Level ' + speedLevel;
-                    speak('Level up!');
+                    playAudio('star');
                 } else {
-                    speak(correct + '!');
+                    playAudio('qz-' + correct.toLowerCase());
                 }
                 updateProgress(3);
             } else {
@@ -975,7 +954,7 @@
                 for (var bi2 = 0; bi2 < allBtns.length; bi2++) {
                     if (allBtns[bi2].textContent === correct) allBtns[bi2].classList.add('correct');
                 }
-                speak('That was ' + correct + '!');
+                playAudio('wrong');
             }
 
             speedRound++;
@@ -1026,7 +1005,7 @@
             playBtn.onclick = startSpeedRound;
             resultDiv.appendChild(playBtn);
 
-            speak(rating + ' You scored ' + speedScore + ' points!');
+            playAudio('qz-complete');
             updateMascot(rating + ' ' + speedScore + ' points!');
             updateProgress(5);
         }
@@ -1122,7 +1101,7 @@
                 document.getElementById('quizQuestion').textContent = 'You got ' + quizScore + ' out of ' + quizQuestions.length + ' correct!';
                 document.getElementById('quizVisual').textContent = '\uD83C\uDF89';
                 document.getElementById('quizOptions').textContent = '';
-                speak('Amazing! You got ' + quizScore + ' out of ' + quizQuestions.length + ' correct! You know your letters!');
+                playAudio('qz-complete');
                 updateMascot('Quiz champion! ' + quizScore + '/' + quizQuestions.length + '!');
                 updateProgress(10);
                 return;
@@ -1154,7 +1133,7 @@
                 })(q.options[oi], oi);
             }
 
-            speak(q.question);
+            playAudio('qz-' + q.options[q.answer].toLowerCase());
         }
 
         function getLetterEmoji(letter) {
@@ -1171,14 +1150,14 @@
             if (correct) {
                 btn.classList.add('correct');
                 quizScore++;
-                speak(q.explanation);
+                playAudio('correct');
                 updateMascot(q.explanation);
                 updateProgress(5);
                 quizIndex++;
                 setTimeout(showQuizQuestion, 1500);
             } else {
                 btn.classList.add('wrong');
-                speak('Not quite! Try again!');
+                playAudio('wrong');
                 updateMascot('Hmm, that is not right. Try another one!');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
@@ -1203,7 +1182,7 @@
             }
 
             launchConfetti();
-            speak('Hooray! You know ALL the letters Q through Z! You are an alphabet superstar!');
+            playAudio('qz-complete');
         }
 
         function closeCelebration() {
@@ -1248,7 +1227,7 @@
         /* ===== INIT ===== */
         buildParade();
         buildReview();
-        speak('Let us review all the letters from Q to Z! You have learned so much! Tap a letter to hear its sound!');
+        playAudio('qz-intro');
     </script>
 </body>
 </html>

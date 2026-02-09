@@ -757,32 +757,17 @@
         var writeCount = 0;
         var miniQuizRound = 0;
 
-        // ========== VOICE ==========
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        // ========== AUDIO ==========
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var i = 0; i < preferred.length; i++) {
-                var name = preferred[i];
-                var found = voices.find(function(v) { return v.name.indexOf(name) !== -1 && v.lang.indexOf('en') === 0; });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) {
-                selectedVoice = voices.find(function(v) { return v.lang.indexOf('en') === 0; }) || voices[0];
-            }
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         // ========== MASCOT ==========
@@ -802,7 +787,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             starEls[idx].classList.add('earned');
-                            speak('Kochav! Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -830,19 +815,19 @@
 
         // ========== LEARN TAB ==========
         function playBetSound() {
-            speak('BET says buh, buh, buh! Like Bayit, which means house!');
+            playAudio('bet-intro');
             updateMascot('BET says /b/ like BAYIT!');
             updateProgress(5);
         }
 
         function playBetCompare() {
-            speak('BET has a dot inside. It says buh, like boy!');
+            playAudio('bet-dagesh');
             updateMascot('BET has a DOT = /b/ sound!');
             updateProgress(3);
         }
 
         function playVetCompare() {
-            speak('VET has no dot. It says vuh, like violin!');
+            playAudio('bet-dagesh');
             updateMascot('VET has NO dot = /v/ sound!');
             updateProgress(3);
         }
@@ -861,7 +846,7 @@
             strong.textContent = strokeDescriptions[step - 1];
             p.appendChild(strong);
             infoEl.appendChild(p);
-            speak(strokeDescriptions[step - 1]);
+            playAudio('bet-write');
             updateProgress(3);
         }
 
@@ -981,25 +966,31 @@
                     'Metzuyan! You did all five! Perfect!'
                 ];
                 var praise = praises[Math.min(writeCount - 1, praises.length - 1)];
-                speak(praise);
+                playAudio('bet-done');
                 updateMascot(praise);
                 updateProgress(10);
 
                 if (writeCount >= 5) {
-                    speak('Amazing! You wrote BET five times! Kol HaKavod!');
+                    playAudio('bet-complete');
                     updateMascot('All 5 stars earned! You are a BET champion!');
                 }
 
                 clearCanvas();
             } else {
-                speak('You already wrote BET five times! Try the Practice tab!');
+                playAudio('bet-complete');
                 updateMascot('Try the Practice tab for more fun!');
             }
         }
 
         // ========== PRACTICE TAB ==========
+        var wordAudioMap = {
+            'Bayit': 'bet-bayit',
+            'Boker': 'bet-boker',
+            'Bracha': 'bet-bracha'
+        };
+
         function playWord(word, meaning, el) {
-            speak(word + '! ' + meaning + ' ' + word + ' starts with the letter BET!');
+            playAudio(wordAudioMap[word] || 'bet-intro');
             updateMascot(meaning);
             updateProgress(5);
 
@@ -1048,7 +1039,7 @@
 
             if (isCorrect) {
                 btn.classList.add('correct');
-                speak('Nachon! Correct! Kol HaKavod!');
+                playAudio('correct');
                 updateMascot('Correct! You know your BET words!');
                 updateProgress(8);
 
@@ -1056,7 +1047,7 @@
                 setTimeout(function() { loadMiniQuiz(miniQuizRound); }, 1500);
             } else {
                 btn.classList.add('wrong');
-                speak('Oops! Try again!');
+                playAudio('wrong');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
                     allBtns.forEach(function(b) { b.style.pointerEvents = 'auto'; });
@@ -1065,14 +1056,22 @@
         }
 
         function sayPhrase() {
-            speak('Boker Tov! Good Morning! Boker starts with BET!');
+            playAudio('bet-boker');
             updateMascot('Boker Tov means Good Morning!');
             updateProgress(5);
         }
 
         // ========== AFFIRM TAB ==========
+        var affirmAudioMap = {
+            'Ani Yachol': 'affirm-yachol',
+            'Ani Chazak': 'affirm-chazak',
+            'Ani Tov': 'affirm-tov',
+            'Ani Ohev': 'affirm-ohev',
+            'Ani Lomed': 'affirm-lomed'
+        };
+
         function sayAffirmation(hebrew, english, el) {
-            speak(hebrew + '! ' + english);
+            playAudio(affirmAudioMap[hebrew] || 'affirm-yachol');
             updateMascot('Say it proud: ' + hebrew + '!');
             updateProgress(6);
 
@@ -1081,8 +1080,18 @@
             setTimeout(function() { el.classList.remove('active-affirm'); }, 1500);
         }
 
+        var dayAudioMap = {
+            'Yom Rishon': 'affirm-yom-rishon',
+            'Yom Sheni': 'affirm-yom-sheni',
+            'Yom Shlishi': 'affirm-yom-shlishi',
+            'Yom Revii': 'affirm-yom-revii',
+            'Yom Chamishi': 'affirm-yom-chamishi',
+            'Yom Shishi': 'affirm-yom-shishi',
+            'Shabbat': 'affirm-shabbat'
+        };
+
         function sayDay(hebrew, english, el) {
-            speak(hebrew + ' is ' + english);
+            playAudio(dayAudioMap[hebrew] || 'affirm-days');
             updateMascot(hebrew + ' means ' + english + '!');
             updateProgress(3);
 
@@ -1093,7 +1102,7 @@
         }
 
         function singDays() {
-            speak('Yom Rishon, Yom Sheni, Yom Shlishi, Yom Revii, Yom Chamishi, Yom Shishi, Shabbat! Shabbat Shalom!');
+            playAudio('affirm-days');
             updateMascot('Sing the Hebrew days!');
             updateProgress(8);
         }
@@ -1101,7 +1110,7 @@
         // ========== CELEBRATION ==========
         function showCelebration() {
             document.getElementById('celebration').classList.add('show');
-            speak('Mazel Tov! You mastered the letter BET! Kol HaKavod!');
+            playAudio('bet-complete');
             launchConfetti();
         }
 
@@ -1170,7 +1179,7 @@
         initCanvas();
         loadMiniQuiz(0);
         updateProgress(3);
-        speak('Welcome! Today we learn BET! BET has a dot inside called dagesh. It says buh, like Bayit, which means house!');
+        playAudio('bet-intro');
     </script>
 </body>
 </html>

@@ -596,29 +596,17 @@
         var quizIndex = 0;
         var exploredRocks = [];
 
-        /* --- Voice --- */
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        /* --- Audio --- */
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var i = 0; i < preferred.length; i++) {
-                var found = voices.find(function(v) { return v.name.includes(preferred[i]) && v.lang.startsWith('en'); });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         /* --- Tabs --- */
@@ -632,7 +620,7 @@
                 if (btn.dataset.tab === 'sort') initSort();
                 if (btn.dataset.tab === 'quiz') initQuiz();
                 if (btn.dataset.tab === 'explore') {
-                    speak('Tap a rock to learn about it!');
+                    playAudio('earth-rocks');
                     updateMascot('Rocks come in all shapes and sizes!');
                 }
             });
@@ -650,7 +638,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             stars[idx].classList.add('earned');
-                            speak('Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -660,7 +648,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     document.getElementById('celebration').classList.add('show');
-                    speak('Hooray! You are an Earth Explorer! You learned about water, rocks, and soil!');
+                    playAudio('earth-complete');
                 }, 500);
             }
         }
@@ -672,22 +660,22 @@
         /* --- Learn Tab --- */
         function learnResource(type) {
             if (type === 'water') {
-                speak('Water is found in oceans, rivers, lakes, and rain! We need water to drink and plants need water to grow!');
+                playAudio('earth-water');
                 updateMascot('Water is everywhere! Oceans, rivers, lakes, and rain!');
                 updateProgress(5);
             } else if (type === 'rocks') {
-                speak('Rocks are hard and strong! Some rocks are smooth, some are rough, some are big, and some are tiny!');
+                playAudio('earth-rocks');
                 updateMascot('Rocks come in all shapes and sizes!');
                 updateProgress(5);
             } else if (type === 'soil') {
-                speak('Soil is soft and brown! It is where plants grow their roots. Worms and bugs live in the soil too!');
+                playAudio('earth-soil');
                 updateMascot('Soil is where plants grow! Worms love it too!');
                 updateProgress(5);
             }
         }
 
         function learnAll() {
-            speak('Earth gives us three amazing resources! Water is in oceans, rivers, and lakes. Rocks are hard and come in many shapes. Soil is where plants grow!');
+            playAudio('earth-intro');
             updateMascot('Water, rocks, and soil. Earth is amazing!');
             updateProgress(5);
         }
@@ -738,7 +726,7 @@
                 container.appendChild(div);
             });
 
-            speak('Sort the items into water, rocks, or soil! Tap an item, then tap the right bucket!');
+            playAudio('earth-sort');
             updateMascot('Sort items into the right groups!');
         }
 
@@ -747,14 +735,12 @@
             document.querySelectorAll('.sort-item').forEach(function(s) { s.classList.remove('selected'); });
             el.classList.add('selected');
             selectedSortItem = el;
-            speak(el.getAttribute('data-name'));
-
             document.querySelectorAll('.sort-bucket').forEach(function(b) { b.classList.add('highlight'); });
         }
 
         function placeToBucket(bucket) {
             if (!selectedSortItem) {
-                speak('First, tap an item to pick it up!');
+                playAudio('earth-sort');
                 return;
             }
 
@@ -777,7 +763,7 @@
                 document.getElementById('sortScore').textContent = 'Sorted: ' + sortCount + ' / 8';
 
                 var categoryName = bucket.charAt(0).toUpperCase() + bucket.slice(1);
-                speak('Yes! ' + itemName + ' goes with ' + categoryName + '!');
+                playAudio('earth-correct');
                 updateMascot('Great! ' + itemName + ' is ' + categoryName + '!');
                 updateProgress(5);
 
@@ -785,7 +771,7 @@
 
                 if (sortCount === 8) {
                     setTimeout(function() {
-                        speak('Amazing! You sorted everything correctly!');
+                        playAudio('earth-complete');
                         updateMascot('You sorted all the Earth resources!');
                         document.getElementById('sortInstruction').textContent = 'All sorted! Great job!';
                     }, 500);
@@ -796,7 +782,7 @@
                     if (selectedSortItem) selectedSortItem.style.animation = '';
                 }, 500);
 
-                speak('Hmm, ' + itemName + ' does not go there. Try again!');
+                playAudio('earth-wrong');
                 updateMascot('Try again! Where does ' + itemName + ' belong?');
             }
         }
@@ -853,7 +839,12 @@
             document.getElementById('detailFact').textContent = rock.fact;
             document.getElementById('rockDetail').classList.add('show');
 
-            speak(rock.desc);
+            var rockAudioMap = {
+                'Smooth Rock': 'earth-smooth',
+                'Rough Rock': 'earth-rough',
+                'Shiny Rock': 'earth-shiny'
+            };
+            playAudio(rockAudioMap[rock.name] || 'earth-rocks');
             updateMascot('You found a ' + rock.name + '!');
 
             if (exploredRocks.indexOf(idx) === -1) {
@@ -914,7 +905,7 @@
         function initQuiz() {
             quizIndex = 0;
             showQuizQuestion();
-            speak('Quiz time! Let us see what you learned about Earth resources!');
+            playAudio('earth-intro');
             updateMascot('Quiz time! Show what you learned!');
         }
 
@@ -923,7 +914,7 @@
                 document.getElementById('quizQuestion').textContent = 'Quiz Complete! You are an Earth Expert!';
                 document.getElementById('quizOptions').textContent = '';
                 document.getElementById('quizProgress').textContent = 'All done! Great job!';
-                speak('Amazing! You finished the quiz! You know all about Earth resources!');
+                playAudio('earth-complete');
                 updateMascot('You are an Earth Resource Expert!');
                 return;
             }
@@ -953,7 +944,7 @@
                 optionsEl.appendChild(btn);
             });
 
-            speak(q.question);
+            playAudio('earth-intro');
         }
 
         function checkQuiz(btn, correct, text) {
@@ -961,14 +952,14 @@
 
             if (correct) {
                 btn.classList.add('correct');
-                speak('Yes! ' + text + ' is correct!');
+                playAudio('earth-correct');
                 updateMascot('Correct! ' + text + '!');
                 updateProgress(8);
                 quizIndex++;
                 setTimeout(showQuizQuestion, 1500);
             } else {
                 btn.classList.add('wrong');
-                speak('Not quite! Try again!');
+                playAudio('earth-wrong');
                 updateMascot('Hmm, try another answer!');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
@@ -993,7 +984,7 @@
         }
 
         /* --- Init --- */
-        speak('Welcome! Earth gives us water, rocks, and soil! Let us explore!');
+        playAudio('earth-intro');
         updateProgress(2);
     </script>
 </body>

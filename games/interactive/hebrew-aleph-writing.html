@@ -721,34 +721,22 @@
         var recognitionScore = 0;
         var recognitionRound = 0;
 
-        // Voice setup
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        // Audio playback system
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var i = 0; i < preferred.length; i++) {
-                var found = voices.find(function(v) { return v.name.indexOf(preferred[i]) !== -1 && v.lang.indexOf('en') === 0; });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.indexOf('en') === 0; }) || voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         // Learn Tab
         function playAleph() {
-            speak('ALEPH is the first letter of the Hebrew alphabet! ALEPH is silent. It carries vowel sounds like ah, eh, ee, oh, and oo!');
+            playAudio('aleph-silent');
             updateMascot('ALEPH is silent! It carries the vowel sounds!');
             updateProgress(5);
         }
@@ -760,8 +748,10 @@
             'ALEPH is made of three parts! An upper arm, a diagonal body, and a lower leg. Three strokes to write it!'
         ];
 
+        var factAudioKeys = ['aleph-intro', 'aleph-silent', 'aleph-intro', 'aleph-write'];
+
         function speakFact(index) {
-            speak(facts[index]);
+            playAudio(factAudioKeys[index]);
             updateMascot(facts[index].substring(0, 60) + '...');
             updateProgress(5);
         }
@@ -886,7 +876,7 @@
 
         function finishTrace() {
             if (!hasDrawn) {
-                speak('Draw the letter first, then tap Done!');
+                playAudio('aleph-write');
                 updateMascot('Try tracing the letter first!');
                 return;
             }
@@ -904,14 +894,14 @@
                     'Mazel Tov! All five ALEPHs written!'
                 ];
 
-                speak(messages[writeCount - 1]);
+                playAudio('aleph-done');
                 updateMascot(messages[writeCount - 1]);
                 document.getElementById('writeCounter').textContent = writeCount + ' of 5 completed';
                 updateProgress(10);
 
                 if (writeCount >= 5) {
                     setTimeout(function() {
-                        speak('You wrote ALEPH five times! You are amazing!');
+                        playAudio('aleph-complete');
                     }, 2000);
                 }
             }
@@ -920,8 +910,16 @@
         }
 
         // Practice Tab - Words
+        var wordAudioMap = {
+            'Abba': 'aleph-abba',
+            'Ima': 'aleph-ima',
+            'Ohel': 'aleph-ohel',
+            'Ohr': 'aleph-ohr',
+            'Eretz': 'aleph-eretz'
+        };
+
         function speakWord(transliteration, english) {
-            speak(transliteration + '! ' + transliteration + ' means ' + english + '! This word starts with ALEPH!');
+            playAudio(wordAudioMap[transliteration] || 'aleph-intro');
             updateMascot(transliteration + ' means ' + english + '!');
             updateProgress(5);
         }
@@ -978,7 +976,7 @@
                 btn.classList.add('correct');
                 recognitionScore++;
                 recognitionRound++;
-                speak('Nachon! Correct! That is ALEPH!');
+                playAudio('correct');
                 updateMascot('You found the ALEPH! Great eyes!');
                 updateProgress(8);
                 document.getElementById('recognitionScore').textContent = 'Score: ' + recognitionScore;
@@ -996,12 +994,12 @@
                         successDiv.style.cssText = 'text-align:center; font-size: 3rem; padding: 20px;';
                         successDiv.textContent = '\u05D0';
                         grid.appendChild(successDiv);
-                        speak('Amazing! You found all five ALEPHs! You really know your ALEPH!');
+                        playAudio('aleph-complete');
                     }
                 }, 1200);
             } else {
                 btn.classList.add('wrong');
-                speak('Oops! That is not ALEPH. Look for the one that looks like an X with arms!');
+                playAudio('wrong');
                 updateMascot('Try again! ALEPH looks like an X with arms!');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
@@ -1011,20 +1009,38 @@
         }
 
         // Affirm Tab
+        var affirmAudioMap = {
+            'Ani Yachol': 'affirm-yachol',
+            'Ani Chazak': 'affirm-chazak',
+            'Ani Tov': 'affirm-tov',
+            'Ani Ohev': 'affirm-ohev',
+            'Ani Lomed': 'affirm-lomed'
+        };
+
         function sayAffirmation(hebrew, english) {
-            speak(hebrew + '! ' + english + ' Say it with me: ' + hebrew + '!');
+            playAudio(affirmAudioMap[hebrew] || 'affirm-yachol');
             updateMascot('Say it proud: ' + hebrew + '!');
             updateProgress(8);
         }
 
+        var dayAudioMap = {
+            'Yom Rishon': 'affirm-yom-rishon',
+            'Yom Sheni': 'affirm-yom-sheni',
+            'Yom Shlishi': 'affirm-yom-shlishi',
+            'Yom Revii': 'affirm-yom-revii',
+            'Yom Chamishi': 'affirm-yom-chamishi',
+            'Yom Shishi': 'affirm-yom-shishi',
+            'Shabbat': 'affirm-shabbat'
+        };
+
         function sayDay(hebrew, english) {
-            speak(hebrew + ' is ' + english);
+            playAudio(dayAudioMap[hebrew] || 'affirm-days');
             updateMascot(hebrew + ' means ' + english + '!');
             updateProgress(3);
         }
 
         function singDays() {
-            speak('Yom Rishon, Yom Sheni, Yom Shlishi, Yom Revii, Yom Chamishi, Yom Shishi, Shabbat!');
+            playAudio('affirm-days');
             updateMascot('Sing the Hebrew days!');
             updateProgress(10);
         }
@@ -1093,7 +1109,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             stars[idx].classList.add('earned');
-                            speak('Kochav! Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -1103,7 +1119,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     showCelebration();
-                    speak('Mazel Tov! You learned the letter ALEPH! The first letter of the Hebrew alphabet!');
+                    playAudio('aleph-complete');
                 }, 500);
             }
         }
@@ -1161,7 +1177,7 @@
         initCanvas();
         buildDaysGrid();
         updateProgress(5);
-        speak('Welcome! Today we are learning ALEPH! The first letter of the Hebrew alphabet! ALEPH is silent and carries vowel sounds!');
+        playAudio('aleph-intro');
     </script>
 </body>
 </html>

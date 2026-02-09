@@ -529,7 +529,7 @@
                     <p style="color:#555; margin-bottom:14px; font-size:1rem; line-height:1.5;">
                         A word problem is a little story about numbers! We read the story, draw pictures, count them all, and write a number sentence.
                     </p>
-                    <button class="sound-btn" onclick="speak('A word problem is a little story about numbers! We read the story, draw pictures, count them all, and write a number sentence.')">
+                    <button class="sound-btn" onclick="playAudio('add-intro')">
                         &#128264; Hear the explanation
                     </button>
                 </div>
@@ -549,7 +549,7 @@
                         </div>
                         <div class="number-sentence">2 + 3 = 5</div>
                     </div>
-                    <button class="sound-btn" onclick="speak('Sam has 2 apples. His mom gives him 3 more apples. How many apples does Sam have now? 2 plus 3 equals 5!')">
+                    <button class="sound-btn" onclick="playAudio('add-p1')">
                         &#128264; Hear the problem
                     </button>
                 </div>
@@ -574,7 +574,7 @@
                             <span><strong>Write</strong> the number sentence!</span>
                         </li>
                     </ol>
-                    <button class="sound-btn" onclick="speak('Step 1, Read the story carefully. Step 2, Draw pictures for each group. Step 3, Count all the pictures together. Step 4, Write the number sentence!')">
+                    <button class="sound-btn" onclick="playAudio('add-step')">
                         &#128264; Hear the steps
                     </button>
                 </div>
@@ -594,7 +594,7 @@
                         </div>
                         <div class="number-sentence">4 + 1 = 5</div>
                     </div>
-                    <button class="sound-btn" onclick="speak('There are 4 birds on a branch. 1 more bird flies over. How many birds are there? 4 plus 1 equals 5!')">
+                    <button class="sound-btn" onclick="playAudio('add-p2')">
                         &#128264; Hear the problem
                     </button>
                 </div>
@@ -673,41 +673,17 @@
         var quizIndex = 0;
         var quizCorrect = 0;
 
-        /* ========== VOICE ========== */
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        /* ========== AUDIO ========== */
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var i = 0; i < preferred.length; i++) {
-                var name = preferred[i];
-                var found = null;
-                for (var j = 0; j < voices.length; j++) {
-                    if (voices[j].name.indexOf(name) !== -1 && voices[j].lang.indexOf('en') === 0) {
-                        found = voices[j];
-                        break;
-                    }
-                }
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) {
-                for (var k = 0; k < voices.length; k++) {
-                    if (voices[k].lang.indexOf('en') === 0) { selectedVoice = voices[k]; break; }
-                }
-            }
-            if (!selectedVoice && voices.length > 0) selectedVoice = voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         /* ========== TABS ========== */
@@ -745,7 +721,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     document.getElementById('celebration').classList.add('show');
-                    speak('Hooray! You are a Math Superstar!');
+                    playAudio('add-complete');
                 }, 600);
             }
         }
@@ -900,12 +876,12 @@
             document.getElementById('practiceNext').style.display = 'none';
             document.getElementById('practiceCounter').textContent = 'Problem ' + (practiceIndex + 1) + ' of ' + practiceProblems.length;
 
-            setTimeout(function() { speak(p.speech); }, 400);
+            setTimeout(function() { playAudio('add-p' + (practiceIndex + 1)); }, 400);
         }
 
         function readPracticeProblem() {
             if (practiceIndex < practiceProblems.length) {
-                speak(practiceProblems[practiceIndex].speech);
+                playAudio('add-p' + (practiceIndex + 1));
             }
         }
 
@@ -915,7 +891,7 @@
                 var allBtns = document.querySelectorAll('#practiceChoices .answer-btn');
                 allBtns.forEach(function(b) { b.style.pointerEvents = 'none'; });
                 var p = practiceProblems[practiceIndex];
-                speak('Yes! ' + p.a + ' plus ' + p.b + ' equals ' + p.answer + '! Great job!');
+                playAudio('add-correct');
                 updateMascot('Correct! ' + p.a + ' + ' + p.b + ' = ' + p.answer + '!');
                 updateProgress(5);
                 launchConfetti();
@@ -923,7 +899,7 @@
                 document.getElementById('practiceNext').style.display = 'block';
             } else {
                 btn.classList.add('wrong');
-                speak('Hmm, try again! Count the pictures.');
+                playAudio('add-wrong');
                 updateMascot('Not quite! Count all the pictures together.');
                 setTimeout(function() { btn.classList.remove('wrong'); }, 600);
             }
@@ -933,7 +909,7 @@
             practiceIndex++;
             if (practiceIndex >= practiceProblems.length) {
                 updateMascot('You finished all the practice problems! Amazing!');
-                speak('You finished all the practice problems! Amazing!');
+                playAudio('add-complete');
                 practiceIndex = 0;
             }
             showPracticeProblem();
@@ -1010,12 +986,12 @@
             document.getElementById('challengeNext').style.display = 'none';
             document.getElementById('challengeCounter').textContent = 'Problem ' + (challengeIndex + 1) + ' of ' + challengeProblems.length;
 
-            setTimeout(function() { speak(p.speech); }, 400);
+            setTimeout(function() { playAudio('add-p' + (challengeIndex + 1)); }, 400);
         }
 
         function readChallengeProblem() {
             if (challengeIndex < challengeProblems.length) {
-                speak(challengeProblems[challengeIndex].speech);
+                playAudio('add-p' + (challengeIndex + 1));
             }
         }
 
@@ -1025,7 +1001,7 @@
                 var allBtns = document.querySelectorAll('#challengeChoices .answer-btn');
                 allBtns.forEach(function(b) { b.style.pointerEvents = 'none'; });
                 var p = challengeProblems[challengeIndex];
-                speak('Fantastic! ' + p.a + ' plus ' + p.b + ' equals ' + p.answer + '!');
+                playAudio('add-correct');
                 updateMascot('Amazing! ' + p.a + ' + ' + p.b + ' = ' + p.answer + '!');
                 updateProgress(8);
                 launchConfetti();
@@ -1033,7 +1009,7 @@
                 document.getElementById('challengeNext').style.display = 'block';
             } else {
                 btn.classList.add('wrong');
-                speak('Not quite! Count the blocks carefully.');
+                playAudio('add-wrong');
                 updateMascot('Count each block. The pink line shows where the groups split.');
                 setTimeout(function() { btn.classList.remove('wrong'); }, 600);
             }
@@ -1043,7 +1019,7 @@
             challengeIndex++;
             if (challengeIndex >= challengeProblems.length) {
                 updateMascot('You completed all the challenge problems! You are a star!');
-                speak('You completed all the challenge problems! You are a star!');
+                playAudio('add-complete');
                 challengeIndex = 0;
             }
             showChallengeProblem();
@@ -1121,12 +1097,12 @@
 
             document.getElementById('quizScore').textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizProblems.length;
 
-            setTimeout(function() { speak(q.speech); }, 400);
+            setTimeout(function() { playAudio('add-p' + (quizIndex + 1)); }, 400);
         }
 
         function readQuizProblem() {
             if (quizIndex < quizProblems.length) {
-                speak(quizProblems[quizIndex].speech);
+                playAudio('add-p' + (quizIndex + 1));
             }
         }
 
@@ -1138,7 +1114,7 @@
                 btn.classList.add('correct');
                 quizCorrect++;
                 var q = quizProblems[quizIndex];
-                speak('Correct! ' + q.a + ' plus ' + q.b + ' equals ' + q.answer + '!');
+                playAudio('add-correct');
                 updateMascot('You got it! ' + q.a + ' + ' + q.b + ' = ' + q.answer);
                 updateProgress(10);
                 launchConfetti();
@@ -1150,7 +1126,7 @@
                     if (parseInt(b.textContent) === answer) b.classList.add('correct');
                 });
                 var q2 = quizProblems[quizIndex];
-                speak('The answer is ' + q2.answer + '. ' + q2.a + ' plus ' + q2.b + ' equals ' + q2.answer + '.');
+                playAudio('add-wrong');
                 updateMascot('The answer was ' + q2.answer + '. Keep trying!');
             }
 
@@ -1176,7 +1152,7 @@
             }
             document.getElementById('quizResultTitle').textContent = title;
             document.getElementById('quizResultText').textContent = text;
-            speak(title + ' ' + text);
+            playAudio('add-complete');
         }
 
         function resetQuiz() {
@@ -1199,7 +1175,7 @@
         }
 
         /* ========== INIT ========== */
-        speak('Let us solve word problems! Read the story, look at the pictures, and add them up!');
+        playAudio('add-intro');
     </script>
 </body>
 </html>

@@ -561,34 +561,21 @@
         var findFound = 0;
         var quizIndex = 0;
 
-        // Voice setup with Microsoft voices preferred
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        // Audio playback
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var p = 0; p < preferred.length; p++) {
-                var name = preferred[p];
-                var found = voices.find(function(v) { return v.name.includes(name) && v.lang.startsWith('en'); });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         function playSound(letter) {
-            speak('ks, ks, ks, X!');
+            playAudio('x-sound');
             document.querySelectorAll('.letter-box').forEach(function(box) {
                 box.style.animation = 'none';
                 box.offsetHeight;
@@ -597,11 +584,8 @@
         }
 
         function sayWord(word, atStart) {
-            if (atStart) {
-                speak(word + ' starts with X!');
-            } else {
-                speak(word + ' ends with X!');
-            }
+            var key = 'x-' + word.toLowerCase().replace('-', '');
+            playAudio(key);
         }
 
         // Tab navigation
@@ -629,7 +613,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             stars[idx].classList.add('earned');
-                            speak('Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -639,7 +623,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     document.getElementById('celebration').classList.add('show');
-                    speak('Hooray! You learned the letter X! X marks the spot!');
+                    playAudio('x-complete');
                 }, 500);
             }
         }
@@ -695,12 +679,12 @@
                 findFound++;
                 document.getElementById('findScore').textContent = 'Found: ' + findFound + '/4';
                 var pos = item.label === 'X-ray' ? 'starts' : 'ends';
-                speak('Yes! ' + item.label + ' has the letter X!');
+                playAudio('x-correct');
                 updateMascot('Great job! ' + item.label + ' ' + pos + ' with X!');
                 updateProgress(10);
             } else {
                 card.classList.add('wrong');
-                speak('Oops! ' + item.label + ' does not have X.');
+                playAudio('x-wrong');
                 updateMascot(item.label + ' does not have the letter X!');
                 setTimeout(function() { card.classList.remove('wrong'); }, 500);
             }
@@ -796,7 +780,7 @@
         }
 
         function finishTrace() {
-            speak('Excellent X! Two lines that cross!');
+            playAudio('x-trace');
             updateMascot('Beautiful letter X! Two lines crossing!');
             updateProgress(20);
             setTimeout(function() { initCanvas(); }, 800);
@@ -847,10 +831,10 @@
                 btn.classList.add('correct');
                 var hasStart = question.indexOf('starts') !== -1;
                 if (hasStart) {
-                    speak('Yes! ' + word + ' starts with X!');
+                    playAudio('x-correct');
                     updateMascot('Correct! ' + word + ' starts with X!');
                 } else {
-                    speak('Yes! ' + word + ' ends with X!');
+                    playAudio('x-correct');
                     updateMascot('Correct! ' + word + ' ends with X!');
                 }
                 updateProgress(12);
@@ -858,7 +842,7 @@
                 setTimeout(showQuizQuestion, 1500);
             } else {
                 btn.classList.add('wrong');
-                speak('Try again!');
+                playAudio('wrong');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
                     document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
@@ -879,7 +863,7 @@
         // Init
         initCanvas();
         updateProgress(5);
-        speak('X marks the spot! X says ks like X-ray! X can be at the beginning or end of words!');
+        playAudio('x-intro');
     </script>
 </body>
 </html>

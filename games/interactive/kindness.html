@@ -397,19 +397,19 @@
                 </p>
 
                 <div class="kindness-cards">
-                    <div class="kindness-card" onclick="learnCard(this, 'Sharing toys with a friend shows you care!')">
+                    <div class="kindness-card" onclick="learnCard(this, 'Sharing toys with a friend shows you care!', 'kind-share')">
                         <span class="emoji">&#x1F9F8;</span>
                         <span class="text">Sharing Toys</span>
                     </div>
-                    <div class="kindness-card" onclick="learnCard(this, 'Helping clean up makes everyone happy!')">
+                    <div class="kindness-card" onclick="learnCard(this, 'Helping clean up makes everyone happy!', 'kind-help')">
                         <span class="emoji">&#x1F9F9;</span>
                         <span class="text">Helping Clean Up</span>
                     </div>
-                    <div class="kindness-card" onclick="learnCard(this, 'Saying nice words makes people smile!')">
+                    <div class="kindness-card" onclick="learnCard(this, 'Saying nice words makes people smile!', 'kind-words')">
                         <span class="emoji">&#x1F4AC;</span>
                         <span class="text">Saying Nice Words</span>
                     </div>
-                    <div class="kindness-card" onclick="learnCard(this, 'Giving hugs shows love and kindness!')">
+                    <div class="kindness-card" onclick="learnCard(this, 'Giving hugs shows love and kindness!', 'kind-hug')">
                         <span class="emoji">&#x1F917;</span>
                         <span class="text">Giving Hugs</span>
                     </div>
@@ -461,29 +461,17 @@
         var progress = 0;
         var quizIndex = 0;
 
-        // ---- VOICE SETUP ----
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        // ---- AUDIO SETUP ----
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var p = 0; p < preferred.length; p++) {
-                var found = voices.find(function(v) { return v.name.includes(preferred[p]) && v.lang.startsWith('en'); });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         // ---- TAB NAVIGATION ----
@@ -512,7 +500,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             starEls[idx].classList.add('earned');
-                            speak('Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -522,7 +510,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     document.getElementById('celebration').classList.add('show');
-                    speak('Hooray! You are so kind! Keep spreading kindness everywhere!');
+                    playAudio('kind-complete');
                 }, 500);
             }
         }
@@ -533,12 +521,12 @@
 
         // ---- LEARN TAB ----
         function speakKindness() {
-            speak('K, I, N, D, N, E, S, S! KINDNESS! Kindness means being nice, helping, and sharing!');
+            playAudio('kind-intro');
             updateProgress(5);
         }
 
-        function learnCard(el, message) {
-            speak(message);
+        function learnCard(el, message, audioKey) {
+            playAudio(audioKey);
             updateMascot(message);
             el.style.borderColor = '#FF6B6B';
             el.style.background = 'linear-gradient(135deg, #FED7D7 0%, #FEEBC8 100%)';
@@ -583,13 +571,13 @@
                 hintEl.textContent = 'Tap to hear this story!';
                 card.appendChild(hintEl);
 
-                card.onclick = function() { playStory(card, story); };
+                card.onclick = function() { playStory(card, story, idx); };
                 container.appendChild(card);
             });
         }
 
-        function playStory(card, story) {
-            speak(story.text + ' ' + story.detail);
+        function playStory(card, story, idx) {
+            playAudio('kind-story' + (idx + 1));
             card.classList.add('heard');
             card.querySelector('.tap-hint').textContent = 'You heard this story!';
             updateMascot(story.detail);
@@ -653,7 +641,7 @@
             }
 
             spawnFloatingHeart(item);
-            speak('I will ' + action.text + '! That is so kind!');
+            playAudio('kind-correct');
             updateMascot('Wonderful! ' + action.text + ' is a kind thing to do!');
             updateProgress(4);
         }
@@ -741,7 +729,7 @@
                 doneDiv.appendChild(doneSubtext);
 
                 container.appendChild(doneDiv);
-                speak('Amazing! You know all about kindness! Now go spread kindness everywhere!');
+                playAudio('kind-complete');
                 return;
             }
 
@@ -780,7 +768,7 @@
             card.appendChild(options);
             container.appendChild(card);
 
-            speak(q.text);
+            playAudio('kind-intro');
         }
 
         function checkQuiz(btn, correct, feedback) {
@@ -788,14 +776,14 @@
 
             if (correct) {
                 btn.classList.add('correct');
-                speak('Yes! ' + feedback);
+                playAudio('kind-correct');
                 updateMascot(feedback);
                 updateProgress(8);
                 quizIndex++;
                 setTimeout(showQuizQuestion, 2000);
             } else {
                 btn.classList.add('wrong');
-                speak('Hmm, try again!');
+                playAudio('kind-wrong');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
                     document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
@@ -819,7 +807,7 @@
 
         // ---- INITIAL LOAD ----
         updateProgress(5);
-        speak('KINDNESS means being nice, helping, and sharing! Let us learn together!');
+        playAudio('kind-intro');
     </script>
 </body>
 </html>

@@ -495,33 +495,20 @@
         var findFound = 0;
         var quizIndex = 0;
 
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var p = 0; p < preferred.length; p++) {
-                var name = preferred[p];
-                var found = voices.find(function(v) { return v.name.includes(name) && v.lang.startsWith('en'); });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         function playSound(letter) {
-            speak('zzz, zzz, zzz, Z! Zzzzz like a buzzing bee!');
+            playAudio('z-sound');
             document.querySelectorAll('.letter-box').forEach(function(box) {
                 box.style.animation = 'none';
                 box.offsetHeight;
@@ -530,7 +517,8 @@
         }
 
         function sayWord(word) {
-            speak(word + ' starts with Z!');
+            var key = 'z-' + word.toLowerCase();
+            playAudio(key);
         }
 
         document.querySelectorAll('.tab-btn').forEach(function(btn) {
@@ -557,7 +545,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             stars[idx].classList.add('earned');
-                            speak('Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -567,7 +555,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     document.getElementById('celebration').classList.add('show');
-                    speak('Hooray! You learned the letter Z! Zzzzz!');
+                    playAudio('z-complete');
                 }, 500);
             }
         }
@@ -622,12 +610,12 @@
                 card.classList.add('correct');
                 findFound++;
                 document.getElementById('findScore').textContent = 'Found: ' + findFound + '/4';
-                speak('Yes! ' + item.label + ' starts with Z!');
+                playAudio('correct');
                 updateMascot('Great job! ' + item.label + ' starts with Z!');
                 updateProgress(10);
             } else {
                 card.classList.add('wrong');
-                speak('Oops! ' + item.label + ' does not start with Z.');
+                playAudio('wrong');
                 updateMascot(item.label + ' starts with ' + item.label[0] + ', not Z!');
                 setTimeout(function() { card.classList.remove('wrong'); }, 500);
             }
@@ -721,7 +709,7 @@
         }
 
         function finishTrace() {
-            speak('Wonderful Z! Zigzag!');
+            playAudio('z-trace');
             updateMascot('Beautiful letter Z! Look at those zigzags!');
             updateProgress(20);
             setTimeout(function() { clearCanvas(); }, 600);
@@ -770,14 +758,14 @@
 
             if (correct) {
                 btn.classList.add('correct');
-                speak('Yes! ' + word + ' starts with Z!');
+                playAudio('correct');
                 updateMascot('Correct! ' + word + '!');
                 updateProgress(12);
                 quizIndex++;
                 setTimeout(showQuizQuestion, 1500);
             } else {
                 btn.classList.add('wrong');
-                speak('Try again!');
+                playAudio('wrong');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
                     document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
@@ -800,7 +788,7 @@
         /* ===== INIT ===== */
         initCanvas();
         updateProgress(5);
-        speak('Z has zigzag lines! Z says zzz like Zebra! Zzzzz like a bee!');
+        playAudio('z-intro');
     </script>
 </body>
 </html>

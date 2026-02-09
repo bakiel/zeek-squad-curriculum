@@ -482,33 +482,20 @@
         var findFound = 0;
         var quizIndex = 0;
 
-        var synth = window.speechSynthesis;
-        var selectedVoice = null;
+        var audioBase = '../../assets/audio/week3/';
+        var currentAudio = null;
 
-        function initVoice() {
-            var voices = synth.getVoices();
-            var preferred = ['Microsoft Zira', 'Microsoft Eva', 'Samantha', 'Karen', 'Google US English Female', 'Female'];
-            for (var p = 0; p < preferred.length; p++) {
-                var name = preferred[p];
-                var found = voices.find(function(v) { return v.name.includes(name) && v.lang.startsWith('en'); });
-                if (found) { selectedVoice = found; break; }
+        function playAudio(key) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
             }
-            if (!selectedVoice) selectedVoice = voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
-        }
-        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = initVoice;
-        initVoice();
-
-        function speak(text) {
-            synth.cancel();
-            var utter = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utter.voice = selectedVoice;
-            utter.rate = 0.85;
-            utter.pitch = 1.1;
-            synth.speak(utter);
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
         }
 
         function playSound(letter) {
-            speak('yuh, yuh, yuh, Y!');
+            playAudio('y-sound');
             document.querySelectorAll('.letter-box').forEach(function(box) {
                 box.style.animation = 'none';
                 box.offsetHeight;
@@ -517,7 +504,8 @@
         }
 
         function sayWord(word) {
-            speak(word + ' starts with Y!');
+            var key = 'y-' + word.toLowerCase().replace('-', '');
+            playAudio(key);
         }
 
         document.querySelectorAll('.tab-btn').forEach(function(btn) {
@@ -544,7 +532,7 @@
                     (function(idx) {
                         setTimeout(function() {
                             stars[idx].classList.add('earned');
-                            speak('Star!');
+                            playAudio('star');
                         }, (idx - starsEarned) * 300);
                     })(i);
                 }
@@ -554,7 +542,7 @@
             if (progress >= 100) {
                 setTimeout(function() {
                     document.getElementById('celebration').classList.add('show');
-                    speak('Hooray! You learned the letter Y!');
+                    playAudio('y-complete');
                 }, 500);
             }
         }
@@ -609,12 +597,12 @@
                 card.classList.add('correct');
                 findFound++;
                 document.getElementById('findScore').textContent = 'Found: ' + findFound + '/4';
-                speak('Yes! ' + item.label + ' starts with Y!');
+                playAudio('correct');
                 updateMascot('Great job! ' + item.label + ' starts with Y!');
                 updateProgress(10);
             } else {
                 card.classList.add('wrong');
-                speak('Oops! ' + item.label + ' does not start with Y.');
+                playAudio('wrong');
                 updateMascot(item.label + ' starts with ' + item.label[0] + ', not Y!');
                 setTimeout(function() { card.classList.remove('wrong'); }, 500);
             }
@@ -685,7 +673,7 @@
         }
 
         function finishTrace() {
-            speak('Wonderful Y! It looks like a slingshot!');
+            playAudio('y-trace');
             updateMascot('Beautiful letter Y! Like a slingshot!');
             updateProgress(20);
             clearCanvas();
@@ -732,14 +720,14 @@
 
             if (correct) {
                 btn.classList.add('correct');
-                speak('Yes! ' + word + ' starts with Y!');
+                playAudio('correct');
                 updateMascot('Correct! ' + word + ' starts with Y!');
                 updateProgress(10);
                 quizIndex++;
                 setTimeout(showQuizQuestion, 1500);
             } else {
                 btn.classList.add('wrong');
-                speak('Try again!');
+                playAudio('wrong');
                 setTimeout(function() {
                     btn.classList.remove('wrong');
                     document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
@@ -759,7 +747,7 @@
 
         initCanvas();
         updateProgress(5);
-        speak('Y looks like a slingshot! Y says yuh like yak!');
+        playAudio('y-intro');
     </script>
 </body>
 </html>
