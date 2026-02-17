@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperation - Zeek Squad SEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #4ECDC4 0%, #2BAF9F 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: teamBounce 1.2s ease-in-out infinite; }
+        @keyframes teamBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #2BAF9F;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #2BAF9F;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .learn-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .learn-card {
+            background: linear-gradient(135deg, #E0FFF9 0%, #B2F5EA 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .learn-card:hover { transform: scale(1.05); border-color: #2BAF9F; }
+        .learn-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+        .learn-card .text { color: #1A4D47; font-weight: bold; font-size: 0.9rem; }
+
+        .word-box {
+            background: linear-gradient(135deg, #4ECDC4 0%, #2BAF9F 100%);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .word-box .word {
+            font-size: 2.2rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .word-box .definition {
+            color: rgba(255,255,255,0.95);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .speak-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #4ECDC4 0%, #2BAF9F 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speak-btn:hover { transform: scale(1.02); }
+        .speak-btn:active { transform: scale(0.98); }
+
+        .story-card {
+            background: #E0FFF9;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .story-card:hover { border-color: #2BAF9F; transform: scale(1.02); }
+        .story-card.heard {
+            border-color: #38B2AC;
+            background: linear-gradient(135deg, #E0FFF9 0%, #C6F6D5 100%);
+        }
+        .story-card .story-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+        .story-card .story-text { font-size: 1.05rem; color: #333; line-height: 1.5; }
+        .story-card .tap-hint { font-size: 0.8rem; color: #999; margin-top: 6px; }
+
+        .quiz-card {
+            background: #E0FFF9;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .quiz-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .quiz-text { font-size: 1.1rem; color: #333; margin-bottom: 15px; line-height: 1.5; }
+        .quiz-counter { font-size: 0.9rem; color: #999; margin-bottom: 10px; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .quiz-option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #B2F5EA;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #E0FFF9; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #2BAF9F; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #4ECDC4 0%, #2BAF9F 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .floating-item {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp 2s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { opacity: 1; transform: translateY(-80px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-160px) scale(0.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Learning Cooperation</h1>
+            <div class="standard">SEL.K.1 - Social Awareness</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F91D;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                COOPERATION means working together! We are stronger as a team!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="stories">Stories</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">What is COOPERATION?</h2>
+
+                <div class="word-box">
+                    <div class="word">COOPERATION</div>
+                    <div class="definition">Working together to get things done!</div>
+                </div>
+
+                <button class="speak-btn" onclick="speakWord()">
+                    &#x1F50A; Say it: COOPERATION!
+                </button>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    When we cooperate, we work as a team. Together we can do amazing things!
+                </p>
+
+                <div class="learn-cards">
+                    <div class="learn-card" onclick="learnCard(this, 'Taking turns means everyone gets a chance!', 'coop-intro')">
+                        <span class="emoji">&#x1F503;</span>
+                        <span class="text">Taking Turns</span>
+                    </div>
+                    <div class="learn-card" onclick="learnCard(this, 'Sharing materials helps everyone create!', 'coop-intro')">
+                        <span class="emoji">&#x1F3A8;</span>
+                        <span class="text">Sharing Supplies</span>
+                    </div>
+                    <div class="learn-card" onclick="learnCard(this, 'Listening to your friend shows you value their ideas!', 'coop-intro')">
+                        <span class="emoji">&#x1F442;</span>
+                        <span class="text">Listening</span>
+                    </div>
+                    <div class="learn-card" onclick="learnCard(this, 'When everyone helps clean up, it is done fast!', 'coop-intro')">
+                        <span class="emoji">&#x1F9F9;</span>
+                        <span class="text">Cleaning Together</span>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #1A4D47; font-weight: bold;">
+                    Tap each card to learn about teamwork!
+                </p>
+            </div>
+
+            <!-- STORIES TAB -->
+            <div class="tab-content" id="stories">
+                <h2 class="section-title">Teamwork Stories</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Tap each story to hear it read aloud!
+                </p>
+                <div id="storiesContainer"></div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Cooperation Quiz!</h2>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x1F91D;&#x1F389;</div>
+            <div class="celebration-text">Great Teamwork!</div>
+            <p style="color: #666; margin-bottom: 20px;">You learned all about cooperation! Keep working together!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var quizIndex = 0;
+
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'stories') initStories();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            playAudio('star');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    playAudio('coop-complete');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        function speakWord() {
+            playAudio('coop-intro');
+            updateProgress(5);
+        }
+
+        function learnCard(el, message, audioKey) {
+            playAudio(audioKey);
+            updateMascot(message);
+            el.style.borderColor = '#2BAF9F';
+            el.style.background = 'linear-gradient(135deg, #B2F5EA 0%, #C6F6D5 100%)';
+            updateProgress(5);
+        }
+
+        // Stories
+        var coopStories = [
+            { emoji: '\uD83E\uDDF1', text: 'We built a tower together! I held the blocks while my friend stacked them.', detail: 'Working together means using everyone\'s strengths. Great teamwork!' },
+            { emoji: '\uD83C\uDF3B', text: 'Our class planted a garden. Everyone dug, planted, and watered together.', detail: 'When the whole class helps, the garden grows beautiful!' },
+            { emoji: '\uD83C\uDFA4', text: 'We sang a song together at the school show. Everyone had a part!', detail: 'Each person makes the team better by doing their part!' },
+            { emoji: '\uD83E\uDDF9', text: 'We cleaned up the classroom together. It only took 5 minutes!', detail: 'Many hands make light work! Cooperation makes hard jobs easy!' },
+            { emoji: '\uD83C\uDFA8', text: 'We made a big mural painting. Each friend painted their part.', detail: 'When we cooperate on art, we create something amazing together!' }
+        ];
+
+        var storiesInitialized = false;
+        function initStories() {
+            if (storiesInitialized) return;
+            storiesInitialized = true;
+            var container = document.getElementById('storiesContainer');
+            container.textContent = '';
+            coopStories.forEach(function(story, idx) {
+                var card = document.createElement('div');
+                card.className = 'story-card';
+                var emojiEl = document.createElement('div');
+                emojiEl.className = 'story-emoji';
+                emojiEl.textContent = story.emoji;
+                card.appendChild(emojiEl);
+                var textEl = document.createElement('div');
+                textEl.className = 'story-text';
+                textEl.textContent = story.text;
+                card.appendChild(textEl);
+                var hintEl = document.createElement('div');
+                hintEl.className = 'tap-hint';
+                hintEl.textContent = 'Tap to hear this story!';
+                card.appendChild(hintEl);
+                card.onclick = function() {
+                    playAudio('coop-story' + (idx + 1));
+                    card.classList.add('heard');
+                    card.querySelector('.tap-hint').textContent = 'You heard this story!';
+                    updateMascot(story.detail);
+                    updateProgress(5);
+                };
+                container.appendChild(card);
+            });
+        }
+
+        // Quiz
+        var quizQuestions = [
+            {
+                emoji: '\uD83E\uDDF1',
+                text: 'Your class is building a big puzzle. What should you do?',
+                options: ['Help find pieces together', 'Take all the pieces for yourself'],
+                correct: 0,
+                feedback: 'Working together on a puzzle is great cooperation!'
+            },
+            {
+                emoji: '\uD83C\uDFA8',
+                text: 'Two friends both want the red crayon. What is cooperative?',
+                options: ['Fight over it', 'Take turns using it'],
+                correct: 1,
+                feedback: 'Taking turns is one of the best ways to cooperate!'
+            },
+            {
+                emoji: '\uD83E\uDDF9',
+                text: 'The teacher asks everyone to help clean up. What do you do?',
+                options: ['Pick up toys and help', 'Hide so you don\'t have to help'],
+                correct: 0,
+                feedback: 'Helping clean up is wonderful cooperation!'
+            },
+            {
+                emoji: '\uD83C\uDFB5',
+                text: 'Your group is singing a song. What should you do?',
+                options: ['Sing as loud as you can over everyone', 'Sing together and listen to each other'],
+                correct: 1,
+                feedback: 'Singing together in harmony is beautiful cooperation!'
+            },
+            {
+                emoji: '\uD83D\uDC6B',
+                text: 'Your friend has an idea for a game. What is cooperative?',
+                options: ['Listen and try their idea', 'Say "No, only MY idea"'],
+                correct: 0,
+                feedback: 'Listening to others\' ideas shows great cooperation!'
+            }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var container = document.getElementById('quizContainer');
+            if (quizIndex >= quizQuestions.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#1A4D47';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'Amazing! You are a great team player!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                playAudio('coop-complete');
+                return;
+            }
+            var q = quizQuestions[quizIndex];
+            container.textContent = '';
+            var card = document.createElement('div');
+            card.className = 'quiz-card';
+            var counter = document.createElement('div');
+            counter.className = 'quiz-counter';
+            counter.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+            card.appendChild(counter);
+            var emoji = document.createElement('div');
+            emoji.className = 'quiz-emoji';
+            emoji.textContent = q.emoji;
+            card.appendChild(emoji);
+            var text = document.createElement('div');
+            text.className = 'quiz-text';
+            text.textContent = q.text;
+            card.appendChild(text);
+            var options = document.createElement('div');
+            options.className = 'quiz-options';
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.correct, q.feedback); };
+                options.appendChild(btn);
+            });
+            card.appendChild(options);
+            container.appendChild(card);
+        }
+
+        function checkQuiz(btn, correct, feedback) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+            if (correct) {
+                btn.classList.add('correct');
+                playAudio('coop-correct');
+                updateMascot(feedback);
+                updateProgress(8);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 2000);
+            } else {
+                btn.classList.add('wrong');
+                playAudio('coop-wrong');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            storiesInitialized = false;
+            initQuiz();
+        }
+
+        updateProgress(5);
+        playAudio('coop-intro');
+    </script>
+</body>
+</html>

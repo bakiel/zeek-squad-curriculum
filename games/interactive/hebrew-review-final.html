@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Final Review - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.75rem; opacity: 0.85; margin-top: 4px; }
+        .back-btn { display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; transition: all 0.3s; cursor: pointer; }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .speech-bubble { background: white; padding: 15px 20px; border-radius: 20px; flex: 1; position: relative; font-size: 1.05rem; color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .speech-bubble:before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); border: 10px solid transparent; border-right-color: white; }
+        .progress-container { background: rgba(255,255,255,0.3); border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 60% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0deg); } }
+        .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { padding: 10px 16px; border: none; background: rgba(255,255,255,0.2); color: white; border-radius: 10px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+        .tab-btn:hover { background: rgba(255,255,255,0.3); }
+        .tab-btn.active { background: white; color: #1E40AF; font-weight: bold; }
+        .tab-btn.completed::after { content: ' \2713'; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .game-area { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .instruction { background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%); color: white; padding: 15px 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
+
+        .review-card { background: #eff6ff; border-radius: 20px; padding: 20px; margin: 12px 0; text-align: center; border: 3px solid #bfdbfe; cursor: pointer; transition: all 0.3s; }
+        .review-card:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .review-card .big { font-size: 4rem; font-weight: bold; color: #1e3a8a; }
+        .review-card .name { font-size: 1.3rem; font-weight: bold; color: #3b82f6; margin-top: 5px; }
+        .review-card .sound { font-size: 0.95rem; color: #6366f1; }
+
+        .round-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .round-dot { width: 12px; height: 12px; border-radius: 50%; background: #e0e0e0; transition: all 0.3s; }
+        .round-dot.active { background: #1E40AF; transform: scale(1.2); }
+        .round-dot.completed { background: #FFD700; }
+
+        .option-btn { display: block; width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #e0e0e0; border-radius: 12px; background: white; cursor: pointer; font-size: 1.2rem; font-family: inherit; transition: all 0.3s; text-align: center; }
+        .option-btn:hover { border-color: #1E40AF; background: #eff6ff; }
+        .option-btn.correct { background: #dcfce7; border-color: #22c55e; }
+        .option-btn.wrong { background: #fee2e2; border-color: #ef4444; }
+
+        .day-card { background: #eff6ff; border-radius: 15px; padding: 15px; margin: 10px 0; display: flex; align-items: center; gap: 15px; border: 2px solid #bfdbfe; cursor: pointer; transition: all 0.3s; }
+        .day-card:hover { transform: scale(1.02); border-color: #3b82f6; }
+        .day-card .day-num { width: 40px; height: 40px; background: #1E40AF; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; }
+        .day-card .day-info { flex: 1; }
+        .day-card .day-hebrew { font-size: 1.3rem; font-weight: bold; color: #1e3a8a; }
+        .day-card .day-english { font-size: 0.9rem; color: #6366f1; }
+        .day-card.shabbat { background: linear-gradient(135deg, #fbbf24, #f59e0b); border-color: #f59e0b; }
+        .day-card.shabbat .day-num { background: white; color: #f59e0b; }
+        .day-card.shabbat .day-hebrew { color: white; }
+        .day-card.shabbat .day-english { color: #fffbeb; }
+
+        .shabbat-banner { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; padding: 25px; border-radius: 20px; text-align: center; margin: 20px 0; }
+        .shabbat-banner .big-text { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
+        .shabbat-banner .sub-text { font-size: 1.2rem; }
+
+        .next-btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%); color: white; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; font-family: inherit; margin-top: 15px; transition: all 0.3s; }
+        .next-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .learn-card { background: #eff6ff; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center; border: 2px solid #bfdbfe; }
+        .learn-card h3 { color: #1e3a8a; margin-bottom: 10px; }
+        .feedback { text-align: center; padding: 10px; margin: 10px 0; border-radius: 10px; font-weight: bold; font-size: 1.1rem; }
+        .feedback.correct { background: #dcfce7; color: #15803d; }
+        .feedback.wrong { background: #fee2e2; color: #dc2626; }
+        .celebration { display: none; text-align: center; padding: 30px; }
+        .celebration.show { display: block; animation: celebrationPop 0.5s ease; }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { font-size: 2rem; color: #1e3a8a; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; margin-bottom: 15px; display: block; }
+        .confetti { position: fixed; top: -10px; font-size: 1.5rem; animation: fall linear forwards; pointer-events: none; z-index: 1000; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+        <div class="header">
+            <h1>Hebrew Final Review</h1>
+            <div class="standard">Hebrew Literacy</div>
+        </div>
+        <div class="mascot">
+            <div class="mascot-emoji">&#127775;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Final review! Let us show what we have learned! ANI YACHOL!
+            </div>
+        </div>
+        <div class="stars">
+            <span class="star" id="star1">&#9733;</span>
+            <span class="star" id="star2">&#9733;</span>
+            <span class="star" id="star3">&#9733;</span>
+            <span class="star" id="star4">&#9733;</span>
+            <span class="star" id="star5">&#9733;</span>
+        </div>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('learn')" id="tabLearn">Review</button>
+            <button class="tab-btn" onclick="switchTab('practice')" id="tabPractice">Final Quiz</button>
+            <button class="tab-btn" onclick="switchTab('quiz')" id="tabQuiz">Days + Shabbat</button>
+        </div>
+
+        <div class="tab-content active" id="learnTab">
+            <div class="game-area">
+                <div class="instruction">One last look at our 3 Hebrew letters!</div>
+                <div id="learnContent"></div>
+                <div class="learn-card">
+                    <h3>ANI YACHOL! ANI CHAZAK!</h3>
+                    <p>I can do it! I am strong! You have learned so much!</p>
+                </div>
+                <button class="next-btn" onclick="switchTab('practice')">Take Final Quiz!</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="practiceTab">
+            <div class="game-area">
+                <div class="instruction">Final Comprehensive Quiz!</div>
+                <div class="round-indicator" id="quizRounds"></div>
+                <div id="quizContent"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="quizTab">
+            <div class="game-area">
+                <div class="instruction">Days of the Week in Hebrew!</div>
+                <div id="daysContent"></div>
+            </div>
+        </div>
+
+        <div class="celebration" id="celebration">
+            <span class="trophy">&#127942;</span>
+            <h2>Shabbat Shalom!</h2>
+            <p>You completed the Hebrew review! ANI YACHOL!</p>
+            <button class="next-btn" onclick="location.reload()">Play Again!</button>
+        </div>
+    </div>
+
+    <script>
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        var hebrewLetters = [
+            { letter: '\u05D0', name: 'Aleph', sound: 'Silent (glottal stop)' },
+            { letter: '\u05D1\u05BC', name: 'Bet', sound: 'B sound' },
+            { letter: '\u05D1', name: 'Vet', sound: 'V sound' }
+        ];
+
+        var daysOfWeek = [
+            { hebrew: 'Yom Rishon', english: 'Sunday (First Day)', num: 1 },
+            { hebrew: 'Yom Sheni', english: 'Monday (Second Day)', num: 2 },
+            { hebrew: 'Yom Shlishi', english: 'Tuesday (Third Day)', num: 3 },
+            { hebrew: 'Yom Revi\'i', english: 'Wednesday (Fourth Day)', num: 4 },
+            { hebrew: 'Yom Chamishi', english: 'Thursday (Fifth Day)', num: 5 },
+            { hebrew: 'Yom Shishi', english: 'Friday (Sixth Day)', num: 6 },
+            { hebrew: 'Shabbat', english: 'Saturday (Day of Rest)', num: 7, isShabbat: true }
+        ];
+
+        var score = 0;
+        var totalPoints = 20;
+        var tabsCompleted = {};
+        var quizRound = 0;
+        var quizTotal = 8;
+
+        function updateProgress() {
+            var pct = Math.min(100, Math.round((score / totalPoints) * 100));
+            document.getElementById('progressBar').style.width = pct + '%';
+            var starsEarned = Math.floor(pct / 20);
+            for (var i = 1; i <= 5; i++) {
+                var el = document.getElementById('star' + i);
+                if (i <= starsEarned && !el.classList.contains('earned')) {
+                    el.classList.add('earned');
+                    playAudio('star');
+                }
+            }
+            if (pct >= 100) { setTimeout(showCelebration, 800); }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+        }
+
+        function shuffle(arr) {
+            var a = arr.slice();
+            for (var i = a.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+            return a;
+        }
+
+        function buildReview() {
+            var container = document.getElementById('learnContent');
+            container.textContent = '';
+            hebrewLetters.forEach(function(h) {
+                var card = document.createElement('div');
+                card.className = 'review-card';
+                var big = document.createElement('div');
+                big.className = 'big';
+                big.textContent = h.letter;
+                var name = document.createElement('div');
+                name.className = 'name';
+                name.textContent = h.name;
+                var sound = document.createElement('div');
+                sound.className = 'sound';
+                sound.textContent = h.sound;
+                card.appendChild(big);
+                card.appendChild(name);
+                card.appendChild(sound);
+                card.addEventListener('click', function() {
+                    document.getElementById('mascotSpeech').textContent = h.name + ': ' + h.sound + '!';
+                    playAudio('hebfin-intro');
+                });
+                container.appendChild(card);
+            });
+            if (!tabsCompleted.learn) {
+                tabsCompleted.learn = true;
+                score += 2;
+                updateProgress();
+                document.getElementById('tabLearn').classList.add('completed');
+            }
+        }
+
+        var quizQuestions = [
+            { q: 'Which letter is Aleph?', answer: '\u05D0', opts: ['\u05D0', '\u05D1\u05BC', '\u05D1'], type: 'letter' },
+            { q: 'Which letter makes a B sound?', answer: '\u05D1\u05BC', opts: ['\u05D0', '\u05D1\u05BC', '\u05D1'], type: 'letter' },
+            { q: 'Which letter makes a V sound?', answer: '\u05D1', opts: ['\u05D0', '\u05D1\u05BC', '\u05D1'], type: 'letter' },
+            { q: 'What is this letter called? \u05D0', answer: 'Aleph', opts: ['Aleph', 'Bet', 'Vet'], type: 'text' },
+            { q: 'What is this letter called? \u05D1\u05BC', answer: 'Bet', opts: ['Aleph', 'Bet', 'Vet'], type: 'text' },
+            { q: 'What is this letter called? \u05D1', answer: 'Vet', opts: ['Aleph', 'Bet', 'Vet'], type: 'text' },
+            { q: 'Which letter is the silent one?', answer: '\u05D0', opts: ['\u05D0', '\u05D1\u05BC', '\u05D1'], type: 'letter' },
+            { q: 'Bet and Vet are the same letter. What is different?', answer: 'The dot (dagesh)', opts: ['The dot (dagesh)', 'The size', 'The color'], type: 'text' }
+        ];
+
+        function initQuiz() {
+            quizRound = 0;
+            var dots = document.getElementById('quizRounds');
+            dots.textContent = '';
+            for (var i = 0; i < quizTotal; i++) {
+                var dot = document.createElement('div');
+                dot.className = 'round-dot';
+                dot.id = 'qDot' + i;
+                dots.appendChild(dot);
+            }
+            showQuizRound();
+        }
+
+        function showQuizRound() {
+            var content = document.getElementById('quizContent');
+            if (quizRound >= quizTotal) {
+                tabsCompleted.practice = true;
+                document.getElementById('tabPractice').classList.add('completed');
+                content.textContent = '';
+                var card = document.createElement('div');
+                card.className = 'learn-card';
+                var h3 = document.createElement('h3');
+                h3.textContent = 'Final Quiz Complete!';
+                var p = document.createElement('p');
+                p.textContent = 'ANI CHAZAK! You are a Hebrew champion!';
+                card.appendChild(h3);
+                card.appendChild(p);
+                content.appendChild(card);
+                var btn = document.createElement('button');
+                btn.className = 'next-btn';
+                btn.textContent = 'Learn Days of the Week!';
+                btn.onclick = function() { switchTab('quiz'); };
+                content.appendChild(btn);
+                playAudio('hebfin-complete');
+                score += 2;
+                updateProgress();
+                return;
+            }
+            document.getElementById('qDot' + quizRound).classList.add('active');
+            var q = quizQuestions[quizRound];
+            var options = shuffle(q.opts);
+
+            content.textContent = '';
+            var counter = document.createElement('p');
+            counter.style.textAlign = 'center';
+            counter.style.color = '#666';
+            counter.textContent = 'Question ' + (quizRound + 1) + ' of ' + quizTotal;
+            content.appendChild(counter);
+
+            var qText = document.createElement('div');
+            qText.style.textAlign = 'center';
+            qText.style.fontSize = '1.2rem';
+            qText.style.fontWeight = 'bold';
+            qText.style.margin = '15px 0';
+            qText.style.color = '#1e3a8a';
+            qText.textContent = q.q;
+            content.appendChild(qText);
+
+            options.forEach(function(o) {
+                var btn = document.createElement('button');
+                btn.className = 'option-btn';
+                if (q.type === 'letter') btn.style.fontSize = '2.5rem';
+                btn.textContent = o;
+                btn.addEventListener('click', function() { checkQuiz(btn, o, q.answer); });
+                content.appendChild(btn);
+            });
+        }
+
+        function checkQuiz(btn, chosen, correct) {
+            var btns = document.querySelectorAll('#quizContent .option-btn');
+            btns.forEach(function(b) { var cl = b.cloneNode(true); b.parentNode.replaceChild(cl, b); });
+            if (chosen === correct) {
+                btn.classList.add('correct');
+                score += 2;
+                document.getElementById('qDot' + quizRound).classList.remove('active');
+                document.getElementById('qDot' + quizRound).classList.add('completed');
+                document.getElementById('mascotSpeech').textContent = 'Correct! Well done!';
+                playAudio('hebfin-correct');
+            } else {
+                btn.classList.add('wrong');
+                document.querySelectorAll('#quizContent .option-btn').forEach(function(b) {
+                    if (b.textContent === correct) b.classList.add('correct');
+                });
+                document.getElementById('mascotSpeech').textContent = 'The answer is: ' + correct;
+                playAudio('hebfin-wrong');
+            }
+            updateProgress();
+            quizRound++;
+            setTimeout(showQuizRound, 1200);
+        }
+
+        function buildDays() {
+            var container = document.getElementById('daysContent');
+            container.textContent = '';
+
+            var intro = document.createElement('div');
+            intro.className = 'learn-card';
+            var h3 = document.createElement('h3');
+            h3.textContent = 'The Days of the Week';
+            var p = document.createElement('p');
+            p.textContent = 'In Hebrew, the days are numbered. The week starts on Sunday!';
+            intro.appendChild(h3);
+            intro.appendChild(p);
+            container.appendChild(intro);
+
+            daysOfWeek.forEach(function(d) {
+                var card = document.createElement('div');
+                card.className = 'day-card';
+                if (d.isShabbat) card.classList.add('shabbat');
+
+                var num = document.createElement('div');
+                num.className = 'day-num';
+                num.textContent = d.num;
+
+                var info = document.createElement('div');
+                info.className = 'day-info';
+                var heb = document.createElement('div');
+                heb.className = 'day-hebrew';
+                heb.textContent = d.hebrew;
+                var eng = document.createElement('div');
+                eng.className = 'day-english';
+                eng.textContent = d.english;
+                info.appendChild(heb);
+                info.appendChild(eng);
+
+                card.appendChild(num);
+                card.appendChild(info);
+                card.addEventListener('click', function() {
+                    document.getElementById('mascotSpeech').textContent = d.hebrew + ' means ' + d.english + '!';
+                    playAudio('hebfin-intro');
+                });
+                container.appendChild(card);
+            });
+
+            var banner = document.createElement('div');
+            banner.className = 'shabbat-banner';
+            var bigText = document.createElement('div');
+            bigText.className = 'big-text';
+            bigText.textContent = 'Shabbat Shalom!';
+            var subText = document.createElement('div');
+            subText.className = 'sub-text';
+            subText.textContent = 'Have a peaceful Shabbat!';
+            banner.appendChild(bigText);
+            banner.appendChild(subText);
+            banner.addEventListener('click', function() {
+                document.getElementById('mascotSpeech').textContent = 'Shabbat Shalom! A peaceful rest day!';
+                playAudio('hebfin-complete');
+                if (!tabsCompleted.quiz) {
+                    tabsCompleted.quiz = true;
+                    document.getElementById('tabQuiz').classList.add('completed');
+                    score += 4;
+                    updateProgress();
+                }
+            });
+            container.appendChild(banner);
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+            playAudio('hebfin-complete');
+            for (var i = 0; i < 30; i++) {
+                setTimeout(function() {
+                    var c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.textContent = ['\u05D0','\u05D1','*','!'][Math.floor(Math.random()*4)];
+                    c.style.left = Math.random() * 100 + 'vw';
+                    c.style.animationDuration = (2 + Math.random() * 3) + 's';
+                    c.style.color = ['#FFD700','#1E40AF','#fbbf24','#3b82f6'][Math.floor(Math.random()*4)];
+                    document.body.appendChild(c);
+                    setTimeout(function() { c.remove(); }, 5000);
+                }, i * 100);
+            }
+        }
+
+        buildReview();
+        initQuiz();
+        buildDays();
+        playAudio('hebfin-intro');
+    </script>
+</body>
+</html>

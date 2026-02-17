@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uppercase to Lowercase Match - Zeek Squad ELA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.7rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: bounce 1.2s ease-in-out infinite; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #56ab2f;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #2D6A1E;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .pair-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .letter-pair {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-radius: 12px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .letter-pair:hover { transform: scale(1.05); border-color: #56ab2f; }
+        .letter-pair.tapped {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border-color: #56ab2f;
+        }
+        .letter-pair .upper {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #065F46;
+        }
+        .letter-pair .lower {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #10B981;
+        }
+        .letter-pair.tapped .upper,
+        .letter-pair.tapped .lower { color: white; }
+        .letter-pair .dash { color: #999; font-size: 1rem; }
+
+        .match-area { margin: 15px 0; }
+        .match-prompt { text-align: center; margin-bottom: 15px; }
+        .match-big-letter {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border-radius: 20px;
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            line-height: 100px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .match-choices {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .match-choice {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 3px solid #D1FAE5;
+            border-radius: 15px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #065F46;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .match-choice:hover { transform: scale(1.05); border-color: #56ab2f; }
+        .match-choice.correct { background: #D1FAE5; border-color: #10B981; }
+        .match-choice.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .match-counter { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 10px; }
+
+        .quiz-card {
+            background: #ECFDF5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .quiz-text { font-size: 1.1rem; color: #333; margin-bottom: 15px; line-height: 1.5; }
+        .quiz-counter { font-size: 0.9rem; color: #999; margin-bottom: 10px; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .quiz-option {
+            padding: 20px;
+            background: white;
+            border: 3px solid #D1FAE5;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #065F46;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #ECFDF5; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #2D6A1E; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Match: Uppercase to Lowercase</h1>
+            <div class="standard">CCSS.RF.K.1d - Letter Recognition</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F517;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Every BIG letter has a little letter partner! Let's match them!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">Easy Matches First!</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 10px;">
+                    These letters look the SAME in uppercase and lowercase!
+                </p>
+                <div class="pair-grid" id="easyGrid"></div>
+
+                <h2 class="section-title" style="margin-top: 20px;">All 26 Pairs</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 10px;">
+                    Tap each pair to see them together!
+                </p>
+                <div class="pair-grid" id="allGrid"></div>
+                <p id="pairCount" style="text-align: center; color: #2D6A1E; font-weight: bold; margin-top: 10px;">
+                    Tap all 26 pairs!
+                </p>
+            </div>
+
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">Match the Partner!</h2>
+                <div id="practiceContainer"></div>
+            </div>
+
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Matching Quiz!</h2>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x1F517;&#x1F389;</div>
+            <div class="celebration-text">Perfect Match!</div>
+            <p style="color: #666; margin-bottom: 20px;">You matched all the letter pairs!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var quizIndex = 0;
+        var practiceIndex = 0;
+        var tappedPairs = 0;
+
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        function shuffle(arr) {
+            var a = arr.slice();
+            for (var i = a.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+            return a;
+        }
+
+        var allPairs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(function(u) {
+            return { upper: u, lower: u.toLowerCase() };
+        });
+
+        var easyLetters = ['C','K','O','S','V','W','X','Z'];
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'practice') initPractice();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            playAudio('star');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    playAudio('match-complete');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        function createPairElement(upper, lower) {
+            var el = document.createElement('div');
+            el.className = 'letter-pair';
+            var upperDiv = document.createElement('div');
+            upperDiv.className = 'upper';
+            upperDiv.textContent = upper;
+            var dashDiv = document.createElement('div');
+            dashDiv.className = 'dash';
+            dashDiv.textContent = '-';
+            var lowerDiv = document.createElement('div');
+            lowerDiv.className = 'lower';
+            lowerDiv.textContent = lower;
+            el.appendChild(upperDiv);
+            el.appendChild(dashDiv);
+            el.appendChild(lowerDiv);
+            return el;
+        }
+
+        function buildEasyGrid() {
+            var grid = document.getElementById('easyGrid');
+            grid.textContent = '';
+            easyLetters.forEach(function(u) {
+                var el = createPairElement(u, u.toLowerCase());
+                el.onclick = function() {
+                    el.classList.add('tapped');
+                    updateMascot(u + ' and ' + u.toLowerCase() + ' look almost the same! Easy match!');
+                    playAudio('match-intro');
+                    updateProgress(2);
+                };
+                grid.appendChild(el);
+            });
+        }
+
+        function buildAllGrid() {
+            var grid = document.getElementById('allGrid');
+            grid.textContent = '';
+            tappedPairs = 0;
+            allPairs.forEach(function(pair) {
+                var el = createPairElement(pair.upper, pair.lower);
+                el.onclick = function() {
+                    if (!el.classList.contains('tapped')) {
+                        el.classList.add('tapped');
+                        tappedPairs++;
+                        document.getElementById('pairCount').textContent = tappedPairs + ' of 26 pairs found!';
+                        updateProgress(1);
+                    }
+                    updateMascot('Big ' + pair.upper + ' goes with little ' + pair.lower + '!');
+                    playAudio('match-intro');
+                };
+                grid.appendChild(el);
+            });
+        }
+
+        buildEasyGrid();
+        buildAllGrid();
+
+        var practiceLettersArr = shuffle(allPairs).slice(0, 10);
+        var practiceInitialized = false;
+
+        function initPractice() {
+            if (practiceInitialized) return;
+            practiceInitialized = true;
+            practiceIndex = 0;
+            showPracticeRound();
+        }
+
+        function showPracticeRound() {
+            var container = document.getElementById('practiceContainer');
+            if (practiceIndex >= practiceLettersArr.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '30px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#2D6A1E';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'You matched all the letters!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                return;
+            }
+
+            var pair = practiceLettersArr[practiceIndex];
+            container.textContent = '';
+
+            var counter = document.createElement('div');
+            counter.className = 'match-counter';
+            counter.textContent = 'Match ' + (practiceIndex + 1) + ' of ' + practiceLettersArr.length;
+            container.appendChild(counter);
+
+            var prompt = document.createElement('div');
+            prompt.className = 'match-prompt';
+            var promptText = document.createElement('p');
+            promptText.style.color = '#333';
+            promptText.style.fontSize = '1.1rem';
+            promptText.style.marginBottom = '10px';
+            promptText.textContent = 'Find the lowercase partner for:';
+            prompt.appendChild(promptText);
+            var bigLetter = document.createElement('div');
+            bigLetter.className = 'match-big-letter';
+            bigLetter.textContent = pair.upper;
+            prompt.appendChild(bigLetter);
+            container.appendChild(prompt);
+
+            var lowerAlpha = 'abcdefghijklmnopqrstuvwxyz'.split('');
+            var distractors = shuffle(lowerAlpha.filter(function(l) { return l !== pair.lower; })).slice(0, 3);
+            var choices = shuffle([pair.lower].concat(distractors));
+
+            var choicesDiv = document.createElement('div');
+            choicesDiv.className = 'match-choices';
+            choices.forEach(function(ch) {
+                var btn = document.createElement('button');
+                btn.className = 'match-choice';
+                btn.textContent = ch;
+                btn.onclick = function() {
+                    choicesDiv.querySelectorAll('.match-choice').forEach(function(b) { b.style.pointerEvents = 'none'; });
+                    if (ch === pair.lower) {
+                        btn.classList.add('correct');
+                        playAudio('match-correct');
+                        updateMascot('Yes! ' + pair.upper + ' matches with ' + pair.lower + '!');
+                        updateProgress(4);
+                        practiceIndex++;
+                        setTimeout(showPracticeRound, 1200);
+                    } else {
+                        btn.classList.add('wrong');
+                        playAudio('match-wrong');
+                        updateMascot('Not quite. ' + pair.upper + ' matches with ' + pair.lower + '. Try again!');
+                        setTimeout(function() {
+                            btn.classList.remove('wrong');
+                            choicesDiv.querySelectorAll('.match-choice').forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                        }, 600);
+                    }
+                };
+                choicesDiv.appendChild(btn);
+            });
+            container.appendChild(choicesDiv);
+        }
+
+        var quizLetters = [];
+        function buildQuiz() {
+            quizLetters = shuffle(allPairs).slice(0, 8);
+        }
+
+        function initQuiz() {
+            buildQuiz();
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var container = document.getElementById('quizContainer');
+            if (quizIndex >= quizLetters.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#2D6A1E';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'You are a matching champion!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                playAudio('match-complete');
+                return;
+            }
+            var pair = quizLetters[quizIndex];
+            container.textContent = '';
+
+            var card = document.createElement('div');
+            card.className = 'quiz-card';
+            var counter = document.createElement('div');
+            counter.className = 'quiz-counter';
+            counter.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizLetters.length;
+            card.appendChild(counter);
+
+            var text = document.createElement('div');
+            text.className = 'quiz-text';
+            text.textContent = 'What is the lowercase of ' + pair.upper + '?';
+            card.appendChild(text);
+
+            var lowerAlpha = 'abcdefghijklmnopqrstuvwxyz'.split('');
+            var distractors = shuffle(lowerAlpha.filter(function(l) { return l !== pair.lower; })).slice(0, 3);
+            var choices = shuffle([pair.lower].concat(distractors));
+
+            var options = document.createElement('div');
+            options.className = 'quiz-options';
+            choices.forEach(function(ch) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = ch;
+                btn.onclick = function() {
+                    options.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+                    if (ch === pair.lower) {
+                        btn.classList.add('correct');
+                        playAudio('match-correct');
+                        updateMascot('Correct! ' + pair.upper + ' goes with ' + pair.lower + '!');
+                        updateProgress(5);
+                        quizIndex++;
+                        setTimeout(showQuizQuestion, 1500);
+                    } else {
+                        btn.classList.add('wrong');
+                        playAudio('match-wrong');
+                        updateMascot('Try again! Think about which little letter goes with big ' + pair.upper + '.');
+                        setTimeout(function() {
+                            btn.classList.remove('wrong');
+                            options.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                        }, 600);
+                    }
+                };
+                options.appendChild(btn);
+            });
+            card.appendChild(options);
+            container.appendChild(card);
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            tappedPairs = 0;
+            practiceInitialized = false;
+            buildEasyGrid();
+            buildAllGrid();
+            initQuiz();
+        }
+
+        updateProgress(5);
+        playAudio('match-intro');
+    </script>
+</body>
+</html>

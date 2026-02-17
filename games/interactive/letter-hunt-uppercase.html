@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter Hunt - Uppercase - Zeek Squad ELA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #FF6B6B;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #FF6B6B;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Alphabet grid */
+        .alpha-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .alpha-letter {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #9B2C2C;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .alpha-letter:hover { transform: scale(1.1); border-color: #FF6B6B; }
+        .alpha-letter.tapped {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            border-color: #FF6B6B;
+        }
+
+        /* Find the letter game */
+        .target-letter {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            margin: 15px auto;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .choice-btn {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 3px solid #FED7D7;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #9B2C2C;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .choice-btn:hover { transform: scale(1.05); border-color: #FF6B6B; }
+        .choice-btn.correct { background: #D1FAE5; border-color: #10B981; color: #065F46; }
+        .choice-btn.wrong { background: #FEE2E2; border-color: #EF4444; color: #991B1B; }
+
+        .find-counter {
+            text-align: center;
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Quiz */
+        .quiz-card {
+            background: #FFF5F5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .quiz-text { font-size: 1.1rem; color: #333; margin-bottom: 15px; line-height: 1.5; }
+        .quiz-counter { font-size: 0.9rem; color: #999; margin-bottom: 10px; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .quiz-option {
+            padding: 20px;
+            background: white;
+            border: 3px solid #FED7D7;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #9B2C2C;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #FFF5F5; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #FF6B6B; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Letter Hunt: Uppercase!</h1>
+            <div class="standard">CCSS.RF.K.1d - Letter Recognition</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F50D;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Let's find letters in the alphabet! Tap a letter to hear its name!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Alphabet</button>
+            <button class="tab-btn" data-tab="practice">Find It!</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB - Alphabet -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">Tap a Letter to Hear It!</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    These are the 26 UPPERCASE letters. Tap each one!
+                </p>
+                <div class="alpha-grid" id="alphaGrid"></div>
+                <p id="letterCount" style="text-align: center; color: #9B2C2C; font-weight: bold; margin-top: 10px;">
+                    Tap all 26 letters!
+                </p>
+            </div>
+
+            <!-- PRACTICE TAB - Find the Letter -->
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">Find the Letter!</h2>
+                <div id="findContainer"></div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Letter Quiz!</h2>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x1F50D;&#x1F389;</div>
+            <div class="celebration-text">Letter Expert!</div>
+            <p style="color: #666; margin-bottom: 20px;">You found all the uppercase letters!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var quizIndex = 0;
+        var findIndex = 0;
+        var tappedLetters = 0;
+
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'practice') initFind();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            playAudio('star');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    playAudio('ela-up-complete');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // Build alphabet grid
+        function buildAlphaGrid() {
+            var grid = document.getElementById('alphaGrid');
+            grid.textContent = '';
+            alphabet.forEach(function(letter) {
+                var el = document.createElement('div');
+                el.className = 'alpha-letter';
+                el.textContent = letter;
+                el.onclick = function() {
+                    if (!el.classList.contains('tapped')) {
+                        el.classList.add('tapped');
+                        tappedLetters++;
+                        updateProgress(1);
+                        document.getElementById('letterCount').textContent = tappedLetters + ' of 26 letters tapped!';
+                    }
+                    updateMascot('That is the letter ' + letter + '!');
+                    playAudio('ela-up-intro');
+                };
+                grid.appendChild(el);
+            });
+        }
+        buildAlphaGrid();
+
+        // Find the Letter game
+        var findLetters = [];
+        var findInitialized = false;
+
+        function shuffle(arr) {
+            var a = arr.slice();
+            for (var i = a.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+            return a;
+        }
+
+        function initFind() {
+            if (findInitialized) return;
+            findInitialized = true;
+            findLetters = shuffle(alphabet).slice(0, 8);
+            findIndex = 0;
+            showFindRound();
+        }
+
+        function showFindRound() {
+            var container = document.getElementById('findContainer');
+            if (findIndex >= findLetters.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '30px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#9B2C2C';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'You found all the letters! Great eyes!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                return;
+            }
+
+            var target = findLetters[findIndex];
+            container.textContent = '';
+
+            var counter = document.createElement('div');
+            counter.className = 'find-counter';
+            counter.textContent = 'Find letter ' + (findIndex + 1) + ' of ' + findLetters.length;
+            container.appendChild(counter);
+
+            var prompt = document.createElement('p');
+            prompt.style.textAlign = 'center';
+            prompt.style.color = '#333';
+            prompt.style.fontSize = '1.2rem';
+            prompt.style.marginBottom = '5px';
+            prompt.textContent = 'Find the letter:';
+            container.appendChild(prompt);
+
+            var targetEl = document.createElement('div');
+            targetEl.className = 'target-letter';
+            targetEl.textContent = target;
+            container.appendChild(targetEl);
+
+            // Create choices: target + 3 random
+            var distractors = shuffle(alphabet.filter(function(l) { return l !== target; })).slice(0, 3);
+            var choices = shuffle([target].concat(distractors));
+
+            var choicesGrid = document.createElement('div');
+            choicesGrid.className = 'choices-grid';
+
+            choices.forEach(function(ch) {
+                var btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = ch;
+                btn.onclick = function() {
+                    if (ch === target) {
+                        btn.classList.add('correct');
+                        playAudio('ela-up-correct');
+                        updateMascot('Yes! That is ' + target + '! Great job!');
+                        updateProgress(4);
+                        findIndex++;
+                        setTimeout(showFindRound, 1200);
+                    } else {
+                        btn.classList.add('wrong');
+                        playAudio('ela-up-wrong');
+                        updateMascot('That is ' + ch + '. Look for ' + target + '!');
+                        setTimeout(function() { btn.classList.remove('wrong'); }, 500);
+                    }
+                };
+                choicesGrid.appendChild(btn);
+            });
+
+            container.appendChild(choicesGrid);
+            updateMascot('Can you find the letter ' + target + '?');
+        }
+
+        // Quiz
+        var quizQuestions = [];
+        function buildQuiz() {
+            var letters = shuffle(alphabet).slice(0, 5);
+            quizQuestions = letters.map(function(target) {
+                var distractors = shuffle(alphabet.filter(function(l) { return l !== target; })).slice(0, 3);
+                var opts = shuffle([target].concat(distractors));
+                return {
+                    text: 'Which letter is ' + target + '?',
+                    options: opts,
+                    correct: opts.indexOf(target)
+                };
+            });
+        }
+
+        function initQuiz() {
+            buildQuiz();
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var container = document.getElementById('quizContainer');
+            if (quizIndex >= quizQuestions.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#9B2C2C';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'You know your uppercase letters!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                playAudio('ela-up-complete');
+                return;
+            }
+            var q = quizQuestions[quizIndex];
+            container.textContent = '';
+            var card = document.createElement('div');
+            card.className = 'quiz-card';
+            var counter = document.createElement('div');
+            counter.className = 'quiz-counter';
+            counter.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+            card.appendChild(counter);
+            var text = document.createElement('div');
+            text.className = 'quiz-text';
+            text.textContent = q.text;
+            card.appendChild(text);
+            var options = document.createElement('div');
+            options.className = 'quiz-options';
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.correct); };
+                options.appendChild(btn);
+            });
+            card.appendChild(options);
+            container.appendChild(card);
+        }
+
+        function checkQuiz(btn, correct) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+            if (correct) {
+                btn.classList.add('correct');
+                playAudio('ela-up-correct');
+                updateMascot('Correct! Great job!');
+                updateProgress(6);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 1500);
+            } else {
+                btn.classList.add('wrong');
+                playAudio('ela-up-wrong');
+                updateMascot('Try again! Look carefully at the letters.');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            tappedLetters = 0;
+            findInitialized = false;
+            buildAlphaGrid();
+            initQuiz();
+        }
+
+        updateProgress(5);
+        playAudio('ela-up-intro');
+    </script>
+</body>
+</html>

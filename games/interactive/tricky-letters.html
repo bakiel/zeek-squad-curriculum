@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tricky Letters b/d, p/q - Zeek Squad ELA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: bounce 1.2s ease-in-out infinite; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #4facfe;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #0284C7;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Letter pair display */
+        .pair-display {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .pair-card {
+            width: 120px;
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .pair-card:hover { transform: scale(1.05); border-color: #3B82F6; }
+        .pair-card .big-letter {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #1E40AF;
+            line-height: 1;
+        }
+        .pair-card .hint {
+            font-size: 0.85rem;
+            color: #3B82F6;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        .mnemonic-box {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .mnemonic-box .emoji { font-size: 2.5rem; margin-bottom: 8px; }
+        .mnemonic-box .trick {
+            font-size: 1.05rem;
+            color: #1E3A8A;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .vs-label {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #EF4444;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Practice */
+        .practice-letter {
+            width: 140px;
+            height: 140px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .answer-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .answer-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            border: 3px solid #BFDBFE;
+            background: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1E40AF;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .answer-btn:hover { transform: scale(1.08); border-color: #3B82F6; }
+        .answer-btn.correct { background: #D1FAE5; border-color: #10B981; }
+        .answer-btn.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .practice-counter { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 10px; }
+
+        /* Quiz */
+        .quiz-card {
+            background: #EFF6FF;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .quiz-text { font-size: 1.1rem; color: #333; margin-bottom: 15px; line-height: 1.5; }
+        .quiz-counter { font-size: 0.9rem; color: #999; margin-bottom: 10px; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .quiz-option {
+            padding: 20px;
+            background: white;
+            border: 3px solid #BFDBFE;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: #1E40AF;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #EFF6FF; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #0284C7; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Tricky Letters: b/d, p/q</h1>
+            <div class="standard">CCSS.RF.K.1d - Letter Recognition</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F9D0;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                Some letters look alike! Let's learn to tell them apart!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="practice">Practice</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">b and d Look Alike!</h2>
+
+                <div class="pair-display">
+                    <div class="pair-card" onclick="playAudio('tricky-intro'); updateMascot('This is the letter b! The bump is on the RIGHT side.'); updateProgress(3);">
+                        <div class="big-letter">b</div>
+                        <div class="hint">bat then ball</div>
+                    </div>
+                    <div class="vs-label">VS</div>
+                    <div class="pair-card" onclick="playAudio('tricky-intro'); updateMascot('This is the letter d! The bump is on the LEFT side.'); updateProgress(3);">
+                        <div class="big-letter">d</div>
+                        <div class="hint">drum then stick</div>
+                    </div>
+                </div>
+
+                <div class="mnemonic-box">
+                    <div class="emoji">&#x1F44D;</div>
+                    <div class="trick">Make two thumbs up! Your LEFT hand makes a "b" shape, your RIGHT hand makes a "d" shape!</div>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 25px;">p and q Look Alike!</h2>
+
+                <div class="pair-display">
+                    <div class="pair-card" onclick="playAudio('tricky-intro'); updateMascot('This is the letter p! The bump is on the RIGHT, tail goes DOWN.'); updateProgress(3);">
+                        <div class="big-letter">p</div>
+                        <div class="hint">tail goes down right</div>
+                    </div>
+                    <div class="vs-label">VS</div>
+                    <div class="pair-card" onclick="playAudio('tricky-intro'); updateMascot('This is the letter q! The bump is on the LEFT, tail goes DOWN.'); updateProgress(3);">
+                        <div class="big-letter">q</div>
+                        <div class="hint">tail goes down left</div>
+                    </div>
+                </div>
+
+                <div class="mnemonic-box">
+                    <div class="emoji">&#x1F451;</div>
+                    <div class="trick">The letter q almost always has a "u" after it! Think: qu like in "queen"!</div>
+                </div>
+
+                <p style="text-align: center; color: #1E3A8A; font-weight: bold; margin-top: 15px;">
+                    Tap each letter to learn the difference!
+                </p>
+            </div>
+
+            <!-- PRACTICE TAB -->
+            <div class="tab-content" id="practice">
+                <h2 class="section-title">Which Letter Is It?</h2>
+                <div id="practiceContainer"></div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Tricky Letter Quiz!</h2>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x1F9D0;&#x1F389;</div>
+            <div class="celebration-text">Letter Detective!</div>
+            <p style="color: #666; margin-bottom: 20px;">You can tell tricky letters apart!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var quizIndex = 0;
+        var practiceIndex = 0;
+
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        function shuffle(arr) {
+            var a = arr.slice();
+            for (var i = a.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+            return a;
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'practice') initPractice();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            playAudio('star');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    playAudio('tricky-complete');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        // Practice rounds - b/d and p/q identification
+        var practiceLetters = shuffle(['b','d','b','d','p','q','p','q','b','d']);
+        var practiceInitialized = false;
+
+        function initPractice() {
+            if (practiceInitialized) return;
+            practiceInitialized = true;
+            practiceIndex = 0;
+            showPracticeRound();
+        }
+
+        function showPracticeRound() {
+            var container = document.getElementById('practiceContainer');
+            if (practiceIndex >= practiceLetters.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '30px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#1E3A8A';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'Amazing! You know your tricky letters!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                return;
+            }
+
+            var target = practiceLetters[practiceIndex];
+            container.textContent = '';
+
+            var counter = document.createElement('div');
+            counter.className = 'practice-counter';
+            counter.textContent = 'Letter ' + (practiceIndex + 1) + ' of ' + practiceLetters.length;
+            container.appendChild(counter);
+
+            var prompt = document.createElement('p');
+            prompt.style.textAlign = 'center';
+            prompt.style.color = '#333';
+            prompt.style.fontSize = '1.1rem';
+            prompt.textContent = 'What letter is this?';
+            container.appendChild(prompt);
+
+            var letterEl = document.createElement('div');
+            letterEl.className = 'practice-letter';
+            letterEl.textContent = target;
+            container.appendChild(letterEl);
+
+            // Determine pair
+            var pair;
+            if (target === 'b' || target === 'd') {
+                pair = ['b', 'd'];
+            } else {
+                pair = ['p', 'q'];
+            }
+
+            var btnsDiv = document.createElement('div');
+            btnsDiv.className = 'answer-btns';
+
+            pair.forEach(function(ch) {
+                var btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = ch;
+                btn.onclick = function() {
+                    btnsDiv.querySelectorAll('.answer-btn').forEach(function(b) { b.style.pointerEvents = 'none'; });
+                    if (ch === target) {
+                        btn.classList.add('correct');
+                        playAudio('tricky-correct');
+                        updateMascot('Yes! That is the letter ' + target + '!');
+                        updateProgress(5);
+                        practiceIndex++;
+                        setTimeout(showPracticeRound, 1200);
+                    } else {
+                        btn.classList.add('wrong');
+                        playAudio('tricky-wrong');
+                        updateMascot('Look again! Remember the tricks we learned.');
+                        setTimeout(function() {
+                            btn.classList.remove('wrong');
+                            btnsDiv.querySelectorAll('.answer-btn').forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                        }, 600);
+                    }
+                };
+                btnsDiv.appendChild(btn);
+            });
+
+            container.appendChild(btnsDiv);
+        }
+
+        // Quiz - mix of b/d and p/q
+        var quizQuestions = [
+            { letter: 'b', pair: ['b','d'], hint: 'The bump is on the right side.' },
+            { letter: 'd', pair: ['b','d'], hint: 'The bump is on the left side.' },
+            { letter: 'p', pair: ['p','q'], hint: 'The circle is on the right, tail goes down.' },
+            { letter: 'q', pair: ['p','q'], hint: 'The circle is on the left, tail goes down.' },
+            { letter: 'b', pair: ['b','d','p','q'], hint: 'Stick up, bump right.' },
+            { letter: 'd', pair: ['b','d','p','q'], hint: 'Stick up, bump left.' },
+            { letter: 'p', pair: ['b','d','p','q'], hint: 'Stick down, bump right.' },
+            { letter: 'q', pair: ['b','d','p','q'], hint: 'Stick down, bump left.' }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            quizQuestions = shuffle(quizQuestions);
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var container = document.getElementById('quizContainer');
+            if (quizIndex >= quizQuestions.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83C\uDF1F';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#1E3A8A';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'You are a tricky letter master!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                playAudio('tricky-complete');
+                return;
+            }
+            var q = quizQuestions[quizIndex];
+            container.textContent = '';
+
+            var card = document.createElement('div');
+            card.className = 'quiz-card';
+
+            var counter = document.createElement('div');
+            counter.className = 'quiz-counter';
+            counter.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+            card.appendChild(counter);
+
+            var text = document.createElement('div');
+            text.className = 'quiz-text';
+            text.textContent = 'Which letter is this?';
+            card.appendChild(text);
+
+            var bigLetter = document.createElement('div');
+            bigLetter.style.fontSize = '5rem';
+            bigLetter.style.fontWeight = 'bold';
+            bigLetter.style.color = '#1E40AF';
+            bigLetter.style.margin = '10px 0 20px';
+            bigLetter.textContent = q.letter;
+            card.appendChild(bigLetter);
+
+            var options = document.createElement('div');
+            options.className = 'quiz-options';
+            q.pair.forEach(function(opt) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() {
+                    options.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+                    if (opt === q.letter) {
+                        btn.classList.add('correct');
+                        playAudio('tricky-correct');
+                        updateMascot('Correct! ' + q.hint);
+                        updateProgress(5);
+                        quizIndex++;
+                        setTimeout(showQuizQuestion, 1500);
+                    } else {
+                        btn.classList.add('wrong');
+                        playAudio('tricky-wrong');
+                        updateMascot('Not quite. ' + q.hint);
+                        setTimeout(function() {
+                            btn.classList.remove('wrong');
+                            options.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                        }, 600);
+                    }
+                };
+                options.appendChild(btn);
+            });
+            card.appendChild(options);
+            container.appendChild(card);
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            practiceInitialized = false;
+            initQuiz();
+        }
+
+        updateProgress(5);
+        playAudio('tricky-intro');
+    </script>
+</body>
+</html>

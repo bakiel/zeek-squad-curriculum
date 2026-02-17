@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Subtraction Sentences - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.75rem; opacity: 0.85; margin-top: 4px; }
+        .back-btn { display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; transition: all 0.3s; cursor: pointer; }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .speech-bubble { background: white; padding: 15px 20px; border-radius: 20px; flex: 1; position: relative; font-size: 1.05rem; color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .speech-bubble:before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); border: 10px solid transparent; border-right-color: white; }
+        .progress-container { background: rgba(255,255,255,0.3); border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 60% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0deg); } }
+        .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { padding: 10px 16px; border: none; background: rgba(255,255,255,0.2); color: white; border-radius: 10px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+        .tab-btn:hover { background: rgba(255,255,255,0.3); }
+        .tab-btn.active { background: white; color: #FF6B6B; font-weight: bold; }
+        .tab-btn.completed::after { content: ' \2713'; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .game-area { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .instruction { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; padding: 15px 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
+        .question-counter { text-align: center; color: #666; margin-bottom: 15px; }
+        .round-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .round-dot { width: 12px; height: 12px; border-radius: 50%; background: #e0e0e0; transition: all 0.3s; }
+        .round-dot.active { background: #FF6B6B; transform: scale(1.2); }
+        .round-dot.completed { background: #FFD700; }
+
+        .picture-area { background: #fff7ed; border-radius: 15px; padding: 20px; text-align: center; margin: 15px 0; border: 2px solid #fed7aa; }
+        .picture-items { display: flex; justify-content: center; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+        .pic-item { font-size: 2rem; display: inline-block; }
+        .pic-item.crossed { opacity: 0.25; position: relative; }
+        .pic-item.crossed::after { content: 'X'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #ef4444; font-size: 1.5rem; font-weight: bold; }
+
+        .sentence-builder { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px 0; font-size: 2rem; font-weight: bold; flex-wrap: wrap; }
+        .blank-slot { width: 55px; height: 55px; border: 3px dashed #FF6B6B; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: #fff7ed; color: #FF6B6B; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .blank-slot.active { border-color: #22c55e; background: #f0fdf4; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { transform: scale(1.05); } }
+        .blank-slot.filled { border-style: solid; background: #dcfce7; border-color: #22c55e; color: #22c55e; cursor: default; }
+        .blank-slot.wrong-fill { border-color: #ef4444; background: #fee2e2; color: #ef4444; }
+        .minus-sign { color: #ef4444; font-size: 2rem; }
+        .equals-sign { color: #44A08D; font-size: 2rem; }
+
+        .number-pad { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+        .num-btn { width: 55px; height: 55px; font-size: 1.6rem; font-weight: bold; border: 3px solid #e0e0e0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.3s; font-family: inherit; color: #333; }
+        .num-btn:hover { border-color: #FF6B6B; background: #fff7ed; transform: scale(1.05); }
+        .num-btn.used { opacity: 0.3; cursor: default; }
+
+        .learn-card { background: #fff7ed; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center; border: 2px solid #fed7aa; }
+        .learn-card h3 { color: #c2410c; margin-bottom: 10px; }
+        .learn-card p { color: #333; line-height: 1.6; }
+        .learn-step { background: #fff; border-radius: 12px; padding: 15px; margin: 10px 0; border-left: 4px solid #FF6B6B; }
+        .sentence-example { font-size: 1.6rem; font-weight: bold; color: #c2410c; margin: 10px 0; }
+
+        .next-btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; font-family: inherit; margin-top: 15px; transition: all 0.3s; }
+        .next-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .celebration { display: none; text-align: center; padding: 30px; }
+        .celebration.show { display: block; animation: celebrationPop 0.5s ease; }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { font-size: 2rem; color: #FF6B6B; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; animation: bounce 1s ease infinite; }
+        .final-score { font-size: 1.5rem; color: #666; margin: 15px 0; }
+        .final-stars { font-size: 3rem; margin: 15px 0; }
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: confettiFall 3s ease-out forwards; pointer-events: none; }
+        @keyframes confettiFall { to { top: 100vh; transform: rotate(720deg); } }
+        @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">&#8592; Back to Games</a>
+        <div class="header">
+            <h1>Write Subtraction Sentences</h1>
+            <div class="standard">CCSS.K.OA.1 - Writing Number Sentences</div>
+        </div>
+        <div class="mascot">
+            <div class="mascot-emoji">&#9999;&#65039;</div>
+            <div class="speech-bubble" id="mascotMessage">Let us write subtraction sentences from pictures!</div>
+        </div>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="stars">
+            <span class="star" id="star1">&#11088;</span>
+            <span class="star" id="star2">&#11088;</span>
+            <span class="star" id="star3">&#11088;</span>
+            <span class="star" id="star4">&#11088;</span>
+            <span class="star" id="star5">&#11088;</span>
+        </div>
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">&#128218; Learn</button>
+            <button class="tab-btn" data-tab="practice">&#9999;&#65039; Practice</button>
+            <button class="tab-btn" data-tab="quiz">&#127942; Quiz</button>
+        </div>
+
+        <div class="tab-content active" id="learn-tab">
+            <div class="game-area">
+                <div class="instruction">Write Subtraction Sentences!</div>
+                <div class="learn-card">
+                    <h3>A subtraction sentence uses numbers and symbols!</h3>
+                    <p>We look at a picture and write: START - TAKE AWAY = LEFT</p>
+                </div>
+                <div class="learn-step">
+                    <p><strong>Picture:</strong> 5 fish, 2 swim away</p>
+                    <div class="picture-items" id="learnPic1"></div>
+                    <p class="sentence-example">5 - 2 = 3</p>
+                    <p>5 is how many we start with. 2 is how many go away. 3 is how many are left!</p>
+                </div>
+                <div class="learn-step">
+                    <p><strong>Picture:</strong> 4 birds, 3 fly away</p>
+                    <div class="picture-items" id="learnPic2"></div>
+                    <p class="sentence-example">4 - 3 = 1</p>
+                </div>
+                <button class="next-btn" onclick="completeLearn()">I get it! Let me try!</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="practice-tab">
+            <div class="game-area">
+                <div class="instruction">Look at the picture, fill in the sentence!</div>
+                <div class="round-indicator" id="practiceRounds"></div>
+                <div class="question-counter" id="practiceCounter">Problem 1 of 6</div>
+                <div id="practiceContent"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="quiz-tab">
+            <div class="game-area">
+                <div class="instruction">Write the subtraction sentence!</div>
+                <div class="round-indicator" id="quizRounds"></div>
+                <div class="question-counter" id="quizCounter">Problem 1 of 8</div>
+                <div id="quizContent"></div>
+            </div>
+        </div>
+
+        <div class="celebration" id="celebration">
+            <div class="trophy">&#127942;</div>
+            <h2>Sentence Writer Star!</h2>
+            <p>You can write subtraction sentences!</p>
+            <div class="final-stars" id="finalStars"></div>
+            <div class="final-score" id="finalScore"></div>
+            <button class="next-btn" onclick="location.reload()">Play Again!</button>
+            <a href="index.html" class="back-btn" style="display:inline-block;margin-top:15px;">Back to Games</a>
+        </div>
+    </div>
+
+    <script>
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        var totalScore=0,maxScore=20,starsEarned=0;
+        var tabsCompleted={learn:false,practice:false,quiz:false};
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn){
+            btn.addEventListener('click',function(){
+                var tabId=this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+                document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+                this.classList.add('active');
+                document.getElementById(tabId+'-tab').classList.add('active');
+            });
+        });
+
+        function updateProgress(){
+            var pct=(totalScore/maxScore)*100;
+            document.getElementById('progressBar').style.width=Math.min(pct,100)+'%';
+            var t=[20,40,60,80,100];
+            for(var i=0;i<5;i++){if(pct>=t[i]&&starsEarned<i+1){starsEarned=i+1;document.getElementById('star'+(i+1)).classList.add('earned');playAudio('star');}}
+        }
+        function updateMascot(m){document.getElementById('mascotMessage').textContent=m;}
+        function markTabComplete(t){
+            tabsCompleted[t]=true;document.querySelector('[data-tab="'+t+'"]').classList.add('completed');
+            if(tabsCompleted.learn&&tabsCompleted.practice&&tabsCompleted.quiz)setTimeout(showCelebration,500);
+        }
+        function createRoundDots(id,total,cur){
+            var c=document.getElementById(id);while(c.firstChild)c.removeChild(c.firstChild);
+            for(var i=0;i<total;i++){var d=document.createElement('div');d.className='round-dot'+(i<cur?' completed':'')+(i===cur?' active':'');c.appendChild(d);}
+        }
+
+        function buildPicItems(container,emoji,total,crossed){
+            for(var i=0;i<total;i++){
+                var s=document.createElement('span');s.className='pic-item'+(i>=total-crossed?' crossed':'');
+                s.textContent=emoji;container.appendChild(s);
+            }
+        }
+
+        // Learn
+        buildPicItems(document.getElementById('learnPic1'),'\uD83D\uDC1F',5,2);
+        buildPicItems(document.getElementById('learnPic2'),'\uD83D\uDC26',4,3);
+
+        function completeLearn(){
+            totalScore+=2;updateProgress();markTabComplete('learn');playAudio('subsent-correct');
+            updateMascot('Now fill in the subtraction sentences!');
+            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+            document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+            document.querySelector('[data-tab="practice"]').classList.add('active');
+            document.getElementById('practice-tab').classList.add('active');
+        }
+
+        // Practice: fill in blanks one at a time
+        var practiceData=[
+            {emoji:'\uD83C\uDF4E',total:5,remove:2,name:'apples'},
+            {emoji:'\u2B50',total:4,remove:1,name:'stars'},
+            {emoji:'\uD83C\uDF6A',total:3,remove:2,name:'cookies'},
+            {emoji:'\uD83C\uDF88',total:5,remove:3,name:'balloons'},
+            {emoji:'\uD83D\uDC36',total:4,remove:4,name:'puppies'},
+            {emoji:'\u2764\uFE0F',total:5,remove:1,name:'hearts'}
+        ];
+        var practiceIdx=0;
+
+        function loadPractice(){
+            var cont=document.getElementById('practiceContent');
+            while(cont.firstChild)cont.removeChild(cont.firstChild);
+            if(practiceIdx>=practiceData.length){
+                markTabComplete('practice');playAudio('subsent-complete');
+                updateMascot('Practice done! Now try the Quiz!');
+                var card=document.createElement('div');card.className='learn-card';
+                var h=document.createElement('h3');h.textContent='Practice Complete!';
+                card.appendChild(h);cont.appendChild(card);return;
+            }
+            var p=practiceData[practiceIdx];
+            var answer=p.total-p.remove;
+            var slots=[p.total,p.remove,answer];
+            var currentSlot=0;
+
+            createRoundDots('practiceRounds',practiceData.length,practiceIdx);
+            document.getElementById('practiceCounter').textContent='Problem '+(practiceIdx+1)+' of '+practiceData.length;
+
+            var pic=document.createElement('div');pic.className='picture-area';
+            var desc=document.createElement('p');desc.style.fontWeight='bold';desc.style.marginBottom='10px';
+            desc.textContent=p.total+' '+p.name+', '+p.remove+' gone!';
+            pic.appendChild(desc);
+            var items=document.createElement('div');items.className='picture-items';
+            buildPicItems(items,p.emoji,p.total,p.remove);
+            pic.appendChild(items);
+            cont.appendChild(pic);
+
+            var builder=document.createElement('div');builder.className='sentence-builder';
+            var slot1=document.createElement('div');slot1.className='blank-slot active';slot1.id='slot0';slot1.textContent='?';
+            var minus=document.createElement('span');minus.className='minus-sign';minus.textContent='-';
+            var slot2=document.createElement('div');slot2.className='blank-slot';slot2.id='slot1';slot2.textContent='?';
+            var equals=document.createElement('span');equals.className='equals-sign';equals.textContent='=';
+            var slot3=document.createElement('div');slot3.className='blank-slot';slot3.id='slot2';slot3.textContent='?';
+            builder.appendChild(slot1);builder.appendChild(minus);builder.appendChild(slot2);builder.appendChild(equals);builder.appendChild(slot3);
+            cont.appendChild(builder);
+
+            var pad=document.createElement('div');pad.className='number-pad';
+            for(var n=0;n<=5;n++){
+                var btn=document.createElement('button');btn.className='num-btn';btn.textContent=n;
+                (function(val){
+                    btn.addEventListener('click',function(){
+                        if(currentSlot>=3)return;
+                        var slotEl=document.getElementById('slot'+currentSlot);
+                        if(val===slots[currentSlot]){
+                            slotEl.textContent=val;slotEl.classList.remove('active');slotEl.classList.add('filled');
+                            currentSlot++;
+                            if(currentSlot<3){
+                                document.getElementById('slot'+currentSlot).classList.add('active');
+                            }
+                            if(currentSlot===3){
+                                playAudio('subsent-correct');totalScore+=2;updateProgress();
+                                updateMascot(p.total+' - '+p.remove+' = '+answer+'! You wrote it!');
+                                setTimeout(function(){practiceIdx++;loadPractice();},1500);
+                            }
+                        } else {
+                            slotEl.classList.add('wrong-fill');
+                            playAudio('subsent-wrong');
+                            updateMascot('Try again! Count the picture carefully.');
+                            setTimeout(function(){slotEl.classList.remove('wrong-fill');},500);
+                        }
+                    });
+                })(n);
+                pad.appendChild(btn);
+            }
+            cont.appendChild(pad);
+        }
+
+        // Quiz: same format but all 3 blanks
+        var quizData=[
+            {emoji:'\uD83C\uDF4E',total:5,remove:2},{emoji:'\uD83D\uDC36',total:4,remove:3},
+            {emoji:'\uD83E\uDDC1',total:3,remove:1},{emoji:'\u2B50',total:5,remove:4},
+            {emoji:'\uD83C\uDF88',total:5,remove:5},{emoji:'\uD83C\uDF6A',total:2,remove:1},
+            {emoji:'\u2764\uFE0F',total:4,remove:2},{emoji:'\uD83D\uDC1F',total:3,remove:3}
+        ];
+        var quizIdx=0;
+
+        function loadQuiz(){
+            var cont=document.getElementById('quizContent');
+            while(cont.firstChild)cont.removeChild(cont.firstChild);
+            if(quizIdx>=quizData.length){
+                markTabComplete('quiz');playAudio('subsent-complete');
+                updateMascot('Quiz done! You are a Sentence Writer Star!');
+                var card=document.createElement('div');card.className='learn-card';
+                var h=document.createElement('h3');h.textContent='Quiz Complete!';
+                card.appendChild(h);cont.appendChild(card);return;
+            }
+            var q=quizData[quizIdx];
+            var answer=q.total-q.remove;
+            var slots=[q.total,q.remove,answer];
+            var currentSlot=0;
+            createRoundDots('quizRounds',quizData.length,quizIdx);
+            document.getElementById('quizCounter').textContent='Problem '+(quizIdx+1)+' of '+quizData.length;
+
+            var pic=document.createElement('div');pic.className='picture-area';
+            var items=document.createElement('div');items.className='picture-items';
+            buildPicItems(items,q.emoji,q.total,q.remove);
+            pic.appendChild(items);
+            cont.appendChild(pic);
+
+            var builder=document.createElement('div');builder.className='sentence-builder';
+            var slot1=document.createElement('div');slot1.className='blank-slot active';slot1.id='qslot0';slot1.textContent='?';
+            var minus=document.createElement('span');minus.className='minus-sign';minus.textContent='-';
+            var slot2=document.createElement('div');slot2.className='blank-slot';slot2.id='qslot1';slot2.textContent='?';
+            var equals=document.createElement('span');equals.className='equals-sign';equals.textContent='=';
+            var slot3=document.createElement('div');slot3.className='blank-slot';slot3.id='qslot2';slot3.textContent='?';
+            builder.appendChild(slot1);builder.appendChild(minus);builder.appendChild(slot2);builder.appendChild(equals);builder.appendChild(slot3);
+            cont.appendChild(builder);
+
+            var pad=document.createElement('div');pad.className='number-pad';
+            for(var n=0;n<=5;n++){
+                var btn=document.createElement('button');btn.className='num-btn';btn.textContent=n;
+                (function(val){
+                    btn.addEventListener('click',function(){
+                        if(currentSlot>=3)return;
+                        var slotEl=document.getElementById('qslot'+currentSlot);
+                        if(val===slots[currentSlot]){
+                            slotEl.textContent=val;slotEl.classList.remove('active');slotEl.classList.add('filled');
+                            currentSlot++;
+                            if(currentSlot<3) document.getElementById('qslot'+currentSlot).classList.add('active');
+                            if(currentSlot===3){
+                                playAudio('subsent-correct');totalScore+=2;updateProgress();
+                                updateMascot(q.total+' - '+q.remove+' = '+answer+'! Perfect!');
+                                setTimeout(function(){quizIdx++;loadQuiz();},1500);
+                            }
+                        } else {
+                            slotEl.classList.add('wrong-fill');playAudio('subsent-wrong');
+                            updateMascot('Look at the picture again. How many total? How many crossed?');
+                            setTimeout(function(){slotEl.classList.remove('wrong-fill');},500);
+                        }
+                    });
+                })(n);
+                pad.appendChild(btn);
+            }
+            cont.appendChild(pad);
+        }
+
+        function showCelebration(){
+            playAudio('subsent-complete');
+            document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+            document.getElementById('celebration').classList.add('show');
+            var st='';for(var i=0;i<starsEarned;i++)st+='\u2B50';for(var j=starsEarned;j<5;j++)st+='\u2606';
+            document.getElementById('finalStars').textContent=st;
+            document.getElementById('finalScore').textContent='Score: '+totalScore+' / '+maxScore;
+            var colors=['#FF6B6B','#FFD700','#FF8E53','#44A08D','#a8e6cf'];
+            for(var k=0;k<60;k++){(function(i){setTimeout(function(){
+                var c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';
+                c.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+                c.style.borderRadius=Math.random()>0.5?'50%':'0';document.body.appendChild(c);
+                setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},3000);
+            },i*40);})(k);}
+        }
+
+        loadPractice();
+        loadQuiz();
+        playAudio('subsent-intro');
+    </script>
+</body>
+</html>

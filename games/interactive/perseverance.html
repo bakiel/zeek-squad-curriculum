@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perseverance - Zeek Squad SEL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: lionRoar 1.5s ease-in-out infinite; }
+        @keyframes lionRoar {
+            0%, 100% { transform: translateY(0) scale(1); }
+            30% { transform: translateY(-12px) scale(1.15); }
+            60% { transform: translateY(-6px) scale(1.05); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1.1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #f5576c;
+            transform: scale(1.05);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #f5576c;
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .learn-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .learn-card {
+            background: linear-gradient(135deg, #FFF0F5 0%, #FECDD3 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .learn-card:hover { transform: scale(1.05); border-color: #f5576c; }
+        .learn-card .emoji { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+        .learn-card .text { color: #9F1239; font-weight: bold; font-size: 0.9rem; }
+
+        .word-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .word-box .word {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .word-box .definition {
+            color: rgba(255,255,255,0.95);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .speak-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speak-btn:hover { transform: scale(1.02); }
+        .speak-btn:active { transform: scale(0.98); }
+
+        .story-card {
+            background: #FFF0F5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .story-card:hover { border-color: #f5576c; transform: scale(1.02); }
+        .story-card.heard {
+            border-color: #EC4899;
+            background: linear-gradient(135deg, #FFF0F5 0%, #FECDD3 100%);
+        }
+        .story-card .story-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+        .story-card .story-text { font-size: 1.05rem; color: #333; line-height: 1.5; }
+        .story-card .tap-hint { font-size: 0.8rem; color: #999; margin-top: 6px; }
+
+        .quiz-card {
+            background: #FFF0F5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .quiz-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .quiz-text { font-size: 1.1rem; color: #333; margin-bottom: 15px; line-height: 1.5; }
+        .quiz-counter { font-size: 0.9rem; color: #999; margin-bottom: 10px; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .quiz-option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #FECDD3;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #FFF0F5; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebration.show { display: flex; }
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebrationPop 0.5s ease;
+        }
+        @keyframes celebrationPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebration-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebration-text { font-size: 1.8rem; color: #f5576c; font-weight: bold; margin-bottom: 15px; }
+        .celebration-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">Back to Games</a>
+
+        <div class="header">
+            <h1>Learning Perseverance</h1>
+            <div class="standard">SEL.K.3 - Self-Management</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F981;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                PERSEVERANCE means never giving up! Be strong like a lion!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">Learn</button>
+            <button class="tab-btn" data-tab="stories">Stories</button>
+            <button class="tab-btn" data-tab="quiz">Quiz</button>
+        </div>
+
+        <div class="game-area">
+            <!-- LEARN TAB -->
+            <div class="tab-content active" id="learn">
+                <h2 class="section-title">What is PERSEVERANCE?</h2>
+
+                <div class="word-box">
+                    <div class="word">PERSEVERANCE</div>
+                    <div class="definition">Never giving up, even when things are hard!</div>
+                </div>
+
+                <button class="speak-btn" onclick="speakWord()">
+                    &#x1F50A; Say it: PERSEVERANCE!
+                </button>
+
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    When something is hard, you keep trying! You are brave and strong!
+                </p>
+
+                <div class="learn-cards">
+                    <div class="learn-card" onclick="learnCard(this, 'When you fall down, get back up and try again! That is perseverance!', 'persev-intro')">
+                        <span class="emoji">&#x1F4AA;</span>
+                        <span class="text">Try Again</span>
+                    </div>
+                    <div class="learn-card" onclick="learnCard(this, 'Hard things get easier when you keep practicing!', 'persev-intro')">
+                        <span class="emoji">&#x1F3AF;</span>
+                        <span class="text">Keep Practicing</span>
+                    </div>
+                    <div class="learn-card" onclick="learnCard(this, 'Saying I CAN instead of I can\'t is the first step!', 'persev-intro')">
+                        <span class="emoji">&#x1F4AC;</span>
+                        <span class="text">Say "I CAN!"</span>
+                    </div>
+                    <div class="learn-card" onclick="learnCard(this, 'Asking for help when you need it is brave, not weak!', 'persev-intro')">
+                        <span class="emoji">&#x1F64B;</span>
+                        <span class="text">Ask for Help</span>
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: #9F1239; font-weight: bold;">
+                    Tap each card to learn about never giving up!
+                </p>
+            </div>
+
+            <!-- STORIES TAB -->
+            <div class="tab-content" id="stories">
+                <h2 class="section-title">Perseverance Stories</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 15px;">
+                    Tap each story to hear it read aloud!
+                </p>
+                <div id="storiesContainer"></div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="tab-content" id="quiz">
+                <h2 class="section-title">Perseverance Quiz!</h2>
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">&#x1F389;&#x1F981;&#x1F389;</div>
+            <div class="celebration-text">Never Give Up!</div>
+            <p style="color: #666; margin-bottom: 20px;">You learned all about perseverance! You are strong like a lion!</p>
+            <button class="celebration-btn" onclick="closeCelebration()">Celebrate!</button>
+        </div>
+    </div>
+
+    <script>
+        var starsEarned = 0;
+        var progress = 0;
+        var quizIndex = 0;
+
+        var audioBase = '../../assets/audio/week4/';
+        var currentAudio = null;
+
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'stories') initStories();
+                if (btn.dataset.tab === 'quiz') initQuiz();
+            });
+        });
+
+        function updateProgress(amount) {
+            progress = Math.min(100, progress + amount);
+            document.getElementById('progressBar').style.width = progress + '%';
+            var newStars = Math.floor(progress / 20);
+            if (newStars > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i = starsEarned; i < newStars; i++) {
+                    (function(idx) {
+                        setTimeout(function() {
+                            starEls[idx].classList.add('earned');
+                            playAudio('star');
+                        }, (idx - starsEarned) * 300);
+                    })(i);
+                }
+                starsEarned = newStars;
+            }
+            if (progress >= 100) {
+                setTimeout(function() {
+                    document.getElementById('celebration').classList.add('show');
+                    playAudio('persev-complete');
+                }, 500);
+            }
+        }
+
+        function updateMascot(text) {
+            document.getElementById('mascotSpeech').textContent = text;
+        }
+
+        function speakWord() {
+            playAudio('persev-intro');
+            updateProgress(5);
+        }
+
+        function learnCard(el, message, audioKey) {
+            playAudio(audioKey);
+            updateMascot(message);
+            el.style.borderColor = '#f5576c';
+            el.style.background = 'linear-gradient(135deg, #FECDD3 0%, #FCA5A5 100%)';
+            updateProgress(5);
+        }
+
+        // Stories
+        var persevStories = [
+            { emoji: '\uD83D\uDEB2', text: 'I fell off my bike 3 times but I kept trying. Now I can ride it!', detail: 'Falling down is okay! Getting back up is what makes you strong!' },
+            { emoji: '\uD83D\uDCDA', text: 'Reading was hard at first. I practiced every day and now I love books!', detail: 'Practice makes progress! Every day you get a little better!' },
+            { emoji: '\uD83D\uDC5F', text: 'Tying my shoes was so tricky. I tried and tried until I got it!', detail: 'Hard things become easy when you never give up!' },
+            { emoji: '\uD83C\uDFB9', text: 'Learning piano was frustrating. But I kept practicing my scales.', detail: 'Even when something is frustrating, keep going! You can do it!' },
+            { emoji: '\uD83C\uDFD7\uFE0F', text: 'My block tower kept falling. I tried a different way and it worked!', detail: 'Sometimes you need to try a new way. That is smart perseverance!' }
+        ];
+
+        var storiesInitialized = false;
+        function initStories() {
+            if (storiesInitialized) return;
+            storiesInitialized = true;
+            var container = document.getElementById('storiesContainer');
+            container.textContent = '';
+            persevStories.forEach(function(story, idx) {
+                var card = document.createElement('div');
+                card.className = 'story-card';
+                var emojiEl = document.createElement('div');
+                emojiEl.className = 'story-emoji';
+                emojiEl.textContent = story.emoji;
+                card.appendChild(emojiEl);
+                var textEl = document.createElement('div');
+                textEl.className = 'story-text';
+                textEl.textContent = story.text;
+                card.appendChild(textEl);
+                var hintEl = document.createElement('div');
+                hintEl.className = 'tap-hint';
+                hintEl.textContent = 'Tap to hear this story!';
+                card.appendChild(hintEl);
+                card.onclick = function() {
+                    playAudio('persev-story' + (idx + 1));
+                    card.classList.add('heard');
+                    card.querySelector('.tap-hint').textContent = 'You heard this story!';
+                    updateMascot(story.detail);
+                    updateProgress(5);
+                };
+                container.appendChild(card);
+            });
+        }
+
+        // Quiz
+        var quizQuestions = [
+            {
+                emoji: '\uD83D\uDEB2',
+                text: 'You are learning to ride a bike and you fall down. What should you do?',
+                options: ['Give up and never try again', 'Get up and try again'],
+                correct: 1,
+                feedback: 'Getting back up shows incredible perseverance! You are brave!'
+            },
+            {
+                emoji: '\uD83E\uDDE9',
+                text: 'A puzzle is really hard. What shows perseverance?',
+                options: ['Keep trying different pieces', 'Throw the puzzle away'],
+                correct: 0,
+                feedback: 'Trying different ways to solve a problem is smart perseverance!'
+            },
+            {
+                emoji: '\uD83D\uDCDA',
+                text: 'A word is hard to read. What should you do?',
+                options: ['Sound it out slowly', 'Skip the whole book'],
+                correct: 0,
+                feedback: 'Sounding out words slowly shows you never give up on learning!'
+            },
+            {
+                emoji: '\uD83C\uDFA8',
+                text: 'Your drawing does not look right. What shows perseverance?',
+                options: ['Try again or ask for help', 'Say "I am bad at drawing"'],
+                correct: 0,
+                feedback: 'Trying again or asking for help are both great ways to persevere!'
+            },
+            {
+                emoji: '\uD83C\uDFC3',
+                text: 'What does a lion do when things get tough?',
+                options: ['Hides and gives up', 'Stays strong and keeps going'],
+                correct: 1,
+                feedback: 'Be strong like a lion! Keep going even when it is hard!'
+            }
+        ];
+
+        function initQuiz() {
+            quizIndex = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            var container = document.getElementById('quizContainer');
+            if (quizIndex >= quizQuestions.length) {
+                container.textContent = '';
+                var doneDiv = document.createElement('div');
+                doneDiv.style.textAlign = 'center';
+                doneDiv.style.padding = '40px';
+                var doneEmoji = document.createElement('div');
+                doneEmoji.style.fontSize = '4rem';
+                doneEmoji.textContent = '\uD83E\uDD81';
+                doneDiv.appendChild(doneEmoji);
+                var doneText = document.createElement('p');
+                doneText.style.color = '#9F1239';
+                doneText.style.fontSize = '1.3rem';
+                doneText.style.fontWeight = 'bold';
+                doneText.textContent = 'You are strong like a lion! NEVER give up!';
+                doneDiv.appendChild(doneText);
+                container.appendChild(doneDiv);
+                playAudio('persev-complete');
+                return;
+            }
+            var q = quizQuestions[quizIndex];
+            container.textContent = '';
+            var card = document.createElement('div');
+            card.className = 'quiz-card';
+            var counter = document.createElement('div');
+            counter.className = 'quiz-counter';
+            counter.textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+            card.appendChild(counter);
+            var emoji = document.createElement('div');
+            emoji.className = 'quiz-emoji';
+            emoji.textContent = q.emoji;
+            card.appendChild(emoji);
+            var text = document.createElement('div');
+            text.className = 'quiz-text';
+            text.textContent = q.text;
+            card.appendChild(text);
+            var options = document.createElement('div');
+            options.className = 'quiz-options';
+            q.options.forEach(function(opt, i) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = function() { checkQuiz(btn, i === q.correct, q.feedback); };
+                options.appendChild(btn);
+            });
+            card.appendChild(options);
+            container.appendChild(card);
+        }
+
+        function checkQuiz(btn, correct, feedback) {
+            document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'none'; });
+            if (correct) {
+                btn.classList.add('correct');
+                playAudio('persev-correct');
+                updateMascot(feedback);
+                updateProgress(8);
+                quizIndex++;
+                setTimeout(showQuizQuestion, 2000);
+            } else {
+                btn.classList.add('wrong');
+                playAudio('persev-wrong');
+                setTimeout(function() {
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.quiz-option').forEach(function(o) { o.style.pointerEvents = 'auto'; });
+                }, 500);
+            }
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+            progress = 0;
+            starsEarned = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            document.querySelectorAll('.star').forEach(function(s) { s.classList.remove('earned'); });
+            storiesInitialized = false;
+            initQuiz();
+        }
+
+        updateProgress(5);
+        playAudio('persev-intro');
+    </script>
+</body>
+</html>

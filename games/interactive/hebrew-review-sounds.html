@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebrew Letter Sounds Review - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.75rem; opacity: 0.85; margin-top: 4px; }
+        .back-btn { display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 8px 20px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 15px; transition: all 0.3s; cursor: pointer; }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .speech-bubble { background: white; padding: 15px 20px; border-radius: 20px; flex: 1; position: relative; font-size: 1.05rem; color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .speech-bubble:before { content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%); border: 10px solid transparent; border-right-color: white; }
+        .progress-container { background: rgba(255,255,255,0.3); border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn { 0% { transform: scale(0) rotate(-180deg); } 60% { transform: scale(1.5) rotate(20deg); } 100% { transform: scale(1) rotate(0deg); } }
+        .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { padding: 10px 16px; border: none; background: rgba(255,255,255,0.2); color: white; border-radius: 10px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+        .tab-btn:hover { background: rgba(255,255,255,0.3); }
+        .tab-btn.active { background: white; color: #1E40AF; font-weight: bold; }
+        .tab-btn.completed::after { content: ' \2713'; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .game-area { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .instruction { background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%); color: white; padding: 15px 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
+        .question-counter { text-align: center; color: #666; margin-bottom: 15px; }
+        .round-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .round-dot { width: 12px; height: 12px; border-radius: 50%; background: #e0e0e0; transition: all 0.3s; }
+        .round-dot.active { background: #1E40AF; transform: scale(1.2); }
+        .round-dot.completed { background: #FFD700; }
+
+        .sound-card { background: linear-gradient(135deg, #dbeafe, #bfdbfe); border: 3px solid #3b82f6; border-radius: 20px; padding: 25px; margin: 15px 0; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .sound-card:hover { transform: scale(1.02); border-color: #1E40AF; }
+        .sound-card .letter-big { font-size: 4rem; color: #1e3a8a; }
+        .sound-card .sound-label { font-size: 1.4rem; font-weight: bold; color: #1e40af; margin: 10px 0; }
+        .sound-card .sound-example { font-size: 1rem; color: #555; }
+        .sound-card .speaker { font-size: 2rem; margin-top: 10px; }
+
+        .match-card { background: white; border: 3px solid #e0e0e0; border-radius: 15px; padding: 20px; margin: 10px 0; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .match-card:hover { border-color: #1E40AF; transform: scale(1.02); }
+        .match-card.correct { border-color: #22c55e; background: #dcfce7; }
+        .match-card.wrong { border-color: #ef4444; background: #fee2e2; animation: shake 0.3s ease; }
+        @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .match-letter { font-size: 2.5rem; color: #1e3a8a; }
+        .match-label { font-size: 1rem; font-weight: bold; color: #333; margin-top: 5px; }
+
+        .big-letter { font-size: 6rem; text-align: center; color: #1e3a8a; font-weight: bold; margin: 15px 0; }
+        .question-text { font-size: 1.2rem; font-weight: bold; color: #333; text-align: center; margin: 15px 0; }
+        .sound-display { font-size: 2rem; text-align: center; padding: 15px; background: #eff6ff; border-radius: 15px; margin: 15px 0; font-weight: bold; color: #1e40af; }
+
+        .answer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .answer-card { background: white; border: 3px solid #e0e0e0; border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .answer-card:hover { border-color: #1E40AF; transform: scale(1.05); }
+        .answer-card.correct { border-color: #22c55e; background: #dcfce7; }
+        .answer-card.wrong { border-color: #ef4444; background: #fee2e2; animation: shake 0.3s; }
+        .answer-card .card-letter { font-size: 2.5rem; color: #1e3a8a; }
+        .answer-card .card-name { font-size: 0.85rem; font-weight: bold; color: #555; margin-top: 5px; }
+
+        .affirmation { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; padding: 12px; margin: 10px 0; text-align: center; font-size: 1.1rem; font-weight: bold; color: #92400e; }
+        .learn-card { background: #eff6ff; border-radius: 15px; padding: 20px; margin: 15px 0; text-align: center; border: 2px solid #bfdbfe; }
+        .learn-card h3 { color: #1e40af; margin-bottom: 10px; }
+
+        .next-btn { display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%); color: white; border: none; border-radius: 10px; font-size: 1.2rem; cursor: pointer; font-family: inherit; margin-top: 15px; transition: all 0.3s; }
+        .next-btn:hover { transform: scale(1.02); }
+        .celebration { display: none; text-align: center; padding: 30px; }
+        .celebration.show { display: block; animation: celebrationPop 0.5s ease; }
+        @keyframes celebrationPop { 0% { transform: scale(0); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .celebration h2 { font-size: 2rem; color: #1E40AF; margin-bottom: 15px; }
+        .celebration .trophy { font-size: 5rem; animation: bounce 1s ease infinite; }
+        .final-score { font-size: 1.5rem; color: #666; margin: 15px 0; }
+        .final-stars { font-size: 3rem; margin: 15px 0; }
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: confettiFall 3s ease-out forwards; pointer-events: none; }
+        @keyframes confettiFall { to { top: 100vh; transform: rotate(720deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">&#8592; Back to Games</a>
+        <div class="header">
+            <h1>Hebrew Letter Sounds Review</h1>
+            <div class="standard">Hebrew - Sound Matching</div>
+        </div>
+        <div class="mascot">
+            <div class="mascot-emoji">&#128266;</div>
+            <div class="speech-bubble" id="mascotMessage">Let us practice the SOUNDS our Hebrew letters make!</div>
+        </div>
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="stars">
+            <span class="star" id="star1">&#11088;</span><span class="star" id="star2">&#11088;</span><span class="star" id="star3">&#11088;</span><span class="star" id="star4">&#11088;</span><span class="star" id="star5">&#11088;</span>
+        </div>
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="learn">&#128218; Learn</button>
+            <button class="tab-btn" data-tab="practice">&#9999;&#65039; Practice</button>
+            <button class="tab-btn" data-tab="quiz">&#127942; Quiz</button>
+        </div>
+
+        <div class="tab-content active" id="learn-tab">
+            <div class="game-area">
+                <div class="instruction">Each Letter has a Sound!</div>
+                <div class="sound-card" onclick="playAudio('heb-aleph')">
+                    <div class="letter-big">\u05D0</div>
+                    <div class="sound-label">Aleph = Silent</div>
+                    <div class="sound-example">Aleph is quiet! It helps vowels make sound.</div>
+                    <div class="speaker">\uD83D\uDD0A Tap to hear!</div>
+                </div>
+                <div class="sound-card" onclick="playAudio('heb-bet')">
+                    <div class="letter-big">\u05D1\u05BC</div>
+                    <div class="sound-label">Bet = "B" sound</div>
+                    <div class="sound-example">Like in "Ball" and "Book"!</div>
+                    <div class="speaker">\uD83D\uDD0A Tap to hear!</div>
+                </div>
+                <div class="sound-card" onclick="playAudio('heb-vet')">
+                    <div class="letter-big">\u05D1</div>
+                    <div class="sound-label">Vet = "V" sound</div>
+                    <div class="sound-example">Like in "Van" and "Voice"!</div>
+                    <div class="speaker">\uD83D\uDD0A Tap to hear!</div>
+                </div>
+                <div class="affirmation">ANI YACHOL! - I can do it!</div>
+                <button class="next-btn" onclick="completeLearn()">I know the sounds! Let me practice!</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="practice-tab">
+            <div class="game-area">
+                <div class="instruction">Match the sound to the letter!</div>
+                <div class="round-indicator" id="practiceRounds"></div>
+                <div class="question-counter" id="practiceCounter">Problem 1 of 6</div>
+                <div id="practiceContent"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="quiz-tab">
+            <div class="game-area">
+                <div class="instruction">Which letter makes this sound?</div>
+                <div class="round-indicator" id="quizRounds"></div>
+                <div class="question-counter" id="quizCounter">Problem 1 of 8</div>
+                <div id="quizContent"></div>
+            </div>
+        </div>
+
+        <div class="celebration" id="celebration">
+            <div class="trophy">&#127942;</div>
+            <h2>ANI CHAZAK!</h2>
+            <p>You know all the letter sounds!</p>
+            <div class="final-stars" id="finalStars"></div>
+            <div class="final-score" id="finalScore"></div>
+            <button class="next-btn" onclick="location.reload()">Play Again!</button>
+            <a href="index.html" class="back-btn" style="display:inline-block;margin-top:15px;">Back to Games</a>
+        </div>
+    </div>
+
+    <script>
+        var audioBase='../../assets/audio/week4/';var currentAudio=null;
+        function playAudio(key){if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;}currentAudio=new Audio(audioBase+key+'.mp3');currentAudio.play().catch(function(){});}
+
+        var totalScore=0,maxScore=20,starsEarned=0;
+        var tabsCompleted={learn:false,practice:false,quiz:false};
+        var letters=[
+            {char:'\u05D0',name:'Aleph',sound:'Silent'},
+            {char:'\u05D1\u05BC',name:'Bet',sound:'"B"'},
+            {char:'\u05D1',name:'Vet',sound:'"V"'}
+        ];
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn){btn.addEventListener('click',function(){var tabId=this.getAttribute('data-tab');document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});this.classList.add('active');document.getElementById(tabId+'-tab').classList.add('active');});});
+        function updateProgress(){var pct=(totalScore/maxScore)*100;document.getElementById('progressBar').style.width=Math.min(pct,100)+'%';var t=[20,40,60,80,100];for(var i=0;i<5;i++){if(pct>=t[i]&&starsEarned<i+1){starsEarned=i+1;document.getElementById('star'+(i+1)).classList.add('earned');playAudio('star');}}}
+        function updateMascot(m){document.getElementById('mascotMessage').textContent=m;}
+        function markTabComplete(t){tabsCompleted[t]=true;document.querySelector('[data-tab="'+t+'"]').classList.add('completed');if(tabsCompleted.learn&&tabsCompleted.practice&&tabsCompleted.quiz)setTimeout(showCelebration,500);}
+        function createRoundDots(id,total,cur){var c=document.getElementById(id);while(c.firstChild)c.removeChild(c.firstChild);for(var i=0;i<total;i++){var d=document.createElement('div');d.className='round-dot'+(i<cur?' completed':'')+(i===cur?' active':'');c.appendChild(d);}}
+
+        function completeLearn(){
+            totalScore+=2;updateProgress();markTabComplete('learn');playAudio('hebsnd-correct');
+            updateMascot('Now match sounds to letters!');
+            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+            document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+            document.querySelector('[data-tab="practice"]').classList.add('active');
+            document.getElementById('practice-tab').classList.add('active');
+        }
+
+        // Practice: show a sound, pick the letter
+        var practiceData=[
+            {sound:'Silent',answer:'Aleph'},{sound:'"B" sound',answer:'Bet'},{sound:'"V" sound',answer:'Vet'},
+            {sound:'"B" like Ball',answer:'Bet'},{sound:'Quiet - no sound',answer:'Aleph'},{sound:'"V" like Van',answer:'Vet'}
+        ];
+        var practiceIdx=0,practiceAnswered=false;
+
+        function loadPractice(){
+            var cont=document.getElementById('practiceContent');
+            while(cont.firstChild)cont.removeChild(cont.firstChild);
+            if(practiceIdx>=practiceData.length){
+                markTabComplete('practice');playAudio('hebsnd-complete');
+                updateMascot('Sound matching done! Quiz time!');
+                var card=document.createElement('div');card.className='learn-card';
+                var h=document.createElement('h3');h.textContent='Practice Complete!';
+                card.appendChild(h);cont.appendChild(card);return;
+            }
+            practiceAnswered=false;
+            var p=practiceData[practiceIdx];
+            createRoundDots('practiceRounds',practiceData.length,practiceIdx);
+            document.getElementById('practiceCounter').textContent='Problem '+(practiceIdx+1)+' of '+practiceData.length;
+
+            var sd=document.createElement('div');sd.className='sound-display';sd.textContent='Sound: '+p.sound;
+            cont.appendChild(sd);
+
+            var qt=document.createElement('div');qt.className='question-text';qt.textContent='Which letter makes this sound?';
+            cont.appendChild(qt);
+
+            var grid=document.createElement('div');grid.className='answer-grid';
+            var shuffled=letters.slice().sort(function(){return Math.random()-0.5;});
+            for(var i=0;i<shuffled.length;i++){
+                var card=document.createElement('div');card.className='answer-card';
+                var cl=document.createElement('div');cl.className='card-letter';cl.textContent=shuffled[i].char;
+                var cn=document.createElement('div');cn.className='card-name';cn.textContent=shuffled[i].name;
+                card.appendChild(cl);card.appendChild(cn);
+                (function(l,el){el.addEventListener('click',function(){
+                    if(practiceAnswered)return;
+                    if(l.name===p.answer){practiceAnswered=true;el.classList.add('correct');playAudio('hebsnd-correct');totalScore+=2;updateProgress();updateMascot('Yes! '+l.name+' makes '+p.sound+'!');setTimeout(function(){practiceIdx++;loadPractice();},1200);}
+                    else{el.classList.add('wrong');playAudio('hebsnd-wrong');updateMascot('That is not right. Try again!');setTimeout(function(){el.classList.remove('wrong');},500);}
+                });})(shuffled[i],card);
+                grid.appendChild(card);
+            }
+            cont.appendChild(grid);
+        }
+
+        // Quiz: show letter, pick its sound
+        var quizData=[
+            {char:'\u05D0',name:'Aleph',answer:'Silent'},
+            {char:'\u05D1\u05BC',name:'Bet',answer:'"B" sound'},
+            {char:'\u05D1',name:'Vet',answer:'"V" sound'},
+            {char:'\u05D1\u05BC',name:'Bet',answer:'"B" sound'},
+            {char:'\u05D0',name:'Aleph',answer:'Silent'},
+            {char:'\u05D1',name:'Vet',answer:'"V" sound'},
+            {char:'\u05D1\u05BC',name:'Bet',answer:'"B" sound'},
+            {char:'\u05D0',name:'Aleph',answer:'Silent'}
+        ];
+        var quizIdx=0,quizAnswered=false;
+
+        function loadQuiz(){
+            var cont=document.getElementById('quizContent');
+            while(cont.firstChild)cont.removeChild(cont.firstChild);
+            if(quizIdx>=quizData.length){
+                markTabComplete('quiz');playAudio('hebsnd-complete');
+                updateMascot('ANI CHAZAK! You know all the sounds!');
+                var card=document.createElement('div');card.className='learn-card';
+                var h=document.createElement('h3');h.textContent='Quiz Complete!';
+                card.appendChild(h);cont.appendChild(card);
+                var af=document.createElement('div');af.className='affirmation';af.textContent='ANI CHAZAK! - I am strong!';
+                cont.appendChild(af);return;
+            }
+            quizAnswered=false;
+            var q=quizData[quizIdx];
+            createRoundDots('quizRounds',quizData.length,quizIdx);
+            document.getElementById('quizCounter').textContent='Problem '+(quizIdx+1)+' of '+quizData.length;
+
+            var big=document.createElement('div');big.className='big-letter';big.textContent=q.char;
+            cont.appendChild(big);
+
+            var qt=document.createElement('div');qt.className='question-text';qt.textContent='What sound does '+q.name+' make?';
+            cont.appendChild(qt);
+
+            var sounds=['Silent','"B" sound','"V" sound'];
+            var shuffled=sounds.slice().sort(function(){return Math.random()-0.5;});
+            for(var i=0;i<shuffled.length;i++){
+                var btn=document.createElement('div');btn.className='match-card';
+                var ml=document.createElement('div');ml.className='match-label';ml.style.fontSize='1.2rem';ml.textContent=shuffled[i];
+                btn.appendChild(ml);
+                (function(snd,el){el.addEventListener('click',function(){
+                    if(quizAnswered)return;
+                    if(snd===q.answer){quizAnswered=true;el.classList.add('correct');playAudio('hebsnd-correct');totalScore+=1;updateProgress();updateMascot('Correct! '+q.name+' says '+q.answer+'!');setTimeout(function(){quizIdx++;loadQuiz();},1200);}
+                    else{el.classList.add('wrong');playAudio('hebsnd-wrong');updateMascot('Not that sound! Try again.');setTimeout(function(){el.classList.remove('wrong');},500);}
+                });})(shuffled[i],btn);
+                cont.appendChild(btn);
+            }
+        }
+
+        function showCelebration(){
+            playAudio('hebsnd-complete');
+            document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+            document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+            document.getElementById('celebration').classList.add('show');
+            var st='';for(var i=0;i<starsEarned;i++)st+='\u2B50';for(var j=starsEarned;j<5;j++)st+='\u2606';
+            document.getElementById('finalStars').textContent=st;
+            document.getElementById('finalScore').textContent='Score: '+totalScore+' / '+maxScore;
+            var colors=['#1E40AF','#FFD700','#FF6B6B','#3b82f6','#a8e6cf'];
+            for(var k=0;k<60;k++){(function(i){setTimeout(function(){var c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];c.style.borderRadius=Math.random()>0.5?'50%':'0';document.body.appendChild(c);setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},3000);},i*40);})(k);}
+        }
+
+        loadPractice();loadQuiz();playAudio('hebsnd-intro');
+    </script>
+</body>
+</html>
