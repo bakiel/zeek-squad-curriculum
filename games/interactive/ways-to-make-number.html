@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ways to Make a Number - Zeek Squad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 15px; }
+        .header h1 { font-size: 1.8rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+        .start-screen {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            z-index: 2000; display: flex; justify-content: center;
+            align-items: center; flex-direction: column;
+            text-align: center; padding: 20px;
+        }
+        .start-screen.hidden { display: none; }
+        .start-screen h1 { color: white; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
+        .start-screen .mascot-big { font-size: 8rem; margin: 20px 0; animation: bounce 1s ease-in-out infinite; }
+        .start-screen p { color: white; font-size: 1.3rem; margin-bottom: 30px; }
+        .start-btn {
+            padding: 20px 50px; font-size: 1.5rem;
+            background: white; color: #10b981;
+            border: none; border-radius: 30px; cursor: pointer;
+            font-family: inherit; font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+        .progress-bar-container { background:rgba(255,255,255,0.3); border-radius:15px; height:20px; margin-bottom:15px; overflow:hidden; }
+        .progress-bar { height:100%; background:linear-gradient(90deg,#fbbf24,#f59e0b); border-radius:15px; width:0%; transition:width 0.5s ease; }
+        .stars { text-align:center; font-size:2.5rem; margin-bottom:15px; }
+        .star { color:rgba(255,255,255,0.3); transition:all 0.5s; display:inline-block; }
+        .star.earned { color:#fbbf24; filter:drop-shadow(0 0 10px #fbbf24); animation:starPop 0.5s ease; }
+        @keyframes starPop { 0%{transform:scale(0) rotate(-180deg)} 50%{transform:scale(1.4) rotate(20deg)} 100%{transform:scale(1) rotate(0)} }
+        .mascot-area { display:flex; align-items:center; gap:15px; margin-bottom:20px; }
+        .mascot { font-size:4rem; animation:bounce 1s ease-in-out infinite; }
+        .mascot.speaking { animation:talk 0.3s ease-in-out infinite; }
+        @keyframes talk { 0%,100%{transform:scale(1) rotate(0)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
+        .speech-bubble { background:white; padding:15px 20px; border-radius:20px; position:relative; box-shadow:0 5px 20px rgba(0,0,0,0.2); flex:1; }
+        .speech-bubble:before { content:''; position:absolute; left:-12px; top:50%; transform:translateY(-50%); border:12px solid transparent; border-right-color:white; }
+        .speech-bubble p { color:#10b981; font-size:1.1rem; font-weight:bold; }
+        .game-container { background:white; border-radius:25px; padding:25px; box-shadow:0 10px 40px rgba(0,0,0,0.3); }
+        .choices { display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px; }
+        .choice-btn { padding:20px 15px; font-size:1.1rem; border:4px solid #e2e8f0; border-radius:20px; background:#f8fafc; cursor:pointer; transition:all 0.3s; display:flex; flex-direction:column; align-items:center; gap:8px; font-family:inherit; font-weight:bold; color:#334155; }
+        .choice-btn:hover { transform:scale(1.05); border-color:#10b981; }
+        .choice-btn.correct { background:#dcfce7; border-color:#22c55e; animation:correctPulse 0.5s ease; }
+        .choice-btn.wrong { background:#fee2e2; border-color:#ef4444; animation:shake 0.5s ease; }
+        @keyframes correctPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+        .celebration { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; }
+        .celebration.show { display:flex; }
+        .celebration-content { background:white; padding:40px; border-radius:30px; text-align:center; animation:popIn 0.5s ease; }
+        @keyframes popIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+        .celebration-content h2 { color:#10b981; font-size:2rem; }
+        .celebration-content .big-emoji { font-size:5rem; margin:20px 0; }
+        .play-again-btn, .home-btn { padding:15px 40px; font-size:1.3rem; background:linear-gradient(135deg,#10b981,#34d399); color:white; border:none; border-radius:25px; cursor:pointer; font-family:inherit; font-weight:bold; margin:10px; }
+        .home-btn { background:linear-gradient(135deg,#3b82f6,#60a5fa); }
+        .sound-toggle { position:fixed; top:15px; right:15px; background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:50px; height:50px; font-size:1.5rem; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.2); z-index:100; }
+        .confetti { position:fixed; width:10px; height:10px; top:-10px; z-index:1001; animation:confettiFall 3s linear forwards; }
+        @keyframes confettiFall { to { transform:translateY(100vh) rotate(720deg); opacity:0; } }
+        
+        .question-area { text-align:center; margin-bottom:20px; }
+        .big-display { font-size:4rem; color:#10b981; text-shadow:4px 4px 8px rgba(0,0,0,0.1); margin-bottom:10px; }
+        .instruction { font-size:1.1rem; color:#64748b; margin-top:10px; }
+        .big-choices { grid-template-columns:1fr 1fr; }
+        .choice-btn .emoji { font-size:2.5rem; }
+        .choice-btn .label { font-size:1rem; font-weight:bold; color:#334155; }
+    
+    </style>
+</head>
+<body>
+
+    <div class="start-screen" id="startScreen">
+        <h1>Ways to Make a Number!</h1>
+        <div class="mascot-big">🎯</div>
+        <p>5 = 3+2 = 4+1 = 5+0! So many ways!</p>
+        <button class="start-btn" onclick="startGame()">Let's Explore!</button>
+    </div>
+    <button class="sound-toggle" id="soundToggle">🔊</button>
+    <div class="container">
+        <div class="header"><h1>Ways to Make It!</h1><p>Find equations that equal the number!</p></div>
+        <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="stars"><span class="star" id="star1">⭐</span><span class="star" id="star2">⭐</span><span class="star" id="star3">⭐</span></div>
+        
+        <div class="mascot-area">
+            <div class="mascot" id="mascot">🦁</div>
+            <div class="speech-bubble">
+                <p id="mascotText">Which equations make this number?</p>
+            </div>
+        </div>
+        <div class="game-container">
+            <div class="question-area">
+                <div style="font-size:6rem;font-weight:bold;color:#10b981;text-align:center;" id="targetNum">5</div>
+                <div class="instruction">Tap the equation that equals this number!</div>
+            </div>
+            <div class="choices" id="choices"></div>
+        </div>
+    </div>
+    
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <h2>Number Builder!</h2>
+            <div class="big-emoji">🎉🎯🌟</div>
+            <div class="stars">
+                <span class="star earned">⭐</span>
+                <span class="star earned">⭐</span>
+                <span class="star earned">⭐</span>
+            </div>
+            <button class="play-again-btn" onclick="restartGame()">Play Again!</button>
+            <button class="home-btn" onclick="window.location.href='index.html'">Back to Games</button>
+        </div>
+    </div>
+    <script>
+        var problems=[
+            {target:5,correct:'3+2',wrong:['3+3','4+2','1+5']},
+            {target:7,correct:'4+3',wrong:['4+4','3+3','5+3']},
+            {target:6,correct:'2+4',wrong:['2+5','3+4','1+4']},
+            {target:8,correct:'5+3',wrong:['5+4','4+3','6+3']},
+            {target:4,correct:'1+3',wrong:['2+3','1+4','2+4']},
+            {target:9,correct:'4+5',wrong:['4+4','5+5','3+5']},
+            {target:3,correct:'1+2',wrong:['2+2','1+3','0+4']},
+            {target:10,correct:'6+4',wrong:['6+5','5+4','7+4']}
+        ];
+        var currentRound=0,score=0,totalRounds=6,current=null;
+        function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+        var shuffled=[];
+        function startGame(){document.getElementById('startScreen').classList.add('hidden');shuffled=shuffle(problems);startRound();}
+        function startRound(){
+            current=shuffled[currentRound%shuffled.length];
+            document.getElementById('targetNum').textContent=current.target;
+            document.getElementById('progressBar').style.width=(currentRound/totalRounds*100)+'%';
+            document.getElementById('mascotText').textContent='Which one equals '+current.target+'?';
+            var opts=shuffle([current.correct].concat(current.wrong.slice(0,3)));
+            var div=document.getElementById('choices');div.innerHTML='';
+            opts.forEach(function(eq){
+                var btn=document.createElement('button');btn.className='choice-btn';
+                btn.style.fontSize='1.5rem';btn.textContent=eq+' = ?';
+                btn.onclick=function(){checkAns(btn,eq===current.correct);};
+                div.appendChild(btn);
+            });
+        }
+        function checkAns(btn,correct){
+            document.querySelectorAll('.choice-btn').forEach(function(b){b.onclick=null;});
+            if(correct){
+                btn.classList.add('correct');btn.textContent=current.correct+' = '+current.target+'! ✓';
+                score++;document.getElementById('mascotText').textContent=current.correct+' = '+current.target+'! Great way to make '+current.target+'!';
+                updateStars(score,totalRounds);
+                setTimeout(function(){currentRound++;if(currentRound>=totalRounds)showCelebration();else startRound();},1000);
+            } else {
+                btn.classList.add('wrong');
+                var parts=btn.textContent.replace(' = ?','').split('+');
+                var sum=parseInt(parts[0])+parseInt(parts[1]);
+                document.getElementById('mascotText').textContent='That equals '+sum+', not '+current.target+'! Try again!';
+                setTimeout(function(){
+                    btn.classList.remove('wrong');
+                    document.querySelectorAll('.choice-btn').forEach(function(b){
+                        var eq=b.textContent.replace(' = ?','').replace(' = '+current.target+'! ✓','');
+                        b.onclick=function(){checkAns(b,eq===current.correct);};
+                    });
+                },800);
+            }
+        }
+        function restartGame(){currentRound=0;score=0;document.getElementById('celebration').classList.remove('show');document.getElementById('progressBar').style.width='0%';document.querySelectorAll('.star').forEach(function(s){s.classList.remove('earned');});shuffled=shuffle(problems);startRound();}
+        
+        var soundEnabled = true;
+        var currentAudio = null;
+        document.getElementById('soundToggle').addEventListener('click', function() {
+            soundEnabled = !soundEnabled;
+            this.textContent = soundEnabled ? '🔊' : '🔇';
+        });
+        function createConfetti() {
+            var colors = ['#10b981','#34d399','#fbbf24','#22c55e','#3b82f6','#8b5cf6'];
+            for (var i=0;i<50;i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        var c=document.createElement('div'); c.className='confetti';
+                        c.style.left=Math.random()*100+'vw';
+                        c.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+                        c.style.borderRadius=Math.random()>0.5?'50%':'0';
+                        c.style.animationDuration=(2+Math.random()*2)+'s';
+                        document.body.appendChild(c);
+                        setTimeout(function(){c.remove();},4000);
+                    },idx*50);
+                })(i);
+            }
+        }
+        function showCelebration() {
+            createConfetti();
+            document.getElementById('celebration').classList.add('show');
+        }
+        function updateStars(score, total) {
+            if (score >= Math.ceil(total*0.4)) document.getElementById('star1').classList.add('earned');
+            if (score >= Math.ceil(total*0.7)) document.getElementById('star2').classList.add('earned');
+            if (score >= total) document.getElementById('star3').classList.add('earned');
+        }
+    
+    </script>
+</body>
+</html>
