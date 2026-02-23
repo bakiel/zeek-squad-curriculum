@@ -128,7 +128,7 @@
             ['S','R','T'],['W','U','Y'],['B','A','D'],['F','H','G'],['Z','X','Y']
         ];
         var currentRound=0, score=0, totalRounds=5, clickOrder=[], targetOrder=[];
-        function startGame() { document.getElementById('startScreen').classList.add('hidden'); startRound(); }
+        function startGame() { document.getElementById('startScreen').classList.add('hidden'); playAudio('abcord-intro'); startRound(); }
         function startRound() {
             var set = rounds[currentRound % rounds.length];
             targetOrder = set.slice().sort();
@@ -158,6 +158,7 @@
                 document.getElementById('orderStatus').textContent = clickOrder.join(' → ') + (clickOrder.length < 3 ? ' → _'.repeat(3-clickOrder.length) : '');
                 if (clickOrder.length === 3) {
                     score++;
+                    playAudio('abcord-correct');
                     updateStars(score, totalRounds);
                     document.getElementById('mascotText').textContent = 'Perfect ABC order!';
                     setTimeout(function(){
@@ -169,6 +170,7 @@
                     document.getElementById('mascotText').textContent = 'Yes! What comes next?';
                 }
             } else {
+                playAudio('abcord-wrong');
                 btn.style.background='#fee2e2'; btn.style.borderColor='#ef4444';
                 document.getElementById('mascotText').textContent = 'Try again! Think of the alphabet!';
                 setTimeout(function(){ btn.style.background='white'; btn.style.borderColor='#ec4899'; }, 600);
@@ -184,6 +186,13 @@
         
         var soundEnabled = true;
         var currentAudio = null;
+        var audioBase = '../../assets/audio/week5/';
+        function playAudio(key) {
+            if (!soundEnabled) return;
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
         document.getElementById('soundToggle').addEventListener('click', function() {
             soundEnabled = !soundEnabled;
             this.textContent = soundEnabled ? '🔊' : '🔇';
@@ -206,12 +215,12 @@
         }
         function showCelebration() {
             createConfetti();
+            playAudio('abcord-complete');
             document.getElementById('celebration').classList.add('show');
         }
         function updateStars(score, total) {
-            if (score >= Math.ceil(total*0.4)) document.getElementById('star1').classList.add('earned');
-            if (score >= Math.ceil(total*0.7)) document.getElementById('star2').classList.add('earned');
-            if (score >= total) document.getElementById('star3').classList.add('earned');
+            var t=[Math.ceil(total*0.4),Math.ceil(total*0.7),total];
+            for(var i=0;i<3;i++){var el=document.getElementById('star'+(i+1));if(score>=t[i]&&!el.classList.contains('earned')){el.classList.add('earned');playAudio('star');}}
         }
     
     </script>

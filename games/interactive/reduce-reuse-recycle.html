@@ -151,7 +151,7 @@
         var currentRound=0,score=0,totalRounds=8,current=null;
         function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
         var shuffled=[];
-        function startGame(){document.getElementById('startScreen').classList.add('hidden');shuffled=shuffle(items);startRound();}
+        function startGame(){document.getElementById('startScreen').classList.add('hidden');playAudio('recycle-intro');shuffled=shuffle(items);startRound();}
         function startRound(){
             current=shuffled[currentRound%shuffled.length];
             document.getElementById('itemEmoji').textContent=current.emoji;
@@ -164,10 +164,12 @@
             document.querySelectorAll('.game-container button').forEach(function(b){b.disabled=true;b.style.opacity='0.7';});
             if(bin===current.bin){
                 score++;
+                playAudio('recycle-correct');
                 document.getElementById('mascotText').textContent='Correct! '+current.reason;
                 updateStars(score,totalRounds);
                 setTimeout(function(){currentRound++;if(currentRound>=totalRounds)showCelebration();else startRound();},1100);
             } else {
+                playAudio('recycle-wrong');
                 document.getElementById('mascotText').textContent='Oops! '+current.reason;
                 setTimeout(function(){
                     document.querySelectorAll('.game-container button').forEach(function(b){b.disabled=false;b.style.opacity='1';});
@@ -179,6 +181,13 @@
         
         var soundEnabled = true;
         var currentAudio = null;
+        var audioBase = '../../assets/audio/week5/';
+        function playAudio(key) {
+            if (!soundEnabled) return;
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
         document.getElementById('soundToggle').addEventListener('click', function() {
             soundEnabled = !soundEnabled;
             this.textContent = soundEnabled ? '🔊' : '🔇';
@@ -201,12 +210,12 @@
         }
         function showCelebration() {
             createConfetti();
+            playAudio('recycle-complete');
             document.getElementById('celebration').classList.add('show');
         }
         function updateStars(score, total) {
-            if (score >= Math.ceil(total*0.4)) document.getElementById('star1').classList.add('earned');
-            if (score >= Math.ceil(total*0.7)) document.getElementById('star2').classList.add('earned');
-            if (score >= total) document.getElementById('star3').classList.add('earned');
+            var t=[Math.ceil(total*0.4),Math.ceil(total*0.7),total];
+            for(var i=0;i<3;i++){var el=document.getElementById('star'+(i+1));if(score>=t[i]&&!el.classList.contains('earned')){el.classList.add('earned');playAudio('star');}}
         }
     
     </script>

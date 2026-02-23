@@ -139,7 +139,7 @@
         var currentRound=0,score=0,totalRounds=7,current=null;
         function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
         var shuffled=[];
-        function startGame(){document.getElementById('startScreen').classList.add('hidden');shuffled=shuffle(words);startRound();}
+        function startGame(){document.getElementById('startScreen').classList.add('hidden');playAudio('findvow-intro');shuffled=shuffle(words);startRound();}
         function startRound(){
             current=shuffled[currentRound%shuffled.length];
             document.getElementById('wordEmoji').textContent=current.emoji+' = '+current.word;
@@ -160,11 +160,11 @@
             document.querySelectorAll('#letterChoices button').forEach(function(b){b.onclick=null;});
             if(letter===vowel){
                 btn.style.background='#22c55e';btn.style.color='white';btn.style.borderColor='#22c55e';
-                score++;document.getElementById('mascotText').textContent=letter+' is the vowel in '+current.word+'! A-E-I-O-U!';
+                score++;playAudio('findvow-correct');document.getElementById('mascotText').textContent=letter+' is the vowel in '+current.word+'! A-E-I-O-U!';
                 updateStars(score,totalRounds);
                 setTimeout(function(){currentRound++;if(currentRound>=totalRounds)showCelebration();else startRound();},900);
             } else {
-                btn.style.background='#fee2e2';btn.style.borderColor='#ef4444';
+                playAudio('findvow-wrong');btn.style.background='#fee2e2';btn.style.borderColor='#ef4444';
                 document.getElementById('mascotText').textContent=letter+' is a consonant. Look for A, E, I, O, or U!';
                 setTimeout(function(){
                     btn.style.background='white';btn.style.borderColor='#e2e8f0';
@@ -179,6 +179,13 @@
         
         var soundEnabled = true;
         var currentAudio = null;
+        var audioBase = '../../assets/audio/week5/';
+        function playAudio(key) {
+            if (!soundEnabled) return;
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
         document.getElementById('soundToggle').addEventListener('click', function() {
             soundEnabled = !soundEnabled;
             this.textContent = soundEnabled ? '🔊' : '🔇';
@@ -201,12 +208,12 @@
         }
         function showCelebration() {
             createConfetti();
+            playAudio('findvow-complete');
             document.getElementById('celebration').classList.add('show');
         }
         function updateStars(score, total) {
-            if (score >= Math.ceil(total*0.4)) document.getElementById('star1').classList.add('earned');
-            if (score >= Math.ceil(total*0.7)) document.getElementById('star2').classList.add('earned');
-            if (score >= total) document.getElementById('star3').classList.add('earned');
+            var t=[Math.ceil(total*0.4),Math.ceil(total*0.7),total];
+            for(var i=0;i<3;i++){var el=document.getElementById('star'+(i+1));if(score>=t[i]&&!el.classList.contains('earned')){el.classList.add('earned');playAudio('star');}}
         }
     
     </script>

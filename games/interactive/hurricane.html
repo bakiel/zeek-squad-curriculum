@@ -134,7 +134,7 @@
         var currentRound=0,score=0,totalRounds=5,current=null;
         function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
         var shuffled=[];
-        function startGame(){document.getElementById('startScreen').classList.add('hidden');shuffled=shuffle(questions);startRound();}
+        function startGame(){document.getElementById('startScreen').classList.add('hidden');playAudio('hurricane-intro');shuffled=shuffle(questions);startRound();}
         function startRound(){
             current=shuffled[currentRound%shuffled.length];
             document.getElementById('qEmoji').textContent=current.emoji;
@@ -151,6 +151,7 @@
             });
         }
         function checkAns(btn,correct){
+            if(correct){playAudio('hurricane-correct');}else{playAudio('hurricane-wrong');}
             document.querySelectorAll('.choice-btn').forEach(function(b){b.onclick=null;});
             if(correct){
                 btn.classList.add('correct');score++;
@@ -170,6 +171,13 @@
         
         var soundEnabled = true;
         var currentAudio = null;
+        var audioBase = '../../assets/audio/week5/';
+        function playAudio(key) {
+            if (!soundEnabled) return;
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
         document.getElementById('soundToggle').addEventListener('click', function() {
             soundEnabled = !soundEnabled;
             this.textContent = soundEnabled ? '🔊' : '🔇';
@@ -192,12 +200,12 @@
         }
         function showCelebration() {
             createConfetti();
+            playAudio('hurricane-complete');
             document.getElementById('celebration').classList.add('show');
         }
         function updateStars(score, total) {
-            if (score >= Math.ceil(total*0.4)) document.getElementById('star1').classList.add('earned');
-            if (score >= Math.ceil(total*0.7)) document.getElementById('star2').classList.add('earned');
-            if (score >= total) document.getElementById('star3').classList.add('earned');
+            var t=[Math.ceil(total*0.4),Math.ceil(total*0.7),total];
+            for(var i=0;i<3;i++){var el=document.getElementById('star'+(i+1));if(score>=t[i]&&!el.classList.contains('earned')){el.classList.add('earned');playAudio('star');}}
         }
     
     </script>
