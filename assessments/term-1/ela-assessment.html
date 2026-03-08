@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELA Assessment - Zeek Squad Term 1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: #fff;
+    color: #333;
+    font-size: 14pt;
+  }
+  @media print {
+    body { font-size: 12pt; }
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+  }
+  .cover {
+    background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 40px;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 3rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); margin-bottom: 10px; }
+  .cover h2 { font-size: 1.8rem; margin-bottom: 30px; }
+  .cover .mascot { font-size: 8rem; margin: 20px 0; }
+  .name-box {
+    background: white; color: #333; border-radius: 20px;
+    padding: 20px 40px; margin-top: 30px; font-size: 1.2rem; width: 90%; max-width: 500px;
+  }
+  .name-box .field { border-bottom: 3px solid #6366f1; min-height: 35px; margin: 8px 0; }
+  .page {
+    padding: 30px 40px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .section-header {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 15px;
+    margin: 25px 0 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .question {
+    margin: 14px 0;
+    padding: 12px 15px;
+    background: #f8f7ff;
+    border-radius: 12px;
+    border-left: 5px solid #6366f1;
+  }
+  .question .num { font-weight: bold; color: #6366f1; margin-right: 6px; }
+  .answer-line {
+    border-bottom: 2px solid #ccc;
+    min-height: 28px;
+    margin: 8px 0 0;
+    width: 100%;
+  }
+  .options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .option {
+    background: white; border: 2px solid #6366f1;
+    border-radius: 10px; padding: 6px 16px;
+    cursor: pointer; font-family: inherit; font-size: 1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .option .circle {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #6366f1; display: inline-block;
+    flex-shrink: 0;
+  }
+  .write-box {
+    border: 2px dashed #6366f1;
+    border-radius: 10px;
+    min-height: 50px;
+    margin-top: 8px;
+    padding: 5px;
+  }
+  .abc-strip {
+    background: #fff3e0; border-radius: 12px; padding: 10px 15px;
+    font-size: 1.1rem; letter-spacing: 2px; margin: 10px 0;
+    text-align: center; border: 2px solid #f59e0b;
+  }
+  .teacher-note {
+    background: #fef3c7; border-left: 5px solid #f59e0b;
+    padding: 10px 15px; border-radius: 0 10px 10px 0;
+    font-size: 0.95rem; margin: 8px 0;
+    font-style: italic;
+  }
+  .rhyme-pair {
+    display: flex; align-items: center; gap: 15px;
+    background: white; border: 2px solid #ec4899;
+    border-radius: 10px; padding: 8px 14px;
+    margin: 6px 0;
+  }
+  .rhyme-word { font-size: 1.1rem; font-weight: bold; width: 70px; }
+  .score-box {
+    border: 3px solid #6366f1; border-radius: 15px;
+    padding: 15px 25px; text-align: center;
+    margin-top: 30px; background: #f8f7ff;
+  }
+  .print-btn {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #6366f1; color: white; border: none;
+    border-radius: 25px; padding: 12px 25px;
+    font-size: 1rem; cursor: pointer; font-family: inherit;
+    box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+    z-index: 100;
+  }
+  .print-btn:hover { background: #4f46e5; }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="mascot">📚</div>
+  <h1>ELA Assessment</h1>
+  <h2>Zeek Squad - Term 1, 2026</h2>
+  <p style="font-size:1.1rem; margin-bottom:10px;">Monday, 9 March 2026</p>
+  <div class="name-box">
+    <div>Student Name: <div class="field"></div></div>
+    <div style="margin-top:12px;">Date: <div class="field"></div></div>
+    <div style="margin-top:12px;">Score: _____ / 40</div>
+  </div>
+  <p style="margin-top:30px; font-size:1rem; opacity:0.9;">
+    Teacher reads questions aloud. Parents assist at home.
+  </p>
+</div>
+
+<!-- SECTION 1: LETTERS -->
+<div class="page page-break">
+  <div class="section-header">Section 1: Letters (Questions 1-10)</div>
+  <div class="teacher-note">Teacher: Read each question aloud clearly. Give the child time to circle or write their answer.</div>
+
+  <div class="question">
+    <span class="num">1.</span> Circle the UPPERCASE letter:<br>
+    <div class="options">
+      <div class="option"><div class="circle"></div> a</div>
+      <div class="option"><div class="circle"></div> B</div>
+      <div class="option"><div class="circle"></div> c</div>
+      <div class="option"><div class="circle"></div> d</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">2.</span> Circle the LOWERCASE letter:<br>
+    <div class="options">
+      <div class="option"><div class="circle"></div> F</div>
+      <div class="option"><div class="circle"></div> G</div>
+      <div class="option"><div class="circle"></div> h</div>
+      <div class="option"><div class="circle"></div> J</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">3.</span> What letter comes BEFORE D?
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">4.</span> What letter comes AFTER M?
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">5.</span> Write the UPPERCASE version of: &nbsp; m
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">6.</span> Write the LOWERCASE version of: &nbsp; T
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">7.</span> How many letters are in the alphabet?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 24</div>
+      <div class="option"><div class="circle"></div> 26</div>
+      <div class="option"><div class="circle"></div> 28</div>
+      <div class="option"><div class="circle"></div> 20</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">8.</span> Circle the letter that makes the sound "kuh":
+    <div class="options">
+      <div class="option"><div class="circle"></div> T</div>
+      <div class="option"><div class="circle"></div> S</div>
+      <div class="option"><div class="circle"></div> C</div>
+      <div class="option"><div class="circle"></div> L</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">9.</span> Circle the letter that makes the sound "ssss":
+    <div class="options">
+      <div class="option"><div class="circle"></div> B</div>
+      <div class="option"><div class="circle"></div> S</div>
+      <div class="option"><div class="circle"></div> P</div>
+      <div class="option"><div class="circle"></div> W</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">10.</span> Write ANY 3 letters of the alphabet:
+    <div class="write-box" style="min-height:60px;"></div>
+  </div>
+
+  <!-- SECTION 2: VOWELS -->
+  <div class="section-header">Section 2: Vowels (Questions 11-20)</div>
+  <div class="teacher-note">Teacher: Explain that vowels are special letters - A, E, I, O, U.</div>
+
+  <div class="question">
+    <span class="num">11.</span> Circle ALL the vowels:
+    <div class="options" style="flex-wrap:wrap;">
+      <div class="option"><div class="circle"></div> A</div>
+      <div class="option"><div class="circle"></div> B</div>
+      <div class="option"><div class="circle"></div> E</div>
+      <div class="option"><div class="circle"></div> F</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">12.</span> Circle ALL the vowels:
+    <div class="options" style="flex-wrap:wrap;">
+      <div class="option"><div class="circle"></div> I</div>
+      <div class="option"><div class="circle"></div> J</div>
+      <div class="option"><div class="circle"></div> O</div>
+      <div class="option"><div class="circle"></div> K</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">13.</span> How many vowels are there?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 3</div>
+      <div class="option"><div class="circle"></div> 4</div>
+      <div class="option"><div class="circle"></div> 5</div>
+      <div class="option"><div class="circle"></div> 6</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">14.</span> Write ALL 5 vowels:
+    <div class="write-box" style="font-size:1.3rem; min-height:50px;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">15.</span> Underline the vowel in the word: &nbsp; <strong style="font-size:1.3rem;">CAT</strong>
+    <div class="teacher-note">Teacher: Write C-A-T on paper or whiteboard for the child to underline.</div>
+  </div>
+
+  <div class="question">
+    <span class="num">16.</span> What vowel do you hear in the word "BIG"?
+    <div class="options">
+      <div class="option"><div class="circle"></div> A</div>
+      <div class="option"><div class="circle"></div> I</div>
+      <div class="option"><div class="circle"></div> U</div>
+      <div class="option"><div class="circle"></div> O</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">17.</span> What vowel do you hear in the word "HOT"?
+    <div class="options">
+      <div class="option"><div class="circle"></div> E</div>
+      <div class="option"><div class="circle"></div> A</div>
+      <div class="option"><div class="circle"></div> O</div>
+      <div class="option"><div class="circle"></div> U</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">18.</span> Is "P" a vowel or consonant?
+    <div class="options">
+      <div class="option"><div class="circle"></div> Vowel</div>
+      <div class="option"><div class="circle"></div> Consonant</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">19.</span> Is "E" a vowel or consonant?
+    <div class="options">
+      <div class="option"><div class="circle"></div> Vowel</div>
+      <div class="option"><div class="circle"></div> Consonant</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">20.</span> Circle the vowel: &nbsp; <strong>B &nbsp; U &nbsp; N &nbsp; D</strong>
+    <div class="answer-line"></div>
+  </div>
+</div>
+
+<!-- PAGE 2: ABC ORDER + RHYMING -->
+<div class="page page-break">
+  <div class="section-header">Section 3: ABC Order (Questions 21-30)</div>
+  <div class="teacher-note">Teacher: Show the child the alphabet strip below. Questions 21-25 can use the strip. Cover it for 26-30.</div>
+
+  <div class="abc-strip">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</div>
+
+  <div class="question">
+    <span class="num">21.</span> Put these letters in ABC order: &nbsp; <strong>G &nbsp; B &nbsp; D</strong>
+    <div class="write-box">___ &nbsp; ___ &nbsp; ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">22.</span> Put these letters in ABC order: &nbsp; <strong>M &nbsp; K &nbsp; L</strong>
+    <div class="write-box">___ &nbsp; ___ &nbsp; ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">23.</span> Put these letters in ABC order: &nbsp; <strong>T &nbsp; R &nbsp; S</strong>
+    <div class="write-box">___ &nbsp; ___ &nbsp; ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">24.</span> Which letter comes FIRST in the alphabet? &nbsp; <strong>P &nbsp; or &nbsp; H?</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> P</div>
+      <div class="option"><div class="circle"></div> H</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">25.</span> Which letter comes LAST in the alphabet? &nbsp; <strong>W &nbsp; or &nbsp; Z?</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> W</div>
+      <div class="option"><div class="circle"></div> Z</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">26.</span> What is the FIRST letter of the alphabet?
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">27.</span> What is the LAST letter of the alphabet?
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">28.</span> Put in ABC order: &nbsp; <strong>Z &nbsp; A &nbsp; M</strong>
+    <div class="write-box">___ &nbsp; ___ &nbsp; ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">29.</span> Put in ABC order: &nbsp; <strong>CAT &nbsp; ANT &nbsp; BEE</strong>
+    <div class="write-box">___________ &nbsp; ___________ &nbsp; ___________</div>
+  </div>
+
+  <div class="question">
+    <span class="num">30.</span> What letter comes between J and L?
+    <div class="options">
+      <div class="option"><div class="circle"></div> K</div>
+      <div class="option"><div class="circle"></div> M</div>
+      <div class="option"><div class="circle"></div> I</div>
+      <div class="option"><div class="circle"></div> N</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: RHYMING -->
+  <div class="section-header">Section 4: Rhyming (Questions 31-35)</div>
+  <div class="teacher-note">Teacher: Read the question aloud and say the word in a clear, expressive voice. Have the child say or write the rhyme.</div>
+
+  <div class="question">
+    <span class="num">31.</span> Which word rhymes with CAT?
+    <div class="options">
+      <div class="option"><div class="circle"></div> dog</div>
+      <div class="option"><div class="circle"></div> hat</div>
+      <div class="option"><div class="circle"></div> sun</div>
+      <div class="option"><div class="circle"></div> big</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">32.</span> Which word rhymes with BIG?
+    <div class="options">
+      <div class="option"><div class="circle"></div> cat</div>
+      <div class="option"><div class="circle"></div> run</div>
+      <div class="option"><div class="circle"></div> pig</div>
+      <div class="option"><div class="circle"></div> map</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">33.</span> Which word rhymes with RUN?
+    <div class="options">
+      <div class="option"><div class="circle"></div> hat</div>
+      <div class="option"><div class="circle"></div> sun</div>
+      <div class="option"><div class="circle"></div> dog</div>
+      <div class="option"><div class="circle"></div> zip</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">34.</span> Do these words rhyme? &nbsp; <strong>CAKE - LAKE</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> Yes, they rhyme</div>
+      <div class="option"><div class="circle"></div> No, they do not</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">35.</span> Do these words rhyme? &nbsp; <strong>TREE - CAR</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> Yes, they rhyme</div>
+      <div class="option"><div class="circle"></div> No, they do not</div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: SIGHT WORDS -->
+  <div class="section-header">Section 5: Sight Words (Questions 36-40)</div>
+  <div class="teacher-note">Teacher: Point to each word. Ask the child to read it aloud OR use it in a sentence.</div>
+
+  <div class="question">
+    <span class="num">36.</span> Read this word aloud: &nbsp; <strong style="font-size:1.8rem; color:#6366f1;">THE</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> I can read it!</div>
+      <div class="option"><div class="circle"></div> I need help</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">37.</span> Read this word aloud: &nbsp; <strong style="font-size:1.8rem; color:#6366f1;">AND</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> I can read it!</div>
+      <div class="option"><div class="circle"></div> I need help</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">38.</span> Read this word aloud: &nbsp; <strong style="font-size:1.8rem; color:#6366f1;">SAID</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> I can read it!</div>
+      <div class="option"><div class="circle"></div> I need help</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">39.</span> Read this word aloud: &nbsp; <strong style="font-size:1.8rem; color:#6366f1;">THEY</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> I can read it!</div>
+      <div class="option"><div class="circle"></div> I need help</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">40.</span> Read this word aloud: &nbsp; <strong style="font-size:1.8rem; color:#6366f1;">COME</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> I can read it!</div>
+      <div class="option"><div class="circle"></div> I need help</div>
+    </div>
+  </div>
+
+  <div class="score-box">
+    <p style="font-size:1.2rem; font-weight:bold; color:#6366f1;">Final Score: _____ / 40</p>
+    <p style="margin-top:10px;">Teacher Comments:</p>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print Assessment</button>
+</body>
+</html>

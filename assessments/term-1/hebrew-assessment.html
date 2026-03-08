@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hebrew Assessment - Zeek Squad Term 1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: #fff; color: #333; font-size: 14pt;
+  }
+  @media print {
+    body { font-size: 12pt; }
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+  }
+  .cover {
+    background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+    color: white; text-align: center;
+    padding: 60px 40px; min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 3rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); margin-bottom: 10px; }
+  .cover h2 { font-size: 1.8rem; margin-bottom: 30px; }
+  .cover .mascot { font-size: 8rem; margin: 20px 0; }
+  .name-box {
+    background: white; color: #333; border-radius: 20px;
+    padding: 20px 40px; margin-top: 30px; font-size: 1.2rem; width: 90%; max-width: 500px;
+  }
+  .name-box .field { border-bottom: 3px solid #1e3a8a; min-height: 35px; margin: 8px 0; }
+  .page { padding: 30px 40px; max-width: 800px; margin: 0 auto; }
+  .section-header {
+    background: linear-gradient(135deg, #1e3a8a, #7c3aed);
+    color: white; padding: 12px 20px;
+    border-radius: 15px; margin: 25px 0 15px;
+    font-size: 1.2rem; font-weight: bold;
+  }
+  .question {
+    margin: 16px 0; padding: 14px 15px;
+    background: #eef2ff; border-radius: 12px;
+    border-left: 5px solid #1e3a8a;
+  }
+  .question .num { font-weight: bold; color: #1e3a8a; margin-right: 6px; }
+  .teacher-note {
+    background: #fef3c7; border-left: 5px solid #f59e0b;
+    padding: 10px 15px; border-radius: 0 10px 10px 0;
+    font-size: 0.95rem; margin: 8px 0; font-style: italic;
+  }
+  .hebrew-big {
+    font-size: 4rem; color: #1e3a8a; font-weight: bold;
+    display: inline-block; padding: 10px 20px;
+    background: white; border: 3px solid #1e3a8a;
+    border-radius: 12px; margin: 5px;
+    direction: rtl;
+  }
+  .hebrew-card {
+    display: flex; align-items: center; gap: 20px;
+    background: white; border: 2px solid #1e3a8a;
+    border-radius: 15px; padding: 15px 20px;
+    margin: 10px 0;
+  }
+  .hebrew-letter { font-size: 3.5rem; color: #1e3a8a; font-weight: bold; min-width: 60px; text-align: center; }
+  .hebrew-info { flex: 1; }
+  .hebrew-name { font-size: 1.3rem; font-weight: bold; color: #333; }
+  .hebrew-sound { font-size: 1rem; color: #7c3aed; }
+  .trace-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0;
+  }
+  .trace-box {
+    width: 70px; height: 80px;
+    border: 2px dashed #1e3a8a; border-radius: 10px;
+    background: #f8f9ff;
+    position: relative;
+  }
+  .trace-box .ghost {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem; color: rgba(30,58,138,0.15);
+    font-weight: bold;
+  }
+  .write-box { border: 2px dashed #1e3a8a; border-radius: 10px; min-height: 50px; margin-top: 8px; padding: 5px; }
+  .options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .option {
+    background: white; border: 2px solid #1e3a8a;
+    border-radius: 10px; padding: 8px 18px;
+    font-family: inherit; font-size: 1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .option .circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #1e3a8a; display: inline-block; flex-shrink: 0; }
+  .days-table {
+    width: 100%; border-collapse: collapse;
+    margin: 15px 0;
+  }
+  .days-table th {
+    background: linear-gradient(135deg, #1e3a8a, #7c3aed);
+    color: white; padding: 10px;
+    font-size: 1rem;
+  }
+  .days-table td {
+    padding: 10px 12px;
+    border: 2px solid #e0e7ff;
+    font-size: 1rem;
+  }
+  .days-table tr:nth-child(even) td { background: #eef2ff; }
+  .days-table td.hebrew-col { font-size: 1.4rem; text-align: center; direction: rtl; }
+  .oral-section {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 3px solid #f59e0b;
+    border-radius: 20px; padding: 25px;
+    margin: 20px 0; text-align: center;
+  }
+  .oral-section h3 { color: #d97706; font-size: 1.5rem; margin-bottom: 15px; }
+  .oral-check { display: flex; align-items: center; gap: 15px; margin: 10px 0; padding: 10px; background: white; border-radius: 10px; }
+  .check-box { width: 30px; height: 30px; border: 3px solid #f59e0b; border-radius: 6px; flex-shrink: 0; }
+  .score-box {
+    border: 3px solid #1e3a8a; border-radius: 15px;
+    padding: 15px 25px; text-align: center;
+    margin-top: 30px; background: #eef2ff;
+  }
+  .answer-line { border-bottom: 2px solid #ccc; min-height: 28px; margin: 8px 0 0; width: 100%; }
+  .print-btn {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #1e3a8a; color: white; border: none;
+    border-radius: 25px; padding: 12px 25px;
+    font-size: 1rem; cursor: pointer; font-family: inherit;
+    box-shadow: 0 4px 15px rgba(30,58,138,0.4); z-index: 100;
+  }
+  .sound-box {
+    background: #f3f0ff; border: 2px solid #7c3aed;
+    border-radius: 10px; padding: 10px 15px;
+    margin: 8px 0; text-align: center;
+    font-size: 1.1rem; color: #5b21b6;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="mascot">✡️</div>
+  <h1>Hebrew Assessment</h1>
+  <h2>Zeek Squad - Term 1, 2026</h2>
+  <p style="font-size:1.1rem; margin-bottom:10px;">Wednesday, 11 March 2026</p>
+  <div class="name-box">
+    <div>Student Name: <div class="field"></div></div>
+    <div style="margin-top:12px;">Date: <div class="field"></div></div>
+    <div style="margin-top:12px;">Written Score: _____ / 15 &nbsp;&nbsp; Oral Score: _____ / 5</div>
+  </div>
+  <p style="margin-top:25px; font-size:1rem; opacity:0.9;">
+    Written: Trace, recognise and write Aleph, Bet, Vet<br>
+    Oral: Sing the Hebrew Days of the Week
+  </p>
+</div>
+
+<!-- PAGE 1: REFERENCE CARD + TRACING -->
+<div class="page page-break">
+
+  <div style="text-align:center; margin-bottom:20px;">
+    <h2 style="color:#1e3a8a; font-size:1.8rem;">Hebrew Letter Reference Card</h2>
+    <p style="color:#666;">Use this to help you during the written section.</p>
+  </div>
+
+  <div class="hebrew-card">
+    <div class="hebrew-letter">&#1488;</div>
+    <div class="hebrew-info">
+      <div class="hebrew-name">Aleph (&#1488;)</div>
+      <div class="hebrew-sound">Sound: Silent (no sound on its own)</div>
+      <div style="font-size:0.9rem; color:#666; margin-top:3px;">First letter of the Hebrew alphabet</div>
+    </div>
+    <div class="sound-box">Like the number 1 - it comes first!</div>
+  </div>
+
+  <div class="hebrew-card">
+    <div class="hebrew-letter">&#1489;</div>
+    <div class="hebrew-info">
+      <div class="hebrew-name">Bet (&#1489;)</div>
+      <div class="hebrew-sound">Sound: "B" as in Ball</div>
+      <div style="font-size:0.9rem; color:#666; margin-top:3px;">Second letter of the Hebrew alphabet</div>
+    </div>
+    <div class="sound-box">Bet = "B" sound (like Bet-lebem = Bethlehem!)</div>
+  </div>
+
+  <div class="hebrew-card">
+    <div class="hebrew-letter">&#1489;&#x200E;</div>
+    <div class="hebrew-info">
+      <div class="hebrew-name">Vet (&#1489; without dot)</div>
+      <div class="hebrew-sound">Sound: "V" as in Vine</div>
+      <div style="font-size:0.9rem; color:#666; margin-top:3px;">Same shape as Bet - but makes the "V" sound</div>
+    </div>
+    <div class="sound-box">Vet = "V" sound (no dot inside)</div>
+  </div>
+
+  <div class="section-header">Section 1: Recognise the Letters (Questions 1-5)</div>
+  <div class="teacher-note">Teacher: Point to each letter below. Ask the child to say its NAME aloud. Circle the correct answer.</div>
+
+  <div class="question">
+    <span class="num">1.</span> What is the name of this letter? &nbsp; <strong style="font-size:2.5rem; color:#1e3a8a;">&#1488;</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> Bet</div>
+      <div class="option"><div class="circle"></div> Aleph</div>
+      <div class="option"><div class="circle"></div> Vet</div>
+      <div class="option"><div class="circle"></div> Gimel</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">2.</span> What is the name of this letter? &nbsp; <strong style="font-size:2.5rem; color:#1e3a8a;">&#1489;</strong>
+    <div class="options">
+      <div class="option"><div class="circle"></div> Aleph</div>
+      <div class="option"><div class="circle"></div> Dalet</div>
+      <div class="option"><div class="circle"></div> Bet</div>
+      <div class="option"><div class="circle"></div> Vet</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">3.</span> Aleph is which number letter of the Hebrew alphabet?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 3rd</div>
+      <div class="option"><div class="circle"></div> 2nd</div>
+      <div class="option"><div class="circle"></div> 1st</div>
+      <div class="option"><div class="circle"></div> 4th</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">4.</span> What SOUND does the letter Bet make?
+    <div class="options">
+      <div class="option"><div class="circle"></div> V sound (vvvv)</div>
+      <div class="option"><div class="circle"></div> B sound (bbb)</div>
+      <div class="option"><div class="circle"></div> No sound</div>
+      <div class="option"><div class="circle"></div> S sound (sss)</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">5.</span> What SOUND does the letter Vet make?
+    <div class="options">
+      <div class="option"><div class="circle"></div> B sound (bbb)</div>
+      <div class="option"><div class="circle"></div> No sound</div>
+      <div class="option"><div class="circle"></div> V sound (vvvv)</div>
+      <div class="option"><div class="circle"></div> P sound</div>
+    </div>
+  </div>
+
+  <div class="section-header">Section 2: Trace the Letters (Questions 6-10)</div>
+  <div class="teacher-note">Teacher: The child traces over the light grey letters. Count each successful trace as correct. Reward any attempt that shows the correct shape.</div>
+
+  <div class="question">
+    <span class="num">6.</span> Trace ALEPH three times (&#1488;):
+    <div class="trace-row">
+      <div class="trace-box"><div class="ghost">&#1488;</div></div>
+      <div class="trace-box"><div class="ghost">&#1488;</div></div>
+      <div class="trace-box"><div class="ghost">&#1488;</div></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">7.</span> Trace BET three times (&#1489;):
+    <div class="trace-row">
+      <div class="trace-box"><div class="ghost">&#1489;</div></div>
+      <div class="trace-box"><div class="ghost">&#1489;</div></div>
+      <div class="trace-box"><div class="ghost">&#1489;</div></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">8.</span> Now WRITE Aleph (&#1488;) on your own - without tracing:
+    <div class="trace-row">
+      <div class="trace-box"></div>
+      <div class="trace-box"></div>
+      <div class="trace-box"></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">9.</span> Now WRITE Bet (&#1489;) on your own - without tracing:
+    <div class="trace-row">
+      <div class="trace-box"></div>
+      <div class="trace-box"></div>
+      <div class="trace-box"></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">10.</span> Write the Hebrew letters in order: Aleph, Bet. Then try to write the next letter (Gimel &#1490;):
+    <div class="trace-row">
+      <div class="trace-box"></div>
+      <div class="trace-box"></div>
+      <div class="trace-box"><div class="ghost">&#1490;</div></div>
+    </div>
+    <p style="font-size:0.9rem; color:#666; margin-top:5px;">First box = Aleph &nbsp; Second box = Bet &nbsp; Third box = Trace Gimel (bonus!)</p>
+  </div>
+</div>
+
+<!-- PAGE 2: KNOWLEDGE + ORAL -->
+<div class="page page-break">
+  <div class="section-header">Section 3: Hebrew Knowledge (Questions 11-15)</div>
+  <div class="teacher-note">Teacher: These questions test general Hebrew knowledge. The child circles or writes their answer.</div>
+
+  <div class="question">
+    <span class="num">11.</span> Hebrew is read from which direction?
+    <div class="options">
+      <div class="option"><div class="circle"></div> Left to Right (like English)</div>
+      <div class="option"><div class="circle"></div> Right to Left</div>
+      <div class="option"><div class="circle"></div> Top to Bottom</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">12.</span> What language did the ancient Israelites speak?
+    <div class="options">
+      <div class="option"><div class="circle"></div> English</div>
+      <div class="option"><div class="circle"></div> Hebrew</div>
+      <div class="option"><div class="circle"></div> Arabic</div>
+      <div class="option"><div class="circle"></div> French</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">13.</span> What does "Shabbat" mean?
+    <div class="options">
+      <div class="option"><div class="circle"></div> Monday</div>
+      <div class="option"><div class="circle"></div> Good morning</div>
+      <div class="option"><div class="circle"></div> The day of rest (Saturday)</div>
+      <div class="option"><div class="circle"></div> The sun</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">14.</span> What day of the week comes FIRST in Hebrew? (Hint: Yom Rishon means "First Day")
+    <div class="options">
+      <div class="option"><div class="circle"></div> Yom Shishi (Friday)</div>
+      <div class="option"><div class="circle"></div> Yom Rishon (Sunday)</div>
+      <div class="option"><div class="circle"></div> Yom Shlishi (Tuesday)</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">15.</span> Match the day to its meaning - draw a line or write the letter:
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:12px;">
+      <div>
+        <p><strong>A.</strong> Yom Rishon</p>
+        <p><strong>B.</strong> Yom Sheni</p>
+        <p><strong>C.</strong> Shabbat</p>
+      </div>
+      <div>
+        <p>___ Monday (Second Day)</p>
+        <p>___ The Rest Day (Saturday)</p>
+        <p>___ Sunday (First Day)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORAL SECTION -->
+  <div class="oral-section">
+    <h3>Oral Assessment - Hebrew Days of the Week Song</h3>
+    <p style="color:#666; margin-bottom:15px;">Teacher: Ask the child to sing the Hebrew Days of the Week. Award marks for each day they can sing/say correctly.</p>
+
+    <table class="days-table">
+      <tr>
+        <th>Hebrew Name</th>
+        <th>Hebrew Letters</th>
+        <th>Meaning</th>
+        <th>Child sang it?</th>
+      </tr>
+      <tr>
+        <td><strong>Yom Rishon</strong></td>
+        <td class="hebrew-col">&#1497;&#1493;&#1501; &#1512;&#1488;&#1513;&#1493;&#1503;</td>
+        <td>Sunday (1st Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+      <tr>
+        <td><strong>Yom Sheni</strong></td>
+        <td class="hebrew-col">&#1497;&#1493;&#1501; &#1513;&#1504;&#1497;</td>
+        <td>Monday (2nd Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+      <tr>
+        <td><strong>Yom Shlishi</strong></td>
+        <td class="hebrew-col">&#1497;&#1493;&#1501; &#1513;&#1500;&#1497;&#1513;&#1497;</td>
+        <td>Tuesday (3rd Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+      <tr>
+        <td><strong>Yom Revi'i</strong></td>
+        <td class="hebrew-col">&#1497;&#1493;&#1501; &#1512;&#1489;&#1497;&#1506;&#1497;</td>
+        <td>Wednesday (4th Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+      <tr>
+        <td><strong>Yom Chamishi</strong></td>
+        <td class="hebrew-col">&#1497;&#1493;&#1501; &#1495;&#1502;&#1497;&#1513;&#1497;</td>
+        <td>Thursday (5th Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+      <tr>
+        <td><strong>Yom Shishi</strong></td>
+        <td class="hebrew-col">&#1497;&#1493;&#1501; &#1513;&#1497;&#1513;&#1497;</td>
+        <td>Friday (6th Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+      <tr>
+        <td><strong>Shabbat</strong></td>
+        <td class="hebrew-col">&#1513;&#1489;&#1514;</td>
+        <td>Saturday (Rest Day)</td>
+        <td><div class="check-box"></div></td>
+      </tr>
+    </table>
+
+    <div style="background:white; border-radius:12px; padding:15px; margin-top:15px; text-align:left;">
+      <p><strong>Oral Score Guide (out of 5):</strong></p>
+      <p style="margin-top:8px;">5/5 - Sang all 7 days with confidence</p>
+      <p>4/5 - Sang 5-6 days correctly</p>
+      <p>3/5 - Sang 3-4 days correctly</p>
+      <p>2/5 - Sang 1-2 days with help</p>
+      <p>1/5 - Attempted the song (any participation)</p>
+      <p>0/5 - Did not attempt</p>
+    </div>
+
+    <p style="margin-top:20px; font-size:1.1rem;"><strong>Oral Score: _____ / 5</strong></p>
+  </div>
+
+  <div class="score-box">
+    <p style="font-size:1.2rem; font-weight:bold; color:#1e3a8a;">Written Score: _____ / 15 &nbsp;&nbsp;&nbsp; Oral Score: _____ / 5</p>
+    <p style="font-size:1.1rem; font-weight:bold; color:#7c3aed; margin-top:8px;">TOTAL: _____ / 20</p>
+    <p style="margin-top:12px;">Teacher Comments:</p>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print Assessment</button>
+</body>
+</html>

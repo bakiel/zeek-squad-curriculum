@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Substitute Teacher Lesson Plan - 9-16 March 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: #fff; color: #333; font-size: 13pt;
+  }
+  @media print {
+    body { font-size: 11pt; }
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+  }
+  .cover {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #7c3aed 100%);
+    color: white; text-align: center;
+    padding: 50px 40px; min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 2.5rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.4); margin-bottom: 10px; }
+  .cover h2 { font-size: 1.6rem; margin-bottom: 25px; opacity: 0.9; }
+  .cover .mascot { font-size: 6rem; margin: 15px 0; }
+  .cover-badge {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 15px; padding: 20px 30px;
+    margin-top: 20px; max-width: 550px; width: 90%;
+    text-align: left;
+  }
+  .cover-badge h3 { color: #fbbf24; margin-bottom:12px; font-size:1.1rem; }
+  .cover-badge p { margin: 6px 0; font-size: 0.95rem; }
+  .page { padding: 25px 35px; max-width: 850px; margin: 0 auto; }
+  .day-header {
+    border-radius: 18px; padding: 14px 22px;
+    margin: 25px 0 15px; color: white;
+    font-size: 1.3rem; font-weight: bold;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .day-mon { background: linear-gradient(135deg, #6366f1, #ec4899); }
+  .day-tue { background: linear-gradient(135deg, #10b981, #3b82f6); }
+  .day-wed { background: linear-gradient(135deg, #1e3a8a, #7c3aed); }
+  .day-thu { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .day-mon16 { background: linear-gradient(135deg, #14b8a6, #3b82f6); }
+  .time-block {
+    margin: 12px 0;
+    border-radius: 12px; overflow: hidden;
+    border: 2px solid #e5e7eb;
+  }
+  .time-label {
+    background: #f3f4f6; padding: 8px 15px;
+    font-weight: bold; font-size: 0.95rem;
+    border-bottom: 2px solid #e5e7eb;
+    color: #374151;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .time-content { padding: 12px 15px; background: white; }
+  .script-box {
+    background: #fef3c7; border-left: 4px solid #f59e0b;
+    padding: 10px 14px; border-radius: 0 10px 10px 0;
+    margin: 10px 0;
+  }
+  .script-box .label {
+    font-weight: bold; color: #d97706; font-size: 0.9rem;
+    text-transform: uppercase; margin-bottom: 5px;
+  }
+  .script-text { font-style: italic; color: #333; line-height: 1.6; }
+  .link-box {
+    background: #eff6ff; border: 2px solid #3b82f6;
+    border-radius: 10px; padding: 10px 14px;
+    margin: 8px 0; font-size: 0.95rem;
+  }
+  .link-box .link-label { font-weight: bold; color: #1d4ed8; margin-bottom: 4px; }
+  .link-url { color: #2563eb; word-break: break-all; font-size: 0.9rem; }
+  .checklist {
+    list-style: none; padding: 0; margin: 10px 0;
+  }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 0; border-bottom: 1px solid #f3f4f6;
+    font-size: 0.95rem;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check { width: 22px; height: 22px; border: 2px solid #6366f1; border-radius: 5px; flex-shrink: 0; margin-top: 2px; }
+  .alert {
+    background: #fee2e2; border: 2px solid #ef4444;
+    border-radius: 12px; padding: 12px 16px; margin: 12px 0;
+    color: #991b1b; font-size: 0.95rem;
+  }
+  .tip {
+    background: #f0fdf4; border: 2px solid #10b981;
+    border-radius: 12px; padding: 12px 16px; margin: 12px 0;
+    color: #065f46; font-size: 0.95rem;
+  }
+  .subject-badge {
+    display: inline-block; padding: 3px 12px;
+    border-radius: 20px; font-size: 0.85rem;
+    font-weight: bold; margin-left: 8px;
+  }
+  .badge-ela { background: #ede9fe; color: #5b21b6; }
+  .badge-math { background: #d1fae5; color: #065f46; }
+  .badge-science { background: #fef3c7; color: #92400e; }
+  .badge-hebrew { background: #dbeafe; color: #1e40af; }
+  .badge-plant { background: #fce7f3; color: #9d174d; }
+  .schedule-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 10px; margin: 15px 0;
+  }
+  .schedule-card {
+    border-radius: 12px; padding: 12px 10px;
+    text-align: center; font-size: 0.9rem; border: 2px solid;
+  }
+  .scard-1 { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
+  .scard-2 { background: #d1fae5; border-color: #10b981; color: #065f46; }
+  .scard-3 { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+  .scard-4 { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .scard-5 { background: #fce7f3; border-color: #ec4899; color: #9d174d; }
+  .score-legend {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin: 12px 0;
+  }
+  .legend-item {
+    background: #f8fafc; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 8px 12px; font-size: 0.9rem;
+  }
+  .print-btn {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #1e3a8a; color: white; border: none;
+    border-radius: 25px; padding: 12px 25px;
+    font-size: 1rem; cursor: pointer; font-family: inherit;
+    box-shadow: 0 4px 15px rgba(30,58,138,0.4); z-index: 100;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="mascot">📋</div>
+  <h1>Substitute Teacher Lesson Plan</h1>
+  <h2>Zeek Squad - Term 1 Assessment Week</h2>
+  <p style="opacity:0.8; font-size:1rem;">9 March - 16 March 2026</p>
+
+  <div class="cover-badge">
+    <h3>Week Overview</h3>
+    <p>Mon 9 March - ELA Assessment (40 questions)</p>
+    <p>Tue 10 March - Math Assessment (40 questions)</p>
+    <p>Wed 11 March - Hebrew + Science Assessments</p>
+    <p>Thu 12 March - Plant Project Presentations</p>
+    <p>Mon 16 March - Lesson plan uploaded to Google Drive</p>
+  </div>
+
+  <div class="cover-badge" style="margin-top:15px;">
+    <h3>How to Use This Plan</h3>
+    <p>1. Read each day section carefully before the session</p>
+    <p>2. Use the exact teacher scripts in yellow boxes</p>
+    <p>3. Read all assessment questions aloud on Zoom</p>
+    <p>4. Parents assist children at home</p>
+    <p>5. Collect completed work photos from parents</p>
+  </div>
+</div>
+
+<!-- OVERVIEW PAGE -->
+<div class="page page-break">
+  <h2 style="color:#1e3a8a; text-align:center; margin-bottom:20px; font-size:1.8rem;">Week at a Glance</h2>
+
+  <div class="schedule-grid">
+    <div class="schedule-card scard-1">
+      <div style="font-size:1.5rem; margin-bottom:5px;">📚</div>
+      <strong>Mon 9 March</strong><br>
+      ELA Assessment<br>
+      <span style="font-size:0.8rem;">40 questions</span><br>
+      <span style="font-size:0.8rem;">Letters, Vowels,<br>ABC Order,<br>Rhyming, Sight Words</span>
+    </div>
+    <div class="schedule-card scard-2">
+      <div style="font-size:1.5rem; margin-bottom:5px;">🔢</div>
+      <strong>Tue 10 March</strong><br>
+      Math Assessment<br>
+      <span style="font-size:0.8rem;">40 questions</span><br>
+      <span style="font-size:0.8rem;">Numbers, Counting,<br>Addition,<br>Subtraction</span>
+    </div>
+    <div class="schedule-card scard-3">
+      <div style="font-size:1.5rem; margin-bottom:5px;">✡️🌿</div>
+      <strong>Wed 11 March</strong><br>
+      Hebrew + Science<br>
+      <span style="font-size:0.8rem;">Written + Oral</span><br>
+      <span style="font-size:0.8rem;">Aleph, Bet, Vet +<br>Days of the Week +<br>20 Science Qs</span>
+    </div>
+    <div class="schedule-card scard-4">
+      <div style="font-size:1.5rem; margin-bottom:5px;">🌱</div>
+      <strong>Thu 12 March</strong><br>
+      Plant Presentations<br>
+      <span style="font-size:0.8rem;">Each child presents<br>their plant project</span>
+    </div>
+    <div class="schedule-card scard-5">
+      <div style="font-size:1.5rem; margin-bottom:5px;">☁️</div>
+      <strong>Mon 16 March</strong><br>
+      Google Drive<br>
+      <span style="font-size:0.8rem;">Upload all plans<br>and resources</span>
+    </div>
+  </div>
+
+  <div class="alert">
+    <strong>Important:</strong> All assessments are in Google Classroom. Print them before the session or share the link for parents to print. Read ALL questions aloud clearly on Zoom. Give children time to answer.
+  </div>
+
+  <h3 style="margin: 20px 0 10px; color:#1e3a8a;">Assessment Files (Google Classroom)</h3>
+  <div class="link-box">
+    <div class="link-label">ELA Assessment (Monday)</div>
+    <div class="link-url">Google Classroom > Zeek Squad > Classwork > "ELA Assessment - 9 March 2026"</div>
+  </div>
+  <div class="link-box">
+    <div class="link-label">Math Assessment (Tuesday)</div>
+    <div class="link-url">Google Classroom > Zeek Squad > Classwork > "Math Assessment - 10 March 2026"</div>
+  </div>
+  <div class="link-box">
+    <div class="link-label">Hebrew Assessment (Wednesday)</div>
+    <div class="link-url">Google Classroom > Zeek Squad > Classwork > "Hebrew Assessment - 11 March 2026"</div>
+  </div>
+  <div class="link-box">
+    <div class="link-label">Science Assessment (Wednesday)</div>
+    <div class="link-url">Google Classroom > Zeek Squad > Classwork > "Science Assessment - 11 March 2026"</div>
+  </div>
+
+  <h3 style="margin: 20px 0 10px; color:#1e3a8a;">Scoring Guide</h3>
+  <div class="score-legend">
+    <div class="legend-item"><strong>ELA:</strong> 40 points (1 per question)</div>
+    <div class="legend-item"><strong>Math:</strong> 40 points (1 per question)</div>
+    <div class="legend-item"><strong>Hebrew:</strong> 20 points (15 written + 5 oral)</div>
+    <div class="legend-item"><strong>Science:</strong> 20 points (drawing = full marks for any attempt)</div>
+  </div>
+</div>
+
+<!-- MONDAY: ELA -->
+<div class="page page-break">
+  <div class="day-header day-mon">
+    <span style="font-size:1.8rem;">📚</span>
+    <div>
+      <div>Monday, 9 March 2026</div>
+      <div style="font-size:1rem; font-weight:normal; opacity:0.9;">ELA Assessment <span class="subject-badge badge-ela">40 Questions</span></div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:00 AM - Session Opens (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Say exactly this to open the session:</div>
+        <div class="script-text">"Shalom everyone! Welcome to Zeek Squad. Today is a special day - we are going to do our ELA Assessment. This means we check how much you have learned! Remember, this is not a test to scare you - it is just to show how much you KNOW. Do your best and you will do great. Parents, please have paper and pencil ready for your child. Let's begin!"</div>
+      </div>
+      <ul class="checklist">
+        <li><div class="check"></div> Confirm all children are present on Zoom</li>
+        <li><div class="check"></div> Ask parents to have the assessment sheet ready (printed or on screen)</li>
+        <li><div class="check"></div> Open the ELA Assessment file from Google Classroom</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:05 AM - Section 1: Letters (Questions 1-10) | 10 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Script - Letters Section:</div>
+        <div class="script-text">"Let's start with our letters! I will read each question. You circle or write your answer on your sheet. Ready? Let's go!"</div>
+      </div>
+      <p><strong>Read each question slowly and clearly:</strong></p>
+      <ul class="checklist">
+        <li><div class="check"></div> Q1: "Question 1. Circle the UPPERCASE letter. The choices are: a, B, c, d."</li>
+        <li><div class="check"></div> Q2: "Question 2. Circle the LOWERCASE letter. The choices are: F, G, h, J."</li>
+        <li><div class="check"></div> Q3: "What letter comes BEFORE D? Write it on your paper."</li>
+        <li><div class="check"></div> Q4: "What letter comes AFTER M? Write it on your paper."</li>
+        <li><div class="check"></div> Q5-10: Continue reading each question at a steady pace</li>
+      </ul>
+      <div class="tip">Tip: Pause for 10-15 seconds after each question before reading the next one.</div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:15 AM - Section 2: Vowels (Questions 11-20) | 10 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Script - Vowels Section:</div>
+        <div class="script-text">"Great work! Now we move to vowels. Remember - A, E, I, O, U are our special vowel letters. Listen carefully to each question."</div>
+      </div>
+      <p>Read questions 11-20. For sound questions, say the word clearly and slowly.</p>
+      <div class="tip">For Q16 (vowel in "BIG"): say the word slowly: B - I - G. Emphasise the middle sound.</div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:25 AM - Section 3: ABC Order (Questions 21-30) | 10 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Script - ABC Order Section:</div>
+        <div class="script-text">"Now we are going to put letters in ABC order! There is a help strip on your paper with the whole alphabet. You may use it for questions 21 to 25. For questions 26 to 30, try to remember on your own!"</div>
+      </div>
+      <p>Read each set of letters clearly. Spell them out: "The letters are G... B... D. Put them in ABC order."</p>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:35 AM - Section 4 and 5: Rhyming and Sight Words (Questions 31-40) | 10 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Script - Rhyming:</div>
+        <div class="script-text">"Rhyming words sound the same at the end! CAT and HAT rhyme. DOG and LOG rhyme. Listen to my question..."</div>
+      </div>
+      <div class="script-box">
+        <div class="label">Script - Sight Words (Q36-40):</div>
+        <div class="script-text">"Now I am going to show you a word. I want you to read it aloud to your parent. Your parent will circle YES if you can read it. Ready? The word is..."</div>
+      </div>
+      <p>Hold up each sight word card or display it on screen. Give children 5-10 seconds to read aloud to their parent.</p>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:45 AM - Collect and Close (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Script - Closing:</div>
+        <div class="script-text">"Excellent work today! You are all ELA superstars! Parents - please take a clear photo of the completed assessment sheet and send it to me today. We will give everyone a star for doing their best. See you tomorrow for MATH! Shalom!"</div>
+      </div>
+      <ul class="checklist">
+        <li><div class="check"></div> Remind parents to send assessment photos today</li>
+        <li><div class="check"></div> Record who was present</li>
+        <li><div class="check"></div> Note any children who needed extra help</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- TUESDAY: MATH -->
+<div class="page page-break">
+  <div class="day-header day-tue">
+    <span style="font-size:1.8rem;">🔢</span>
+    <div>
+      <div>Tuesday, 10 March 2026</div>
+      <div style="font-size:1rem; font-weight:normal; opacity:0.9;">Math Assessment <span class="subject-badge badge-math">40 Questions</span></div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:00 AM - Session Opens (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Opening script:</div>
+        <div class="script-text">"Shalom Zeek Squad! Today is MATH day! I love math because numbers are everywhere - in nature, in food, in music! You have been practising all term and today you get to show how much you know. Parents - children may use their FINGERS to count. That is perfectly fine. Ready? Let's go!"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:05 AM - Section 1 and 2: Numbers and Counting (Q1-20) | 20 min</div>
+    <div class="time-content">
+      <p><strong>Numbers section (Q1-10):</strong> Read each number clearly. For "write the number THREE" - say both the word AND the number: "Write the number three - that is 3."</p>
+      <p style="margin-top:8px;"><strong>Counting section (Q11-20):</strong> For dot questions, count with the children: "Let's count the dots together: 1, 2, 3... How many did you count? Write that number."</p>
+      <div class="tip">For Q14 and Q15 (draw shapes): say "Parents, please give your child space to draw on their paper."</div>
+      <div class="script-box">
+        <div class="label">Script for Q29 (word problem):</div>
+        <div class="script-text">"Listen carefully. I have 3 apples. My friend gives me 4 more. How many apples do I have now? Say it out loud - 3... plus 4 more... write your answer."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:25 AM - Section 3 and 4: Addition and Subtraction (Q21-40) | 20 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Script for Addition:</div>
+        <div class="script-text">"Now we add numbers together! I will say the sum. You write the answer. You can use your fingers! Ready? Question 21. Two... plus... three... equals what? Write your answer."</div>
+      </div>
+      <div class="script-box">
+        <div class="label">Script for Subtraction:</div>
+        <div class="script-text">"Now we TAKE AWAY numbers! I will say the sum and you write the answer. Question 31. Five... TAKE AWAY... two... equals what?"</div>
+      </div>
+      <div class="tip">Say "plus" for addition and "take away" or "minus" for subtraction. Both are acceptable.</div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:45 AM - Collect and Close (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Closing script:</div>
+        <div class="script-text">"Amazing work, Math champions! You worked so hard today. Parents - please send us a photo of the completed assessment today. Tomorrow we have our HEBREW and SCIENCE assessments. Tell your children to sing the Days of the Week tonight to get ready! Shalom!"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEDNESDAY: HEBREW + SCIENCE -->
+<div class="page page-break">
+  <div class="day-header day-wed">
+    <span style="font-size:1.8rem;">✡️🌿</span>
+    <div>
+      <div>Wednesday, 11 March 2026</div>
+      <div style="font-size:1rem; font-weight:normal; opacity:0.9;">Hebrew + Science Assessments <span class="subject-badge badge-hebrew">Written + Oral</span> <span class="subject-badge badge-science">20 Questions</span></div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:00 AM - Hebrew Assessment: Written (Q1-15) | 25 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Opening script:</div>
+        <div class="script-text">"Shalom! Today we start with HEBREW! You have been learning the first letters of the aleph-bet. Let's see how much you remember. The letters we are testing are: ALEPH - that is the first letter. BET - that makes the B sound. And VET - that makes the V sound. Ready?"</div>
+      </div>
+      <p><strong>Written section flow:</strong></p>
+      <ul class="checklist">
+        <li><div class="check"></div> Q1-5: Hold up or display each Hebrew letter. Ask children to name it.</li>
+        <li><div class="check"></div> Q6-7: "Now we trace. Parents - help your child trace carefully over the light letters."</li>
+        <li><div class="check"></div> Q8-9: "Now write it on your OWN - no tracing this time!"</li>
+        <li><div class="check"></div> Q11-15: Read each knowledge question aloud. These are multiple choice.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:25 AM - Hebrew Assessment: Oral Song (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Oral Song Script:</div>
+        <div class="script-text">"Wonderful writing! Now it is time for the ORAL section. I want to hear you SING the Hebrew Days of the Week! Sing it with me first, then I will listen to each child individually. Ready? Let's sing together: Yom Rishon, Yom Sheni, Yom Shlishi, Yom Revi'i, Yom Chamishi, Yom Shishi, Shabbat! Great! Now let's hear each child sing it. [Child's name] - your turn!"</div>
+      </div>
+      <div class="tip">If a child is shy: "You can whisper it to your parent and they will tell us what you said. That counts!"</div>
+      <p style="margin-top:8px;">Mark the oral score on the Hebrew Assessment sheet (1-5 marks based on how many days they sing correctly).</p>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:30 AM - Science Assessment (Q1-20) | 25 min</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Transition script:</div>
+        <div class="script-text">"Brilliant singing! Now we switch to SCIENCE! Get your Science Assessment paper. This one is special - some questions ask you to DRAW a picture. Your drawings do not have to be perfect - just show me you understand!"</div>
+      </div>
+      <p><strong>Key notes for science questions:</strong></p>
+      <ul class="checklist">
+        <li><div class="check"></div> Q4, Q5: Drawing questions - full marks for ANY recognisable drawing</li>
+        <li><div class="check"></div> Q8: Drawing a plant - award marks for each part they label correctly</li>
+        <li><div class="check"></div> Q12: "Look outside with your parent right now - what is the weather doing?"</li>
+        <li><div class="check"></div> Q14: Drawing weather - encourage creativity</li>
+        <li><div class="check"></div> Q19: Drawing senses on a person - any figure drawing with labels is full marks</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:55 AM - Close (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Closing script:</div>
+        <div class="script-text">"You have done THREE assessments this week - ELA, Math, and today Hebrew and Science! I am SO proud of every single one of you. Tomorrow is our PLANT PRESENTATION day. Each child will tell us about their plant project. Practise tonight! Parents - please send photos of today's two assessment sheets. Shalom!"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THURSDAY: PLANT PRESENTATIONS -->
+<div class="page page-break">
+  <div class="day-header day-thu">
+    <span style="font-size:1.8rem;">🌱</span>
+    <div>
+      <div>Thursday, 12 March 2026</div>
+      <div style="font-size:1rem; font-weight:normal; opacity:0.9;">Plant Project Presentations <span class="subject-badge badge-plant">Each Child Presents</span></div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:00 AM - Opening (5 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Opening script:</div>
+        <div class="script-text">"Shalom Zeek Squad! Today is the BEST day of assessment week - PLANT PRESENTATION day! You have been growing and observing your plants all term. Today you get to be the TEACHER and tell us what you learned. Remember - there are no wrong answers. We want to hear YOUR observations and YOUR discoveries!"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:05 AM - Presentations (40 min)</div>
+    <div class="time-content">
+      <p><strong>Each child gets 3-5 minutes to present. Use this structure:</strong></p>
+
+      <div class="script-box">
+        <div class="label">Introduce each child:</div>
+        <div class="script-text">"Everyone, please give a big clap for [Child's Name]! Tell us about your plant project. Start by showing us your plant or your drawings."</div>
+      </div>
+
+      <p style="margin: 12px 0 8px;"><strong>Prompt questions if the child is stuck:</strong></p>
+      <ul class="checklist">
+        <li><div class="check"></div> "What did you plant? What is it called?"</li>
+        <li><div class="check"></div> "What did you give your plant every day?"</li>
+        <li><div class="check"></div> "What changes did you notice in your plant?"</li>
+        <li><div class="check"></div> "Can you name any parts of your plant?" (roots, stem, leaves, flower)</li>
+        <li><div class="check"></div> "What was the most interesting thing you discovered?"</li>
+      </ul>
+
+      <div class="script-box">
+        <div class="label">After each presentation:</div>
+        <div class="script-text">"Wonderful job [Name]! Let's all give [him/her] a big hand clap! Who learned something from [Name's] presentation? Raise your hand..."</div>
+      </div>
+
+      <div class="tip">If a child's plant did not survive: "That is SCIENCE! Plants teach us even when things do not go as planned. What did you learn from that experience? That is just as valuable!"</div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">9:45 AM - Assessment Week Celebration (10 min)</div>
+    <div class="time-content">
+      <div class="script-box">
+        <div class="label">Celebration script:</div>
+        <div class="script-text">"Zeek Squad - you have COMPLETED your Term 1 assessments! ELA... Math... Hebrew... Science... AND Plant Presentations! You are incredible learners. Your teacher is going to review all your work and come back with wonderful feedback. Before we go - let's do our Zeek Squad cheer! Ready? ZEEK SQUAD IS THE BEST! We LEARN, we GROW, we DO NOT REST! Amazing! Have a beautiful day. Shalom!"</div>
+      </div>
+      <ul class="checklist">
+        <li><div class="check"></div> Thank parents for supporting their children this week</li>
+        <li><div class="check"></div> Remind parents to send any outstanding assessment photos</li>
+        <li><div class="check"></div> Note all children who presented and any observations</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MONDAY 16: GOOGLE DRIVE UPLOAD -->
+<div class="page page-break">
+  <div class="day-header day-mon16">
+    <span style="font-size:1.8rem;">☁️</span>
+    <div>
+      <div>Monday, 16 March 2026</div>
+      <div style="font-size:1rem; font-weight:normal; opacity:0.9;">Upload Lesson Plan to Google Drive</div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">Checklist: Files to Upload to Google Drive</div>
+    <div class="time-content">
+      <ul class="checklist">
+        <li><div class="check"></div> This lesson plan (lesson-plan-march-9-16.html or PDF)</li>
+        <li><div class="check"></div> ELA Assessment file (ela-assessment.html or PDF)</li>
+        <li><div class="check"></div> Math Assessment file (math-assessment.html or PDF)</li>
+        <li><div class="check"></div> Science Assessment file (science-assessment.html or PDF)</li>
+        <li><div class="check"></div> Hebrew Assessment file (hebrew-assessment.html or PDF)</li>
+        <li><div class="check"></div> Photos of all completed student assessments (organised by child)</li>
+        <li><div class="check"></div> Plant presentation notes (observations for each child)</li>
+        <li><div class="check"></div> Attendance records for 9-12 March</li>
+      </ul>
+
+      <div class="link-box" style="margin-top:15px;">
+        <div class="link-label">Google Drive Folder</div>
+        <div class="link-url">Google Drive > Zeek Squad > Term 1 > March 2026 > Assessment Week</div>
+      </div>
+
+      <div class="tip" style="margin-top:15px;">Organise student assessment photos in sub-folders: one folder per child with all 4 assessments inside.</div>
+    </div>
+  </div>
+
+  <div class="time-block">
+    <div class="time-label">Substitute Teacher Handoff Notes</div>
+    <div class="time-content">
+      <p style="margin-bottom:10px;"><strong>Please record the following before handing over to the regular teacher:</strong></p>
+      <p>Children who were absent this week:</p>
+      <div style="border:2px solid #e5e7eb; border-radius:8px; min-height:50px; padding:8px; margin-bottom:12px;"></div>
+
+      <p>Children who needed extra support:</p>
+      <div style="border:2px solid #e5e7eb; border-radius:8px; min-height:50px; padding:8px; margin-bottom:12px;"></div>
+
+      <p>Children who excelled and should be challenged more:</p>
+      <div style="border:2px solid #e5e7eb; border-radius:8px; min-height:50px; padding:8px; margin-bottom:12px;"></div>
+
+      <p>Any other observations for the teacher:</p>
+      <div style="border:2px solid #e5e7eb; border-radius:8px; min-height:60px; padding:8px; margin-bottom:12px;"></div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:30px; padding:25px; background: linear-gradient(135deg, #ede9fe, #dbeafe); border-radius:20px;">
+    <div style="font-size:3rem; margin-bottom:10px;">🌟</div>
+    <p style="font-size:1.3rem; font-weight:bold; color:#4f46e5;">Thank you for being a wonderful substitute teacher!</p>
+    <p style="color:#6b7280; margin-top:8px;">The Zeek Squad children appreciate you.<br>Todah - Thank you!</p>
+  </div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print Lesson Plan</button>
+</body>
+</html>

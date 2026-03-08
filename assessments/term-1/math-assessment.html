@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Assessment - Zeek Squad Term 1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: #fff;
+    color: #333;
+    font-size: 14pt;
+  }
+  @media print {
+    body { font-size: 12pt; }
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+  }
+  .cover {
+    background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 40px;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 3rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); margin-bottom: 10px; }
+  .cover h2 { font-size: 1.8rem; margin-bottom: 30px; }
+  .cover .mascot { font-size: 8rem; margin: 20px 0; }
+  .name-box {
+    background: white; color: #333; border-radius: 20px;
+    padding: 20px 40px; margin-top: 30px; font-size: 1.2rem; width: 90%; max-width: 500px;
+  }
+  .name-box .field { border-bottom: 3px solid #10b981; min-height: 35px; margin: 8px 0; }
+  .page { padding: 30px 40px; max-width: 800px; margin: 0 auto; }
+  .section-header {
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    color: white; padding: 12px 20px;
+    border-radius: 15px; margin: 25px 0 15px;
+    font-size: 1.2rem; font-weight: bold;
+  }
+  .question {
+    margin: 14px 0; padding: 12px 15px;
+    background: #f0fdf4; border-radius: 12px;
+    border-left: 5px solid #10b981;
+  }
+  .question .num { font-weight: bold; color: #10b981; margin-right: 6px; }
+  .answer-line { border-bottom: 2px solid #ccc; min-height: 28px; margin: 8px 0 0; width: 100%; }
+  .options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .option {
+    background: white; border: 2px solid #10b981;
+    border-radius: 10px; padding: 6px 16px;
+    font-family: inherit; font-size: 1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .option .circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #10b981; display: inline-block; flex-shrink: 0; }
+  .write-box { border: 2px dashed #10b981; border-radius: 10px; min-height: 50px; margin-top: 8px; padding: 5px; }
+  .teacher-note {
+    background: #fef3c7; border-left: 5px solid #f59e0b;
+    padding: 10px 15px; border-radius: 0 10px 10px 0;
+    font-size: 0.95rem; margin: 8px 0; font-style: italic;
+  }
+  .number-line {
+    background: #dbeafe; border-radius: 12px; padding: 12px 15px;
+    font-size: 1.2rem; letter-spacing: 4px; margin: 10px 0;
+    text-align: center; border: 2px solid #3b82f6;
+    font-weight: bold;
+  }
+  .math-box {
+    background: white; border: 3px solid #10b981;
+    border-radius: 12px; padding: 15px;
+    text-align: center; font-size: 2rem; font-weight: bold;
+    margin: 10px 0;
+  }
+  .dot-grid {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin: 8px 0;
+  }
+  .dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #10b981; display: inline-block;
+  }
+  .score-box {
+    border: 3px solid #10b981; border-radius: 15px;
+    padding: 15px 25px; text-align: center;
+    margin-top: 30px; background: #f0fdf4;
+  }
+  .print-btn {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #10b981; color: white; border: none;
+    border-radius: 25px; padding: 12px 25px;
+    font-size: 1rem; cursor: pointer; font-family: inherit;
+    box-shadow: 0 4px 15px rgba(16,185,129,0.4); z-index: 100;
+  }
+  .print-btn:hover { background: #059669; }
+  .inline-big { font-size: 1.6rem; font-weight: bold; color: #10b981; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="mascot">🔢</div>
+  <h1>Math Assessment</h1>
+  <h2>Zeek Squad - Term 1, 2026</h2>
+  <p style="font-size:1.1rem; margin-bottom:10px;">Tuesday, 10 March 2026</p>
+  <div class="name-box">
+    <div>Student Name: <div class="field"></div></div>
+    <div style="margin-top:12px;">Date: <div class="field"></div></div>
+    <div style="margin-top:12px;">Score: _____ / 40</div>
+  </div>
+  <p style="margin-top:30px; font-size:1rem; opacity:0.9;">Teacher reads questions aloud. Parents assist at home.</p>
+</div>
+
+<!-- PAGE 1: NUMBERS + COUNTING -->
+<div class="page page-break">
+  <div class="section-header">Section 1: Numbers (Questions 1-10)</div>
+  <div class="teacher-note">Teacher: Read each number question aloud clearly. Use the number line if needed.</div>
+
+  <div class="number-line">0 &nbsp; 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5 &nbsp; 6 &nbsp; 7 &nbsp; 8 &nbsp; 9 &nbsp; 10</div>
+
+  <div class="question">
+    <span class="num">1.</span> What number is this? &nbsp; <span class="inline-big">7</span>
+    <div class="options">
+      <div class="option"><div class="circle"></div> 5</div>
+      <div class="option"><div class="circle"></div> 6</div>
+      <div class="option"><div class="circle"></div> 7</div>
+      <div class="option"><div class="circle"></div> 8</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">2.</span> Write the number THREE:
+    <div class="write-box" style="font-size:2rem;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">3.</span> Which number is BIGGER?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 4</div>
+      <div class="option"><div class="circle"></div> 9</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">4.</span> Which number is SMALLER?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 2</div>
+      <div class="option"><div class="circle"></div> 8</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">5.</span> What number comes BEFORE 6?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 4</div>
+      <div class="option"><div class="circle"></div> 5</div>
+      <div class="option"><div class="circle"></div> 7</div>
+      <div class="option"><div class="circle"></div> 8</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">6.</span> What number comes AFTER 9?
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">7.</span> Write the numbers 1 to 5:
+    <div class="write-box" style="font-size:1.5rem; min-height:55px;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">8.</span> Write the numbers 6 to 10:
+    <div class="write-box" style="font-size:1.5rem; min-height:55px;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">9.</span> What number is between 3 and 5?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 2</div>
+      <div class="option"><div class="circle"></div> 4</div>
+      <div class="option"><div class="circle"></div> 6</div>
+      <div class="option"><div class="circle"></div> 7</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">10.</span> How do you write "ten" as a number?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 1</div>
+      <div class="option"><div class="circle"></div> 8</div>
+      <div class="option"><div class="circle"></div> 10</div>
+      <div class="option"><div class="circle"></div> 12</div>
+    </div>
+  </div>
+
+  <div class="section-header">Section 2: Counting (Questions 11-20)</div>
+  <div class="teacher-note">Teacher: For dot questions, ask the child to count the dots and write the number.</div>
+
+  <div class="question">
+    <span class="num">11.</span> Count the dots and write the number:
+    <div class="dot-grid">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">12.</span> Count the dots and write the number:
+    <div class="dot-grid">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">13.</span> Count the dots:
+    <div class="dot-grid">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">14.</span> Draw 4 circles:
+    <div class="write-box" style="min-height:70px;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">15.</span> Draw 8 stars:
+    <div class="write-box" style="min-height:70px;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">16.</span> Count and circle the correct number: &nbsp; 🍎🍎🍎🍎🍎
+    <div class="options">
+      <div class="option"><div class="circle"></div> 3</div>
+      <div class="option"><div class="circle"></div> 4</div>
+      <div class="option"><div class="circle"></div> 5</div>
+      <div class="option"><div class="circle"></div> 6</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">17.</span> Count backwards from 5 to 1. Write the numbers:
+    <div class="write-box" style="font-size:1.5rem; min-height:55px;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">18.</span> What comes after counting: 7, 8, 9, ___?
+    <div class="write-box"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">19.</span> How many fingers do you have on TWO hands?
+    <div class="options">
+      <div class="option"><div class="circle"></div> 8</div>
+      <div class="option"><div class="circle"></div> 9</div>
+      <div class="option"><div class="circle"></div> 10</div>
+      <div class="option"><div class="circle"></div> 12</div>
+    </div>
+  </div>
+
+  <div class="question">
+    <span class="num">20.</span> Count by 2s: &nbsp; 2, 4, ___, 8, ___
+    <div class="write-box"></div>
+  </div>
+</div>
+
+<!-- PAGE 2: ADDITION + SUBTRACTION -->
+<div class="page page-break">
+  <div class="section-header">Section 3: Addition (Questions 21-30)</div>
+  <div class="teacher-note">Teacher: Say each number sentence aloud. The child writes the answer. They may use fingers to count.</div>
+
+  <div class="question">
+    <span class="num">21.</span>
+    <div class="math-box">2 + 3 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">22.</span>
+    <div class="math-box">1 + 4 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">23.</span>
+    <div class="math-box">5 + 5 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">24.</span>
+    <div class="math-box">3 + 3 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">25.</span>
+    <div class="math-box">0 + 7 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">26.</span>
+    <div class="math-box">4 + 6 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">27.</span>
+    <div class="math-box">2 + 7 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">28.</span>
+    <div class="math-box">1 + 9 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">29.</span> I have 3 apples. My friend gives me 4 more. How many apples do I have now?
+    <div class="write-box" style="font-size:1.5rem;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">30.</span> There are 2 cats and 5 dogs. How many animals are there altogether?
+    <div class="write-box" style="font-size:1.5rem;"></div>
+  </div>
+
+  <div class="section-header">Section 4: Subtraction (Questions 31-40)</div>
+  <div class="teacher-note">Teacher: "Take away" or "minus" - either language is fine. Children may use fingers to count backwards.</div>
+
+  <div class="question">
+    <span class="num">31.</span>
+    <div class="math-box">5 - 2 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">32.</span>
+    <div class="math-box">8 - 3 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">33.</span>
+    <div class="math-box">10 - 5 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">34.</span>
+    <div class="math-box">7 - 7 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">35.</span>
+    <div class="math-box">9 - 4 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">36.</span>
+    <div class="math-box">6 - 1 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">37.</span>
+    <div class="math-box">10 - 3 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">38.</span>
+    <div class="math-box">4 - 4 = ___</div>
+  </div>
+
+  <div class="question">
+    <span class="num">39.</span> I have 7 cookies. I eat 2. How many cookies are left?
+    <div class="write-box" style="font-size:1.5rem;"></div>
+  </div>
+
+  <div class="question">
+    <span class="num">40.</span> There are 10 birds on a tree. 6 fly away. How many birds are still on the tree?
+    <div class="write-box" style="font-size:1.5rem;"></div>
+  </div>
+
+  <div class="score-box">
+    <p style="font-size:1.2rem; font-weight:bold; color:#10b981;">Final Score: _____ / 40</p>
+    <p style="margin-top:10px;">Teacher Comments:</p>
+    <div class="answer-line"></div>
+    <div class="answer-line"></div>
+  </div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">Print Assessment</button>
+</body>
+</html>
