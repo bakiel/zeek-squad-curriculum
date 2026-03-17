@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllables - Zeek Squad ELA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: slowBounce 2s ease-in-out infinite; }
+        @keyframes slowBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+        }
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        .stars { text-align: center; font-size: 2rem; margin-bottom: 15px; }
+        .star { color: rgba(255,255,255,0.3); transition: all 0.5s; display: inline-block; }
+        .star.earned { color: #FFD700; animation: starEarn 0.6s ease; filter: drop-shadow(0 0 10px #FFD700); }
+        @keyframes starEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            60% { transform: scale(1.5) rotate(20deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .tab-nav { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 70px;
+        }
+        .tab-btn.active { background: white; color: #FF6B6B; transform: scale(1.05); }
+        .game-area {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-height: 300px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section-title { color: #FF6B6B; font-size: 1.3rem; text-align: center; margin-bottom: 15px; }
+        .word-display {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .word-display .big-word {
+            font-size: 2.2rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 3px;
+        }
+        .word-display .syllable-hint { color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-top: 8px; }
+        .clap-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            font-size: 1.5rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .clap-btn:active { transform: translateY(4px) scale(0.98); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .word-card {
+            background: #FFF5F5;
+            border: 3px solid #FFB3B3;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .word-card:hover { transform: scale(1.05); border-color: #FF6B6B; }
+        .word-card.selected { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); border-color: #FF6B6B; }
+        .word-card .wt { font-size: 1.3rem; font-weight: bold; color: #333; }
+        .word-card.selected .wt { color: white; }
+        .word-card .sc { font-size: 0.8rem; color: #999; margin-top: 4px; }
+        .word-card.selected .sc { color: rgba(255,255,255,0.8); }
+        .quiz-card { background: #FFF5F5; border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        .quiz-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .quiz-text { font-size: 1.1rem; color: #333; margin-bottom: 15px; line-height: 1.5; }
+        .quiz-counter { font-size: 0.9rem; color: #999; margin-bottom: 10px; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .quiz-option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #FFB3B3;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover { background: #FFF5F5; transform: scale(1.02); }
+        .quiz-option.correct { background: #D1FAE5; border-color: #10B981; }
+        .quiz-option.wrong { background: #FEE2E2; border-color: #EF4444; }
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            background: #F9FAFB;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        .bank-word {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 3px solid transparent;
+        }
+        .bank-word:hover { transform: scale(1.05); }
+        .bank-word.placed { opacity: 0.4; pointer-events: none; }
+        .bank-word.picked { border-color: white; }
+        .sort-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .sort-zone {
+            background: #FFF5F5;
+            border: 3px dashed #FFB3B3;
+            border-radius: 15px;
+            padding: 12px;
+            text-align: center;
+            min-height: 80px;
+            cursor: pointer;
+        }
+        .sort-zone:hover { border-color: #FF6B6B; background: #FFE5E5; }
+        .sort-zone h4 { color: #FF6B6B; margin-bottom: 8px; font-size: 0.9rem; }
+        .sort-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            margin: 2px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .compound-display {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .compound-part {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .compound-op { font-size: 1.8rem; color: #FF6B6B; }
+        .compound-result {
+            background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .celebrate {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .celebrate.show { display: flex; }
+        .celebrate-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: celebPop 0.5s ease;
+        }
+        @keyframes celebPop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .celebrate-emoji { font-size: 5rem; margin-bottom: 15px; }
+        .celebrate-text { font-size: 1.8rem; color: #FF6B6B; font-weight: bold; margin-bottom: 15px; }
+        .celebrate-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .ixl-link {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0 5px;
+            font-size: 1.05rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .ixl-link:hover { opacity: 0.9; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">&#8592; Back to Games</a>
+
+        <div class="header">
+            <h1>&#127381; Syllables!</h1>
+            <div class="standard">CCSS.ELA-LITERACY.RF.K.2 - Phonological Awareness | Week 7</div>
+        </div>
+
+        <div class="mascot">
+            <div class="mascot-emoji">&#x1F98A;</div>
+            <div class="speech-bubble" id="mascotSpeech">
+                SYLLABLES are the BEATS in a word! Clap to find them! AP-PLE = 2 claps!
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="stars" id="stars">
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+            <span class="star">&#x2B50;</span>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="h1">H.1 Count</button>
+            <button class="tab-btn" data-tab="h2">H.2 More</button>
+            <button class="tab-btn" data-tab="h3">H.3 Sort</button>
+            <button class="tab-btn" data-tab="h4">H.4 Words</button>
+        </div>
+
+        <div class="game-area">
+            <div class="tab-content active" id="h1">
+                <h2 class="section-title">&#x1F44F; How Many Syllables?</h2>
+                <p style="text-align:center;color:#666;margin-bottom:12px;">Tap a word, then clap each syllable beat!</p>
+                <div class="word-display">
+                    <div class="big-word" id="clapWord">APPLE</div>
+                    <div class="syllable-hint" id="clapHint">AP - PLE</div>
+                </div>
+                <button class="clap-btn" id="clapBtn" onclick="doClap()">&#x1F44F; CLAP IT!</button>
+                <div id="clapFeedback" style="text-align:center;font-size:1.8rem;color:#FF6B6B;font-weight:bold;min-height:50px;margin:5px 0;"></div>
+                <div class="word-grid" id="wordGrid"></div>
+                <a class="ixl-link" href="https://www.ixl.com/ela/kindergarten/how-many-syllables-does-the-word-have" target="_blank">&#x1F4BB; Practice H.1 on IXL</a>
+            </div>
+
+            <div class="tab-content" id="h2">
+                <h2 class="section-title">&#x2753; Which Has MORE Syllables?</h2>
+                <p style="text-align:center;color:#666;margin-bottom:12px;">Pick the word with MORE syllable beats!</p>
+                <div id="h2Game"></div>
+                <a class="ixl-link" href="https://www.ixl.com/ela/kindergarten/which-word-has-more-syllables" target="_blank">&#x1F4BB; Practice H.2 on IXL</a>
+            </div>
+
+            <div class="tab-content" id="h3">
+                <h2 class="section-title">&#x1F4CA; Sort by Syllables!</h2>
+                <p style="text-align:center;color:#666;margin-bottom:10px;">Pick a word, then tap its syllable box!</p>
+                <div id="h3Game"></div>
+                <a class="ixl-link" href="https://www.ixl.com/ela/kindergarten/sort-by-the-number-of-syllables" target="_blank">&#x1F4BB; Practice H.3 on IXL</a>
+            </div>
+
+            <div class="tab-content" id="h4">
+                <h2 class="section-title">&#x1F9E9; Compound Words!</h2>
+                <p style="text-align:center;color:#666;margin-bottom:12px;">Two words make ONE big word! What\u2019s left if we remove a part?</p>
+                <div id="h4Game"></div>
+                <a class="ixl-link" href="https://www.ixl.com/ela/kindergarten/change-or-remove-one-part-of-a-compound-word" target="_blank">&#x1F4BB; Practice H.4 on IXL</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebrate" id="celebrate">
+        <div class="celebrate-content">
+            <div class="celebrate-emoji">&#x1F389;&#x1F98A;&#x1F389;</div>
+            <div class="celebrate-text">Syllable Star!</div>
+            <p style="color:#666;margin-bottom:20px;">You are amazing at syllables!</p>
+            <button class="celebrate-btn" onclick="document.getElementById('celebrate').classList.remove('show')">Keep Learning!</button>
+        </div>
+    </div>
+
+    <script>
+        var progress = 0;
+        var starsEarned = 0;
+
+        var WORDS = [
+            { w:'APPLE', s:'AP-PLE', n:2, e:'\uD83C\uDF4E' },
+            { w:'CAT', s:'CAT', n:1, e:'\uD83D\uDC31' },
+            { w:'BUTTERFLY', s:'BUT-TER-FLY', n:3, e:'\uD83E\uDD8B' },
+            { w:'SUN', s:'SUN', n:1, e:'\u2600\uFE0F' },
+            { w:'BANANA', s:'BA-NA-NA', n:3, e:'\uD83C\uDF4C' },
+            { w:'BOOK', s:'BOOK', n:1, e:'\uD83D\uDCD6' },
+            { w:'WATER', s:'WA-TER', n:2, e:'\uD83D\uDCA7' },
+            { w:'ELEPHANT', s:'EL-E-PHANT', n:3, e:'\uD83D\uDC18' }
+        ];
+
+        // H.1
+        var clapActive = 0;
+        var clapCount = 0;
+        function initH1() {
+            var grid = document.getElementById('wordGrid');
+            grid.textContent = '';
+            WORDS.slice(0,6).forEach(function(wd, i) {
+                var c = document.createElement('div');
+                c.className = 'word-card';
+                var t = document.createElement('div');
+                t.className = 'wt';
+                t.textContent = wd.e + ' ' + wd.w;
+                var s = document.createElement('div');
+                s.className = 'sc';
+                s.textContent = wd.n + ' syllable' + (wd.n > 1 ? 's' : '');
+                c.appendChild(t); c.appendChild(s);
+                c.onclick = function() {
+                    clapActive = i; clapCount = 0;
+                    document.getElementById('clapWord').textContent = wd.e + ' ' + wd.w;
+                    document.getElementById('clapHint').textContent = wd.s;
+                    document.getElementById('clapFeedback').textContent = '';
+                    document.querySelectorAll('.word-card').forEach(function(x){x.classList.remove('selected');});
+                    c.classList.add('selected');
+                    updateMascot('Great choice! Clap ' + wd.w + ' - it has ' + wd.n + ' beat' + (wd.n>1?'s':'') + '!');
+                    addProgress(2);
+                };
+                grid.appendChild(c);
+            });
+        }
+        function doClap() {
+            var wd = WORDS[clapActive];
+            clapCount++;
+            var fb = document.getElementById('clapFeedback');
+            var dots = '';
+            for (var i=0;i<clapCount;i++) dots += '\uD83D\uDC4F';
+            fb.textContent = dots + ' (' + clapCount + ')';
+            if (clapCount === wd.n) {
+                updateMascot('YES! ' + wd.w + ' has ' + wd.n + ' syllable' + (wd.n>1?'s':'') + '! ' + wd.s);
+                addProgress(5);
+                setTimeout(function(){ fb.textContent = '\u2705 Correct! ' + wd.n + ' syllables!'; clapCount=0; }, 800);
+            } else if (clapCount > wd.n) {
+                fb.textContent = '\u274C Too many! Try again!';
+                setTimeout(function(){ fb.textContent=''; clapCount=0; }, 1000);
+            }
+        }
+
+        // H.2
+        var h2Pairs = [
+            { a:{w:'CAT',n:1,e:'\uD83D\uDC31'}, b:{w:'WATER',n:2,e:'\uD83D\uDCA7'}, ans:'b' },
+            { a:{w:'BANANA',n:3,e:'\uD83C\uDF4C'}, b:{w:'SUN',n:1,e:'\u2600'}, ans:'a' },
+            { a:{w:'BOOK',n:1,e:'\uD83D\uDCD6'}, b:{w:'BUTTERFLY',n:3,e:'\uD83E\uDD8B'}, ans:'b' },
+            { a:{w:'APPLE',n:2,e:'\uD83C\uDF4E'}, b:{w:'DOG',n:1,e:'\uD83D\uDC36'}, ans:'a' },
+            { a:{w:'ELEPHANT',n:3,e:'\uD83D\uDC18'}, b:{w:'FLOWER',n:2,e:'\uD83C\uDC34'}, ans:'a' },
+            { a:{w:'FISH',n:1,e:'\uD83D\uDC1F'}, b:{w:'HAPPY',n:2,e:'\uD83D\uDE0A'}, ans:'b' }
+        ];
+        var h2Idx = 0;
+        function initH2() { h2Idx=0; renderH2(); }
+        function renderH2() {
+            var con = document.getElementById('h2Game');
+            con.textContent = '';
+            if (h2Idx >= h2Pairs.length) {
+                var done = document.createElement('div');
+                done.style.cssText = 'text-align:center;padding:30px;';
+                done.textContent = '\uD83C\uDF1F You can compare syllables!';
+                done.style.fontSize = '1.3rem';
+                con.appendChild(done);
+                addProgress(10);
+                return;
+            }
+            var p = h2Pairs[h2Idx];
+            var ctr = document.createElement('div');
+            ctr.className = 'quiz-counter';
+            ctr.textContent = 'Question ' + (h2Idx+1) + ' of ' + h2Pairs.length;
+            var q = document.createElement('p');
+            q.style.cssText = 'text-align:center;font-size:1.2rem;color:#333;margin-bottom:15px;font-weight:bold;';
+            q.textContent = 'Which word has MORE syllables?';
+            var opts = document.createElement('div');
+            opts.className = 'quiz-options';
+            ['a','b'].forEach(function(k) {
+                var d = p[k];
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = d.e + ' ' + d.w;
+                btn.onclick = function() {
+                    opts.querySelectorAll('.quiz-option').forEach(function(b){b.style.pointerEvents='none';});
+                    if (k === p.ans) {
+                        btn.classList.add('correct');
+                        var cd = p[p.ans];
+                        updateMascot(cd.w + ' has ' + cd.n + ' syllables - more! Great!');
+                        addProgress(8);
+                        h2Idx++;
+                        setTimeout(renderH2, 1800);
+                    } else {
+                        btn.classList.add('wrong');
+                        updateMascot('Try again! Clap both words!');
+                        setTimeout(function(){
+                            btn.classList.remove('wrong');
+                            opts.querySelectorAll('.quiz-option').forEach(function(b){b.style.pointerEvents='auto';});
+                        }, 800);
+                    }
+                };
+                opts.appendChild(btn);
+            });
+            con.appendChild(ctr); con.appendChild(q); con.appendChild(opts);
+        }
+
+        // H.3
+        var h3Words = [
+            {w:'CAT',n:1,e:'\uD83D\uDC31'}, {w:'APPLE',n:2,e:'\uD83C\uDF4E'},
+            {w:'ELEPHANT',n:3,e:'\uD83D\uDC18'}, {w:'SUN',n:1,e:'\u2600'},
+            {w:'WATER',n:2,e:'\uD83D\uDCA7'}, {w:'BUTTERFLY',n:3,e:'\uD83E\uDD8B'}
+        ];
+        var h3Pick = null;
+        var h3Done = 0;
+        function initH3() {
+            h3Pick = null; h3Done = 0;
+            var con = document.getElementById('h3Game');
+            con.textContent = '';
+            var bank = document.createElement('div');
+            bank.className = 'word-bank';
+            bank.id = 'sortBank';
+            h3Words.forEach(function(wd, i) {
+                var btn = document.createElement('button');
+                btn.className = 'bank-word';
+                btn.id = 'bw-' + i;
+                btn.textContent = wd.e + ' ' + wd.w;
+                btn.onclick = function() {
+                    document.querySelectorAll('.bank-word').forEach(function(b){b.classList.remove('picked');});
+                    h3Pick = {wd:wd, idx:i};
+                    btn.classList.add('picked');
+                    updateMascot('Good! Now tap the box with ' + wd.n + ' syllable' + (wd.n>1?'s':'') + '!');
+                };
+                bank.appendChild(btn);
+            });
+            con.appendChild(bank);
+            var area = document.createElement('div');
+            area.className = 'sort-area';
+            [1,2,3].forEach(function(n) {
+                var zone = document.createElement('div');
+                zone.className = 'sort-zone';
+                var h = document.createElement('h4');
+                h.textContent = n + ' Syllable' + (n>1?'s':'');
+                zone.appendChild(h);
+                zone.onclick = function() {
+                    if (!h3Pick) { updateMascot('Tap a word from the bank first!'); return; }
+                    if (h3Pick.wd.n === n) {
+                        var tag = document.createElement('div');
+                        tag.className = 'sort-tag';
+                        tag.textContent = h3Pick.wd.e + ' ' + h3Pick.wd.w;
+                        zone.appendChild(tag);
+                        document.getElementById('bw-' + h3Pick.idx).classList.add('placed');
+                        updateMascot('Correct! ' + h3Pick.wd.w + ' has ' + n + ' syllable' + (n>1?'s':'') + '!');
+                        addProgress(6);
+                        h3Done++;
+                        h3Pick = null;
+                        if (h3Done >= h3Words.length) {
+                            setTimeout(function(){document.getElementById('celebrate').classList.add('show');}, 500);
+                        }
+                    } else {
+                        updateMascot('Not quite! Clap ' + h3Pick.wd.w + ' - count the beats!');
+                    }
+                };
+                area.appendChild(zone);
+            });
+            con.appendChild(area);
+        }
+
+        // H.4
+        var compWords = [
+            {p1:'SUN',p2:'FLOWER',r:'SUNFLOWER',e1:'\u2600',e2:'\uD83C\uDF3C',er:'\uD83C\uDF3B'},
+            {p1:'RAIN',p2:'BOW',r:'RAINBOW',e1:'\uD83C\uDF27',e2:'\uD83C\uDF08',er:'\uD83C\uDF08'},
+            {p1:'BIRTH',p2:'DAY',r:'BIRTHDAY',e1:'\uD83C\uDF82',e2:'\uD83D\uDCC5',er:'\uD83C\uDF82'},
+            {p1:'CUP',p2:'CAKE',r:'CUPCAKE',e1:'\u2615',e2:'\uD83C\uDF70',er:'\uD83E\uDDC1'}
+        ];
+        var h4Idx = 0;
+        function initH4() { h4Idx=0; renderH4(); }
+        function renderH4() {
+            var con = document.getElementById('h4Game');
+            con.textContent = '';
+            if (h4Idx >= compWords.length) {
+                var done = document.createElement('div');
+                done.style.cssText = 'text-align:center;padding:30px;font-size:1.3rem;font-weight:bold;';
+                done.textContent = '\uD83E\uDD29 You are a Compound Word Expert!';
+                con.appendChild(done);
+                addProgress(10);
+                return;
+            }
+            var c = compWords[h4Idx];
+            var ctr = document.createElement('div');
+            ctr.className = 'quiz-counter';
+            ctr.textContent = 'Word ' + (h4Idx+1) + ' of ' + compWords.length;
+            var disp = document.createElement('div');
+            disp.className = 'compound-display';
+            var parts = [
+                {cls:'compound-part', txt: c.e1 + '\n' + c.p1},
+                {cls:'compound-op', txt: '+'},
+                {cls:'compound-part', txt: c.e2 + '\n' + c.p2},
+                {cls:'compound-op', txt: '='},
+                {cls:'compound-result', txt: c.er + '\n' + c.r}
+            ];
+            parts.forEach(function(p) {
+                var el = document.createElement('div');
+                el.className = p.cls;
+                el.style.whiteSpace = 'pre';
+                el.textContent = p.txt;
+                disp.appendChild(el);
+            });
+            var q = document.createElement('p');
+            q.style.cssText = 'text-align:center;color:#666;margin-bottom:15px;';
+            q.textContent = 'If we REMOVE ' + c.p1 + ', what word is left?';
+            var opts = document.createElement('div');
+            opts.className = 'quiz-options';
+            var choices = [c.p2, compWords[(h4Idx+1)%compWords.length].p2, compWords[(h4Idx+2)%compWords.length].p1];
+            choices.sort(function(){return Math.random()-0.5;});
+            choices.forEach(function(ch) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = ch;
+                btn.onclick = function() {
+                    opts.querySelectorAll('.quiz-option').forEach(function(b){b.style.pointerEvents='none';});
+                    if (ch === c.p2) {
+                        btn.classList.add('correct');
+                        updateMascot('Yes! ' + c.r + ' minus ' + c.p1 + ' = ' + c.p2 + '! Brilliant!');
+                        addProgress(8);
+                        h4Idx++;
+                        setTimeout(renderH4, 1800);
+                    } else {
+                        btn.classList.add('wrong');
+                        updateMascot('Try again! ' + c.r + ' - remove ' + c.p1 + '...');
+                        setTimeout(function(){
+                            btn.classList.remove('wrong');
+                            opts.querySelectorAll('.quiz-option').forEach(function(b){b.style.pointerEvents='auto';});
+                        }, 800);
+                    }
+                };
+                opts.appendChild(btn);
+            });
+            con.appendChild(ctr); con.appendChild(disp); con.appendChild(q); con.appendChild(opts);
+        }
+
+        function addProgress(n) {
+            progress = Math.min(100, progress + n);
+            document.getElementById('progressBar').style.width = progress + '%';
+            var ns = Math.floor(progress/20);
+            if (ns > starsEarned) {
+                var starEls = document.querySelectorAll('.star');
+                for (var i=starsEarned; i<ns && i<5; i++) {
+                    (function(idx){setTimeout(function(){starEls[idx].classList.add('earned');}, (idx-starsEarned)*300);})(i);
+                }
+                starsEarned = ns;
+            }
+            if (progress >= 100) setTimeout(function(){document.getElementById('celebrate').classList.add('show');}, 500);
+        }
+        function updateMascot(t) { document.getElementById('mascotSpeech').textContent = t; }
+
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+                document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+                btn.classList.add('active');
+                var tab = btn.dataset.tab;
+                document.getElementById(tab).classList.add('active');
+                if (tab==='h2') initH2();
+                if (tab==='h3') initH3();
+                if (tab==='h4') initH4();
+                addProgress(3);
+            });
+        });
+
+        initH1();
+        addProgress(5);
+    </script>
+</body>
+</html>
