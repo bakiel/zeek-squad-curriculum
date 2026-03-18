@@ -619,6 +619,15 @@
             nextRound();
         }
 
+        // === AUDIO ===
+        var currentAudio = null;
+        var audioBase = '../../assets/audio/week7/';
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
         document.querySelectorAll('.tab-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
@@ -626,10 +635,10 @@
                 btn.classList.add('active');
                 var tab = btn.dataset.tab;
                 document.getElementById(tab).classList.add('active');
-                if (tab==='ee1') makeCountGame('ee1Game', 15, 4);
-                if (tab==='ee2') makeArrayGame('ee2Game', 15, 4);
-                if (tab==='ee3') initStickerGame();
-                if (tab==='ee4') makeCountGame('ee4Game', 20, 5);
+                if (tab==='ee1') { makeCountGame('ee1Game', 15, 4); playAudio('count-ee1-intro'); }
+                if (tab==='ee2') { makeArrayGame('ee2Game', 15, 4); playAudio('count-ee2-intro'); }
+                if (tab==='ee3') { initStickerGame(); playAudio('count-ee3-intro'); }
+                if (tab==='ee4') { makeCountGame('ee4Game', 20, 5); playAudio('count-ee4-intro'); }
                 addProgress(3);
             });
         });
@@ -637,6 +646,7 @@
         // Init first tab
         makeCountGame('ee1Game', 15, 4);
         addProgress(5);
+        playAudio('count-intro');
     </script>
 </body>
 </html>

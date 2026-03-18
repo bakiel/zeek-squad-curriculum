@@ -655,6 +655,15 @@
         }
         function updateMascot(t) { document.getElementById('mascotSpeech').textContent = t; }
 
+        // === AUDIO ===
+        var currentAudio = null;
+        var audioBase = '../../assets/audio/week7/';
+        function playAudio(key) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(audioBase + key + '.mp3');
+            currentAudio.play().catch(function(){});
+        }
+
         document.querySelectorAll('.tab-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
@@ -662,15 +671,17 @@
                 btn.classList.add('active');
                 var tab = btn.dataset.tab;
                 document.getElementById(tab).classList.add('active');
-                if (tab==='h2') initH2();
-                if (tab==='h3') initH3();
-                if (tab==='h4') initH4();
+                if (tab==='h1') { playAudio('syl-h1-intro'); }
+                if (tab==='h2') { initH2(); playAudio('syl-h2-intro'); }
+                if (tab==='h3') { initH3(); playAudio('syl-h3-intro'); }
+                if (tab==='h4') { initH4(); playAudio('syl-h4-intro'); }
                 addProgress(3);
             });
         });
 
         initH1();
         addProgress(5);
+        playAudio('syl-intro');
     </script>
 </body>
 </html>

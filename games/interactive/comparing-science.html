@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparing - Zeek Squad Science</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #4ECDC4 0%, #2BAF9F 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 20px; }
+        .header h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .standard { font-size: 0.8rem; opacity: 0.9; margin-top: 4px; }
+        .back-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .mascot { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .mascot-emoji { font-size: 4rem; animation: slowBounce 2s ease-in-out infinite; }
+        @keyframes slowBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+        .speech-bubble {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            flex: 1;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: white;
+            border-left: 0;
+        }
+        .progress-section { margin-bottom: 20px; }
+        .stars { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .star { font-size: 2rem; filter: grayscale(1); transition: all 0.5s; }
+        .star.earned { filter: none; transform: scale(1.2); animation: starPop 0.5s ease; }
+        @keyframes starPop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.4); }
+            100% { transform: scale(1.2); }
+        }
+        .progress-bar-outer {
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            height: 16px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            background: linear-gradient(90deg, #FFE66D, #FF6B6B);
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        /* Tabs */
+        .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn {
+            background: rgba(255,255,255,0.25);
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .tab-btn.active { background: white; color: #2BAF9F; }
+        .tab-btn:hover { transform: scale(1.05); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* Game card */
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .game-card h2 { font-size: 1.3rem; color: #2BAF9F; margin-bottom: 12px; text-align: center; }
+        .compare-pair {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .compare-obj {
+            background: #f0fffe;
+            border: 3px solid #4ECDC4;
+            border-radius: 16px;
+            padding: 16px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 110px;
+            flex: 1;
+        }
+        .compare-obj:hover { transform: scale(1.05); border-color: #2BAF9F; }
+        .compare-obj .obj-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; }
+        .compare-obj .obj-name { font-size: 1rem; color: #333; font-weight: bold; }
+        .compare-vs { font-size: 1.5rem; font-weight: 900; color: #FF6B6B; flex-shrink: 0; }
+        .question-box {
+            background: #FFF9E6;
+            border: 2px dashed #FFB347;
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 14px;
+            font-weight: bold;
+        }
+        .compare-obj.correct { background: #C6F6D5; border-color: #38A169; }
+        .compare-obj.wrong { background: #FED7D7; border-color: #E53E3E; animation: shake 0.4s; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .score-line {
+            text-align: center;
+            font-size: 1rem;
+            color: #555;
+            margin-top: 10px;
+        }
+        .next-btn {
+            display: block;
+            margin: 14px auto 0;
+            background: #2BAF9F;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .next-btn:hover { transform: scale(1.05); background: #4ECDC4; }
+        .ixl-section { background: #EEF2FF; border-radius: 16px; padding: 16px; margin-top: 10px; }
+        .ixl-section h3 { font-size: 1rem; color: #4F46E5; margin-bottom: 10px; text-align: center; }
+        .ixl-btn {
+            display: block;
+            background: linear-gradient(135deg, #4F46E5, #7C3AED);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .ixl-btn:hover { transform: scale(1.02); opacity: 0.9; }
+        .celebration {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .celebration.show { display: flex; }
+        .celebration-box {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            max-width: 320px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .celebration-box h2 { font-size: 2rem; margin-bottom: 12px; }
+        .celebration-box p { font-size: 1.1rem; color: #555; margin-bottom: 20px; }
+        .play-again {
+            background: #2BAF9F;
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 30px;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .play-again:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-btn">← Back to Games</a>
+    <div class="header">
+        <h1>🔬 Comparing!</h1>
+        <div class="standard">IXL Science C.1 - C.4 | Week 7</div>
+    </div>
+
+    <div class="mascot">
+        <div class="mascot-emoji">🔬</div>
+        <div class="speech-bubble" id="mascotSpeech">
+            Scientists compare things! Let's learn about long, short, heavy, light, hot, cold, fast, and slow!
+        </div>
+    </div>
+
+    <div class="progress-section">
+        <div class="stars">
+            <span class="star" id="s1">⭐</span>
+            <span class="star" id="s2">⭐</span>
+            <span class="star" id="s3">⭐</span>
+            <span class="star" id="s4">⭐</span>
+            <span class="star" id="s5">⭐</span>
+        </div>
+        <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="c1">C.1 Long/Short</button>
+        <button class="tab-btn" data-tab="c2">C.2 Heavy/Light</button>
+        <button class="tab-btn" data-tab="c3">C.3 Hot/Cold</button>
+        <button class="tab-btn" data-tab="c4">C.4 Fast/Slow</button>
+    </div>
+
+    <!-- C.1: Long vs Short -->
+    <div id="c1" class="tab-content active">
+        <div class="game-card">
+            <h2>🪄 Long and Short</h2>
+            <div class="question-box" id="c1Question">Which object is LONGER?</div>
+            <div class="compare-pair" id="c1Pair"></div>
+            <div class="score-line" id="c1Score">Score: 0 / 5</div>
+            <button class="next-btn" id="c1Next" style="display:none;" onclick="nextC1()">Next ▶</button>
+        </div>
+        <div class="ixl-section">
+            <h3>Practice on IXL!</h3>
+            <a class="ixl-btn" href="https://www.ixl.com/science/kindergarten/compare-lengths-of-objects" target="_blank">IXL C.1 - Compare Lengths</a>
+        </div>
+    </div>
+
+    <!-- C.2: Heavy vs Light -->
+    <div id="c2" class="tab-content">
+        <div class="game-card">
+            <h2>⚖️ Heavy and Light</h2>
+            <div class="question-box" id="c2Question">Which object is HEAVIER?</div>
+            <div class="compare-pair" id="c2Pair"></div>
+            <div class="score-line" id="c2Score">Score: 0 / 5</div>
+            <button class="next-btn" id="c2Next" style="display:none;" onclick="nextC2()">Next ▶</button>
+        </div>
+        <div class="ixl-section">
+            <h3>Practice on IXL!</h3>
+            <a class="ixl-btn" href="https://www.ixl.com/science/kindergarten/compare-weights-of-objects" target="_blank">IXL C.2 - Compare Weights</a>
+        </div>
+    </div>
+
+    <!-- C.3: Hot vs Cold -->
+    <div id="c3" class="tab-content">
+        <div class="game-card">
+            <h2>🌡️ Hot and Cold</h2>
+            <div class="question-box" id="c3Question">Which is HOTTER?</div>
+            <div class="compare-pair" id="c3Pair"></div>
+            <div class="score-line" id="c3Score">Score: 0 / 5</div>
+            <button class="next-btn" id="c3Next" style="display:none;" onclick="nextC3()">Next ▶</button>
+        </div>
+        <div class="ixl-section">
+            <h3>Practice on IXL!</h3>
+            <a class="ixl-btn" href="https://www.ixl.com/science/kindergarten/hot-or-cold" target="_blank">IXL C.3 - Hot or Cold</a>
+        </div>
+    </div>
+
+    <!-- C.4: Fast vs Slow -->
+    <div id="c4" class="tab-content">
+        <div class="game-card">
+            <h2>🏃 Fast and Slow</h2>
+            <div class="question-box" id="c4Question">Which is FASTER?</div>
+            <div class="compare-pair" id="c4Pair"></div>
+            <div class="score-line" id="c4Score">Score: 0 / 5</div>
+            <button class="next-btn" id="c4Next" style="display:none;" onclick="nextC4()">Next ▶</button>
+        </div>
+        <div class="ixl-section">
+            <h3>Practice on IXL!</h3>
+            <a class="ixl-btn" href="https://www.ixl.com/science/kindergarten/compare-speeds-of-objects" target="_blank">IXL C.4 - Compare Speeds</a>
+        </div>
+    </div>
+</div>
+
+<div class="celebration" id="celebrate">
+    <div class="celebration-box">
+        <h2>🔬 Science Star! 🌟</h2>
+        <p>Amazing! You can compare like a real scientist! Long and short, heavy and light, hot and cold, fast and slow!</p>
+        <button class="play-again" onclick="document.getElementById('celebrate').classList.remove('show')">Play Again!</button>
+    </div>
+</div>
+
+<script>
+    var progress = 0;
+    var starsEarned = 0;
+
+    function addProgress(n) {
+        progress = Math.min(100, progress + n);
+        document.getElementById('progressBar').style.width = progress + '%';
+        var ns = Math.floor(progress / 20);
+        if (ns > starsEarned) {
+            for (var i = starsEarned; i < ns && i < 5; i++) {
+                (function(idx) {
+                    setTimeout(function() {
+                        document.getElementById('s' + (idx + 1)).classList.add('earned');
+                        playAudio('star');
+                    }, (idx - starsEarned) * 300);
+                })(i);
+            }
+            starsEarned = ns;
+        }
+        if (progress >= 100) setTimeout(function() { document.getElementById('celebrate').classList.add('show'); }, 500);
+    }
+
+    function updateMascot(t) { document.getElementById('mascotSpeech').textContent = t; }
+
+    // === AUDIO ===
+    var currentAudio = null;
+    var audioBase = '../../assets/audio/week7/';
+    function playAudio(key) {
+        if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+        currentAudio = new Audio(audioBase + key + '.mp3');
+        currentAudio.play().catch(function() {});
+    }
+
+    // === C.1: LONG vs SHORT ===
+    var c1Data = [
+        { a: { e: '📏', n: 'Ruler', val: 'long' }, b: { e: '✏️', n: 'Pencil', val: 'short' }, q: 'Which is LONGER?', ans: 'long' },
+        { a: { e: '🐍', n: 'Snake', val: 'long' }, b: { e: '🐛', n: 'Caterpillar', val: 'short' }, q: 'Which is LONGER?', ans: 'long' },
+        { a: { e: '🪨', n: 'Rock', val: 'short' }, b: { e: '🌿', n: 'Branch', val: 'long' }, q: 'Which is SHORTER?', ans: 'short' },
+        { a: { e: '🚗', n: 'Car', val: 'short' }, b: { e: '🚌', n: 'Bus', val: 'long' }, q: 'Which is SHORTER?', ans: 'short' },
+        { a: { e: '🎀', n: 'Ribbon', val: 'long' }, b: { e: '🪢', n: 'Knot', val: 'short' }, q: 'Which is LONGER?', ans: 'long' }
+    ];
+    var c1Idx = 0, c1Score = 0;
+
+    function renderC1() {
+        if (c1Idx >= c1Data.length) {
+            updateMascot('You finished Long and Short! Score: ' + c1Score + ' / ' + c1Data.length + '!');
+            playAudio('comp-complete');
+            return;
+        }
+        var d = c1Data[c1Idx];
+        document.getElementById('c1Question').textContent = d.q;
+        document.getElementById('c1Score').textContent = 'Score: ' + c1Score + ' / ' + c1Data.length;
+        document.getElementById('c1Next').style.display = 'none';
+        var pair = document.getElementById('c1Pair');
+        pair.textContent = '';
+        [d.a, d.b].forEach(function(obj) {
+            var el = document.createElement('div');
+            el.className = 'compare-obj';
+            var em = document.createElement('span');
+            em.className = 'obj-emoji';
+            em.textContent = obj.e;
+            var nm = document.createElement('div');
+            nm.className = 'obj-name';
+            nm.textContent = obj.n;
+            el.appendChild(em);
+            el.appendChild(nm);
+            el.onclick = function() {
+                pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'none'; });
+                if (obj.val === d.ans) {
+                    el.classList.add('correct');
+                    updateMascot('Yes! The ' + obj.n + ' is ' + d.ans + '! Great comparing!');
+                    playAudio('comp-correct');
+                    c1Score++;
+                    addProgress(8);
+                    document.getElementById('c1Next').style.display = 'block';
+                    if (c1Idx + 1 >= c1Data.length) document.getElementById('c1Next').textContent = 'Finish!';
+                } else {
+                    el.classList.add('wrong');
+                    updateMascot('Try again! Look at the ' + d.q.split(' ')[2].toLowerCase() + ' one more time!');
+                    playAudio('comp-wrong');
+                    setTimeout(function() {
+                        el.classList.remove('wrong');
+                        pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                    }, 900);
+                }
+            };
+            pair.appendChild(el);
+            if (obj !== [d.a, d.b][1]) {
+                var vs = document.createElement('div');
+                vs.className = 'compare-vs';
+                vs.textContent = 'vs';
+                pair.appendChild(vs);
+            }
+        });
+    }
+
+    function nextC1() { c1Idx++; renderC1(); }
+
+    // === C.2: HEAVY vs LIGHT ===
+    var c2Data = [
+        { a: { e: '🪨', n: 'Boulder', val: 'heavy' }, b: { e: '🪶', n: 'Feather', val: 'light' }, q: 'Which is HEAVIER?', ans: 'heavy' },
+        { a: { e: '🐘', n: 'Elephant', val: 'heavy' }, b: { e: '🐦', n: 'Bird', val: 'light' }, q: 'Which is HEAVIER?', ans: 'heavy' },
+        { a: { e: '📦', n: 'Box', val: 'heavy' }, b: { e: '🎈', n: 'Balloon', val: 'light' }, q: 'Which is LIGHTER?', ans: 'light' },
+        { a: { e: '🍎', n: 'Apple', val: 'heavy' }, b: { e: '🍃', n: 'Leaf', val: 'light' }, q: 'Which is LIGHTER?', ans: 'light' },
+        { a: { e: '⚙️', n: 'Gear', val: 'heavy' }, b: { e: '🌸', n: 'Petal', val: 'light' }, q: 'Which is HEAVIER?', ans: 'heavy' }
+    ];
+    var c2Idx = 0, c2Score = 0;
+
+    function renderC2() {
+        if (c2Idx >= c2Data.length) {
+            updateMascot('You finished Heavy and Light! Score: ' + c2Score + ' / ' + c2Data.length + '!');
+            playAudio('comp-complete');
+            return;
+        }
+        var d = c2Data[c2Idx];
+        document.getElementById('c2Question').textContent = d.q;
+        document.getElementById('c2Score').textContent = 'Score: ' + c2Score + ' / ' + c2Data.length;
+        document.getElementById('c2Next').style.display = 'none';
+        var pair = document.getElementById('c2Pair');
+        pair.textContent = '';
+        [d.a, d.b].forEach(function(obj) {
+            var el = document.createElement('div');
+            el.className = 'compare-obj';
+            var em = document.createElement('span');
+            em.className = 'obj-emoji';
+            em.textContent = obj.e;
+            var nm = document.createElement('div');
+            nm.className = 'obj-name';
+            nm.textContent = obj.n;
+            el.appendChild(em);
+            el.appendChild(nm);
+            el.onclick = function() {
+                pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'none'; });
+                if (obj.val === d.ans) {
+                    el.classList.add('correct');
+                    updateMascot('Yes! The ' + obj.n + ' is ' + d.ans + '! Great scientist!');
+                    playAudio('comp-correct');
+                    c2Score++;
+                    addProgress(8);
+                    document.getElementById('c2Next').style.display = 'block';
+                    if (c2Idx + 1 >= c2Data.length) document.getElementById('c2Next').textContent = 'Finish!';
+                } else {
+                    el.classList.add('wrong');
+                    updateMascot('Try again! Think about which one feels heavier!');
+                    playAudio('comp-wrong');
+                    setTimeout(function() {
+                        el.classList.remove('wrong');
+                        pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                    }, 900);
+                }
+            };
+            pair.appendChild(el);
+            if (obj !== [d.a, d.b][1]) {
+                var vs = document.createElement('div');
+                vs.className = 'compare-vs';
+                vs.textContent = 'vs';
+                pair.appendChild(vs);
+            }
+        });
+    }
+
+    function nextC2() { c2Idx++; renderC2(); }
+
+    // === C.3: HOT vs COLD ===
+    var c3Data = [
+        { a: { e: '☀️', n: 'Sun', val: 'hot' }, b: { e: '❄️', n: 'Snowflake', val: 'cold' }, q: 'Which is HOTTER?', ans: 'hot' },
+        { a: { e: '🔥', n: 'Fire', val: 'hot' }, b: { e: '🧊', n: 'Ice', val: 'cold' }, q: 'Which is HOTTER?', ans: 'hot' },
+        { a: { e: '🍵', n: 'Hot Tea', val: 'hot' }, b: { e: '🥤', n: 'Iced Drink', val: 'cold' }, q: 'Which is COLDER?', ans: 'cold' },
+        { a: { e: '🌡️', n: 'Thermometer', val: 'hot' }, b: { e: '🌨️', n: 'Blizzard', val: 'cold' }, q: 'Which is COLDER?', ans: 'cold' },
+        { a: { e: '♨️', n: 'Steam', val: 'hot' }, b: { e: '🌬️', n: 'Cold Wind', val: 'cold' }, q: 'Which is HOTTER?', ans: 'hot' }
+    ];
+    var c3Idx = 0, c3Score = 0;
+
+    function renderC3() {
+        if (c3Idx >= c3Data.length) {
+            updateMascot('You finished Hot and Cold! Score: ' + c3Score + ' / ' + c3Data.length + '!');
+            playAudio('comp-complete');
+            return;
+        }
+        var d = c3Data[c3Idx];
+        document.getElementById('c3Question').textContent = d.q;
+        document.getElementById('c3Score').textContent = 'Score: ' + c3Score + ' / ' + c3Data.length;
+        document.getElementById('c3Next').style.display = 'none';
+        var pair = document.getElementById('c3Pair');
+        pair.textContent = '';
+        [d.a, d.b].forEach(function(obj) {
+            var el = document.createElement('div');
+            el.className = 'compare-obj';
+            var em = document.createElement('span');
+            em.className = 'obj-emoji';
+            em.textContent = obj.e;
+            var nm = document.createElement('div');
+            nm.className = 'obj-name';
+            nm.textContent = obj.n;
+            el.appendChild(em);
+            el.appendChild(nm);
+            el.onclick = function() {
+                pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'none'; });
+                if (obj.val === d.ans) {
+                    el.classList.add('correct');
+                    updateMascot('Yes! The ' + obj.n + ' is ' + d.ans + '! You know temperature!');
+                    playAudio('comp-correct');
+                    c3Score++;
+                    addProgress(8);
+                    document.getElementById('c3Next').style.display = 'block';
+                    if (c3Idx + 1 >= c3Data.length) document.getElementById('c3Next').textContent = 'Finish!';
+                } else {
+                    el.classList.add('wrong');
+                    updateMascot('Try again! Think about which one is hotter or colder!');
+                    playAudio('comp-wrong');
+                    setTimeout(function() {
+                        el.classList.remove('wrong');
+                        pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                    }, 900);
+                }
+            };
+            pair.appendChild(el);
+            if (obj !== [d.a, d.b][1]) {
+                var vs = document.createElement('div');
+                vs.className = 'compare-vs';
+                vs.textContent = 'vs';
+                pair.appendChild(vs);
+            }
+        });
+    }
+
+    function nextC3() { c3Idx++; renderC3(); }
+
+    // === C.4: FAST vs SLOW ===
+    var c4Data = [
+        { a: { e: '🚀', n: 'Rocket', val: 'fast' }, b: { e: '🐌', n: 'Snail', val: 'slow' }, q: 'Which is FASTER?', ans: 'fast' },
+        { a: { e: '🐆', n: 'Cheetah', val: 'fast' }, b: { e: '🐢', n: 'Turtle', val: 'slow' }, q: 'Which is FASTER?', ans: 'fast' },
+        { a: { e: '✈️', n: 'Airplane', val: 'fast' }, b: { e: '🐛', n: 'Caterpillar', val: 'slow' }, q: 'Which is SLOWER?', ans: 'slow' },
+        { a: { e: '🏎️', n: 'Race Car', val: 'fast' }, b: { e: '🐘', n: 'Elephant', val: 'slow' }, q: 'Which is SLOWER?', ans: 'slow' },
+        { a: { e: '⚡', n: 'Lightning', val: 'fast' }, b: { e: '🦥', n: 'Sloth', val: 'slow' }, q: 'Which is FASTER?', ans: 'fast' }
+    ];
+    var c4Idx = 0, c4Score = 0;
+
+    function renderC4() {
+        if (c4Idx >= c4Data.length) {
+            updateMascot('You finished Fast and Slow! Score: ' + c4Score + ' / ' + c4Data.length + '!');
+            playAudio('comp-complete');
+            return;
+        }
+        var d = c4Data[c4Idx];
+        document.getElementById('c4Question').textContent = d.q;
+        document.getElementById('c4Score').textContent = 'Score: ' + c4Score + ' / ' + c4Data.length;
+        document.getElementById('c4Next').style.display = 'none';
+        var pair = document.getElementById('c4Pair');
+        pair.textContent = '';
+        [d.a, d.b].forEach(function(obj) {
+            var el = document.createElement('div');
+            el.className = 'compare-obj';
+            var em = document.createElement('span');
+            em.className = 'obj-emoji';
+            em.textContent = obj.e;
+            var nm = document.createElement('div');
+            nm.className = 'obj-name';
+            nm.textContent = obj.n;
+            el.appendChild(em);
+            el.appendChild(nm);
+            el.onclick = function() {
+                pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'none'; });
+                if (obj.val === d.ans) {
+                    el.classList.add('correct');
+                    updateMascot('Yes! The ' + obj.n + ' is ' + d.ans + '! You understand speed!');
+                    playAudio('comp-correct');
+                    c4Score++;
+                    addProgress(8);
+                    document.getElementById('c4Next').style.display = 'block';
+                    if (c4Idx + 1 >= c4Data.length) document.getElementById('c4Next').textContent = 'Finish!';
+                } else {
+                    el.classList.add('wrong');
+                    updateMascot('Try again! Think about which moves faster!');
+                    playAudio('comp-wrong');
+                    setTimeout(function() {
+                        el.classList.remove('wrong');
+                        pair.querySelectorAll('.compare-obj').forEach(function(b) { b.style.pointerEvents = 'auto'; });
+                    }, 900);
+                }
+            };
+            pair.appendChild(el);
+            if (obj !== [d.a, d.b][1]) {
+                var vs = document.createElement('div');
+                vs.className = 'compare-vs';
+                vs.textContent = 'vs';
+                pair.appendChild(vs);
+            }
+        });
+    }
+
+    function nextC4() { c4Idx++; renderC4(); }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            btn.classList.add('active');
+            var tab = btn.dataset.tab;
+            document.getElementById(tab).classList.add('active');
+            if (tab === 'c1') { renderC1(); playAudio('comp-c1-intro'); }
+            if (tab === 'c2') { renderC2(); playAudio('comp-c2-intro'); }
+            if (tab === 'c3') { renderC3(); playAudio('comp-c3-intro'); }
+            if (tab === 'c4') { renderC4(); playAudio('comp-c4-intro'); }
+            addProgress(3);
+        });
+    });
+
+    // Init
+    renderC1();
+    addProgress(5);
+    playAudio('comp-intro');
+</script>
+</body>
+</html>
